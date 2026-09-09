@@ -106,6 +106,20 @@ const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Ast
         role="listitem"
         tabindex="0"
       >
+        {t.logoUrl && (
+          <div class="store-card-logo-wrap">
+            <img
+              src={t.logoUrl}
+              alt={`${t.name} Logo`}
+              class="store-card-logo"
+              loading="lazy"
+              decoding="async"
+              width="205"
+              height="120"
+            />
+          </div>
+        )}
+
         <div class="store-card-header">
           <span class="store-card-category">
             {t.categoryName} {t.categorySlug ? CATEGORY_EMOJI_MAP[t.categorySlug] || '' : ''}

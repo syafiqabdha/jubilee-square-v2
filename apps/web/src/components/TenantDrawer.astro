@@ -27,6 +27,11 @@
 
   <!-- Content Body -->
   <div class="drawer-content-body">
+    <!-- Tenant Logo Banner -->
+    <div class="drawer-logo-container hidden" id="drawer-logo-wrap">
+      <img id="drawer-logo-img" src="" alt="" class="drawer-logo-img" width="240" height="130" />
+    </div>
+
     <!-- Header -->
     <div>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-2" id="drawer-store-name">
@@ -131,6 +136,8 @@
   const mapLevelEl = document.getElementById('drawer-map-level');
   const detailsGrid = document.getElementById('drawer-details-grid');
   const hoursList = document.getElementById('drawer-hours-list');
+  const logoWrap = document.getElementById('drawer-logo-wrap');
+  const logoImg = document.getElementById('drawer-logo-img') as HTMLImageElement | null;
 
   const callBtn = document.getElementById('drawer-call-btn') as HTMLAnchorElement | null;
   const callText = document.getElementById('drawer-call-text');
@@ -152,6 +159,7 @@
       id: typeof data.id === 'string' ? data.id : '',
       slug: typeof data.slug === 'string' ? data.slug : '',
       name: typeof data.name === 'string' ? data.name : 'Store Profile',
+      logoUrl: typeof data.logoUrl === 'string' ? data.logoUrl : null,
       categoryName: typeof data.categoryName === 'string' ? data.categoryName : 'Directory',
       floorLevel: typeof data.floorLevel === 'string' ? data.floorLevel : 'L1',
       unitNumber: typeof data.unitNumber === 'string' ? data.unitNumber : '',
@@ -169,6 +177,14 @@
   function populateDrawerUI(rawTenant: any) {
     const tenant = sanitizeTenantData(rawTenant);
     if (!tenant) return;
+
+    if (tenant.logoUrl && logoImg && logoWrap) {
+      logoImg.src = tenant.logoUrl;
+      logoImg.alt = `${tenant.name} Logo`;
+      logoWrap.classList.remove('hidden');
+    } else if (logoWrap) {
+      logoWrap.classList.add('hidden');
+    }
 
     if (catEl) catEl.textContent = tenant.categoryName;
     if (nameEl) nameEl.textContent = tenant.name;
