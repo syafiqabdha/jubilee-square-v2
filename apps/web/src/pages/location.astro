@@ -22,85 +22,214 @@ import CTA from '../components/CTA.astro';
       </p>
     </div>
 
-    <!-- Building Landmark Visual Arrival Card -->
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 overflow-hidden">
+    <!-- Tactical Landmark Arrival & Street-Level Guide Card -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 overflow-hidden" id="arrival-guide-card">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-        <!-- Photo Column -->
-        <div class="lg:col-span-6">
-          <div class="group relative rounded-2xl overflow-hidden bg-slate-900 aspect-[4/3] sm:aspect-[16/10] border border-slate-200 shadow-md">
+        <!-- Photo & Interactive Waypoint Canvas -->
+        <div class="lg:col-span-7">
+          <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3] sm:aspect-[16/10] border border-slate-200 shadow-md select-none" id="waypoint-canvas">
             <img
               src="/images/jubilee_sq_building.jpg"
               alt="Jubilee Square building exterior facade with colorful geometric triangles and street signage in Ang Mo Kio Central"
-              class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+              class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 ease-out"
               loading="eager"
               width="800"
               height="600"
             />
             
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent pointer-events-none"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-slate-950/40 pointer-events-none"></div>
 
-            <div class="absolute top-3 left-3 pointer-events-none">
+            <!-- Top Header & Mode Toggle -->
+            <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-20 pointer-events-none">
               <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-slate-950/80 backdrop-blur-md border border-white/20 shadow-sm">
-                🏛️ Exterior Landmark
+                <span>📍</span> Street-Level Wayfinding
               </span>
+              <button
+                type="button"
+                id="toggle-waypoints-btn"
+                class="pointer-events-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-300 hover:text-white bg-slate-950/80 hover:bg-slate-900 border border-white/20 transition-all cursor-pointer"
+                title="Toggle visual waypoint pins"
+              >
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span id="toggle-waypoints-text">Pins: ON</span>
+              </button>
             </div>
 
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white pointer-events-none">
-              <span class="text-xs font-semibold drop-shadow-sm">
-                61 Ang Mo Kio Ave 8
-              </span>
-              <span class="inline-flex items-center gap-1 text-[11px] font-bold bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-lg">
-                🔍 Click to Enlarge
-              </span>
+            <!-- Interactive Waypoint Pins Overlay -->
+            <div class="absolute inset-0 z-20" id="waypoint-markers-layer">
+              <!-- Waypoint 1: Sheltered Linkway (AMK MRT Exit C) -->
+              <div
+                class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
+                style="left: 18%; top: 68%;"
+                data-waypoint-id="wp-linkway"
+              >
+                <div class="relative flex items-center justify-center">
+                  <span class="absolute w-6 h-6 rounded-full bg-jubilee-navy/50 animate-ping"></span>
+                  <span class="relative w-8 h-8 rounded-full bg-jubilee-navy border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                    1
+                  </span>
+                  <!-- Tooltip -->
+                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                    🚇 MRT Exit C Sheltered Walkway
+                  </div>
+                </div>
+              </div>
+
+              <!-- Waypoint 2: Rainbow Geometric Triangle Facade -->
+              <div
+                class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
+                style="left: 56%; top: 28%;"
+                data-waypoint-id="wp-facade"
+              >
+                <div class="relative flex items-center justify-center">
+                  <span class="absolute w-6 h-6 rounded-full bg-jubilee-red/50 animate-ping"></span>
+                  <span class="relative w-8 h-8 rounded-full bg-jubilee-red border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                    2
+                  </span>
+                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                    🎨 Rainbow Triangle Mosaic Landmark
+                  </div>
+                </div>
+              </div>
+
+              <!-- Waypoint 3: Ground Floor Main Entrance -->
+              <div
+                class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
+                style="left: 52%; top: 78%;"
+                data-waypoint-id="wp-entrance"
+              >
+                <div class="relative flex items-center justify-center">
+                  <span class="absolute w-6 h-6 rounded-full bg-emerald-500/50 animate-ping"></span>
+                  <span class="relative w-8 h-8 rounded-full bg-emerald-600 border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                    3
+                  </span>
+                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                    🚪 Ground Entrance (Ya Kun &amp; Subway)
+                  </div>
+                </div>
+              </div>
+
+              <!-- Waypoint 4: Carpark & Drop-off Access -->
+              <div
+                class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
+                style="left: 82%; top: 72%;"
+                data-waypoint-id="wp-carpark"
+              >
+                <div class="relative flex items-center justify-center">
+                  <span class="absolute w-6 h-6 rounded-full bg-amber-500/50 animate-ping"></span>
+                  <span class="relative w-8 h-8 rounded-full bg-amber-600 border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                    4
+                  </span>
+                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                    🚗 Basement Carpark &amp; Lift Access
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Lightbox trigger -->
-            <button
-              type="button"
-              class="absolute inset-0 w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-jubilee-navy z-10"
-              data-open-building-lightbox
-              aria-label="Click to enlarge building photograph"
-            >
-              <span class="sr-only">Enlarge Jubilee Square building photo</span>
-            </button>
+            <!-- Bottom Caption & Lightbox Launcher -->
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-20 pointer-events-none">
+              <span class="text-xs font-semibold drop-shadow-sm flex items-center gap-1.5">
+                <span>📍</span> 61 Ang Mo Kio Ave 8
+              </span>
+              <button
+                type="button"
+                data-open-building-lightbox
+                class="pointer-events-auto inline-flex items-center gap-1 text-[11px] font-bold bg-white/20 hover:bg-white/30 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 transition-all cursor-pointer"
+              >
+                🔍 Expand Full Photo
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Recognition & Directions Details Column -->
-        <div class="lg:col-span-6 flex flex-col justify-center space-y-4">
+        <!-- Interactive Recognition & Directions Checklist Column -->
+        <div class="lg:col-span-5 flex flex-col justify-center space-y-3.5">
           <div>
             <span class="text-xs font-bold uppercase tracking-wider text-jubilee-red mb-1 block">
-              What to Look For
+              Tactical Arrival Checklist
             </span>
             <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
               Finding Jubilee Square
             </h2>
-            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-              When arriving from Ang Mo Kio Central or the MRT station, look out for the building's iconic features:
+            <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+              Step out from Ang Mo Kio Central using these 4 physical landmarks:
             </p>
           </div>
 
-          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-700">
-            <li class="flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-jubilee-red-light text-jubilee-red flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">✓</span>
-              <span><strong>Signature Facade:</strong> High-profile white building featuring the vibrant rainbow geometric triangle mosaic and "jubilee sq" logo.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-jubilee-navy-light text-jubilee-navy flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">✓</span>
-              <span><strong>Sheltered Access:</strong> 2 minutes fully sheltered walkway from <strong>Ang Mo Kio MRT Station (Exit C)</strong> and AMK Bus Interchange.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">✓</span>
-              <span><strong>Key Neighbours:</strong> Next to Ang Mo Kio Polyclinic, AMK Public Library, and directly opposite AMK Hub.</span>
-            </li>
-          </ul>
+          <!-- Interactive Waypoint Steps -->
+          <div class="space-y-2 text-xs sm:text-sm" id="waypoint-steps-list">
+            <!-- Step 1 -->
+            <div
+              class="waypoint-step-card p-3 rounded-xl border border-slate-200 hover:border-jubilee-navy/50 bg-slate-50 hover:bg-jubilee-navy-light/40 transition-all cursor-pointer flex items-start gap-2.5"
+              data-target-waypoint="wp-linkway"
+            >
+              <span class="w-6 h-6 rounded-full bg-jubilee-navy text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                1
+              </span>
+              <div>
+                <strong class="text-slate-900 block text-xs sm:text-sm">2-Min Sheltered Linkway</strong>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-0.5">
+                  Walk from <strong>Ang Mo Kio MRT (Exit C)</strong> or Bus Interchange. Fully covered and rain-proof.
+                </span>
+              </div>
+            </div>
 
-          <div class="pt-2">
+            <!-- Step 2 -->
+            <div
+              class="waypoint-step-card p-3 rounded-xl border border-slate-200 hover:border-jubilee-red/50 bg-slate-50 hover:bg-jubilee-red-light/40 transition-all cursor-pointer flex items-start gap-2.5"
+              data-target-waypoint="wp-facade"
+            >
+              <span class="w-6 h-6 rounded-full bg-jubilee-red text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                2
+              </span>
+              <div>
+                <strong class="text-slate-900 block text-xs sm:text-sm">Iconic Rainbow Geometric Facade</strong>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-0.5">
+                  Distinctive white building with colorful geometric triangles and high-visibility Jubilee Square signage.
+                </span>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+              class="waypoint-step-card p-3 rounded-xl border border-slate-200 hover:border-emerald-500/50 bg-slate-50 hover:bg-emerald-50 transition-all cursor-pointer flex items-start gap-2.5"
+              data-target-waypoint="wp-entrance"
+            >
+              <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                3
+              </span>
+              <div>
+                <strong class="text-slate-900 block text-xs sm:text-sm">Ground Level Main Entrance</strong>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-0.5">
+                  Direct street entry with Ya Kun Kaya Toast, Subway, and central escalators to all 4 levels.
+                </span>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div
+              class="waypoint-step-card p-3 rounded-xl border border-slate-200 hover:border-amber-500/50 bg-slate-50 hover:bg-amber-50 transition-all cursor-pointer flex items-start gap-2.5"
+              data-target-waypoint="wp-carpark"
+            >
+              <span class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                4
+              </span>
+              <div>
+                <strong class="text-slate-900 block text-xs sm:text-sm">Basement Carpark &amp; Lift Lobby</strong>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-0.5">
+                  Direct vehicular ramp from Ave 8 with automated EPS gantries and barrier-free lift lobby access.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-1">
             <a
               href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
               target="_blank"
               rel="noopener noreferrer"
-              class="btn-cta-getting-here text-sm py-2.5 px-5 w-full sm:w-auto justify-center"
+              class="btn-cta-getting-here text-sm py-2.5 px-5 w-full sm:w-auto justify-center inline-flex items-center gap-2"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
@@ -183,3 +312,76 @@ import CTA from '../components/CTA.astro';
 
   <CTA />
 </Layout>
+
+<script>
+  const markersLayer = document.getElementById('waypoint-markers-layer');
+  const toggleBtn = document.getElementById('toggle-waypoints-btn');
+  const toggleText = document.getElementById('toggle-waypoints-text');
+  const markers = Array.from(document.querySelectorAll('.waypoint-marker'));
+  const stepCards = Array.from(document.querySelectorAll('.waypoint-step-card'));
+
+  let waypointsVisible = true;
+
+  // Toggle Pins visibility
+  toggleBtn?.addEventListener('click', () => {
+    waypointsVisible = !waypointsVisible;
+    if (markersLayer) {
+      markersLayer.style.display = waypointsVisible ? 'block' : 'none';
+    }
+    if (toggleText) {
+      toggleText.textContent = waypointsVisible ? 'Pins: ON' : 'Pins: OFF';
+    }
+  });
+
+  function activateWaypoint(id: string) {
+    // 1. Highlight marker
+    markers.forEach((m) => {
+      const match = m.getAttribute('data-waypoint-id') === id;
+      const tooltip = m.querySelector('.waypoint-tooltip');
+      if (match) {
+        m.classList.add('scale-125', 'z-40');
+        tooltip?.classList.remove('hidden');
+      } else {
+        m.classList.remove('scale-125', 'z-40');
+        tooltip?.classList.add('hidden');
+      }
+    });
+
+    // 2. Highlight card
+    stepCards.forEach((card) => {
+      const match = card.getAttribute('data-target-waypoint') === id;
+      if (match) {
+        card.classList.add('ring-2', 'ring-jubilee-navy', 'bg-jubilee-navy-light/60');
+      } else {
+        card.classList.remove('ring-2', 'ring-jubilee-navy', 'bg-jubilee-navy-light/60');
+      }
+    });
+  }
+
+  function resetWaypoint() {
+    markers.forEach((m) => {
+      m.classList.remove('scale-125', 'z-40');
+      m.querySelector('.waypoint-tooltip')?.classList.add('hidden');
+    });
+    stepCards.forEach((card) => {
+      card.classList.remove('ring-2', 'ring-jubilee-navy', 'bg-jubilee-navy-light/60');
+    });
+  }
+
+  // Bind marker hover/click
+  markers.forEach((m) => {
+    const id = m.getAttribute('data-waypoint-id') || '';
+    m.addEventListener('mouseenter', () => activateWaypoint(id));
+    m.addEventListener('click', () => activateWaypoint(id));
+  });
+
+  // Bind card hover/click
+  stepCards.forEach((card) => {
+    const id = card.getAttribute('data-target-waypoint') || '';
+    card.addEventListener('mouseenter', () => activateWaypoint(id));
+    card.addEventListener('click', () => activateWaypoint(id));
+  });
+
+  // Reset on leave canvas area
+  document.getElementById('arrival-guide-card')?.addEventListener('mouseleave', resetWaypoint);
+</script>

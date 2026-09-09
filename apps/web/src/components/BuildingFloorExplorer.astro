@@ -1,0 +1,393 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+
+const FLOORS = [
+  {
+    id: 'all',
+    label: 'All Levels',
+    tag: 'Whole Mall',
+    name: 'Jubilee Square Community Hub',
+    count: 23,
+    summary: '4 levels of curated dining, premier enrichment academies, wellness spas, and community healthcare.',
+    tenants: ['Bantianyao', 'Siam Square', 'Ya Kun', 'Subway', 'AGrader', 'LCentral', 'My Drum School', 'Guitar Emerge'],
+    bandTop: '0%',
+    bandHeight: '100%',
+  },
+  {
+    id: 'L4',
+    label: 'Level 4',
+    tag: 'Music & Preschool',
+    name: 'Level 4 — Music Studios & Early Learning',
+    count: 3,
+    summary: 'Specialized drumming suites, acoustic music studios, and premier early childhood education.',
+    tenants: ['My Drum School', 'Guitar Emerge Music School', 'Learning Kidz'],
+    bandTop: '6%',
+    bandHeight: '22%',
+    accentColor: 'from-amber-500/25 to-yellow-500/15',
+    borderColor: 'border-amber-400/80',
+    badgeBg: 'bg-amber-500/90 text-white',
+  },
+  {
+    id: 'L3',
+    label: 'Level 3',
+    tag: 'Academic & Arts',
+    name: 'Level 3 — Academic Enrichment & Martial Arts Hub',
+    count: 6,
+    summary: 'Renowned curriculum tuition, creative art studios, and certified Korean Taekwondo education.',
+    tenants: ['AGrader Learning Centre', 'LCentral English', 'Artlette Art Studio', 'Jeong-In Taekwondo', 'Mcube Learning', 'Wang Learning Centre'],
+    bandTop: '28%',
+    bandHeight: '24%',
+    accentColor: 'from-indigo-500/25 to-blue-500/15',
+    borderColor: 'border-indigo-400/80',
+    badgeBg: 'bg-indigo-600/90 text-white',
+  },
+  {
+    id: 'L2',
+    label: 'Level 2',
+    tag: 'Dining & Wellness',
+    name: 'Level 2 — Dining Terrace, Hair Studios & Spas',
+    count: 7,
+    summary: 'Famous Sichuan grilled fish, authentic Thai mookata, premium hair salons, and therapeutic reflexology spas.',
+    tenants: ['BANTIANYAO GRILLED FISH', 'Siam Square Mookata', '7 Studio Hair Salon', 'Soul Scissors Studio', 'Ashi Foot Reflexology', 'Glow Haven', 'Skin Labo'],
+    bandTop: '52%',
+    bandHeight: '24%',
+    accentColor: 'from-rose-500/25 to-pink-500/15',
+    borderColor: 'border-rose-400/80',
+    badgeBg: 'bg-rose-600/90 text-white',
+  },
+  {
+    id: 'L1',
+    label: 'Level 1',
+    tag: 'Street Retail & Dining',
+    name: 'Level 1 — Street-Level Entrance, Cafes & Healthcare',
+    count: 7,
+    summary: 'Direct sheltered arrival from AMK MRT Exit C, traditional breakfast toast, quick bites, optometry & TCM clinic.',
+    tenants: ['Ya Kun Kaya Toast', 'Subway', 'Max-See & Veggie House', 'Jolly Desserts', 'Eyechamp Optometrists', 'Tianyi InMed TCM', 'The Chinese Wedding Shop'],
+    bandTop: '76%',
+    bandHeight: '24%',
+    accentColor: 'from-emerald-500/25 to-teal-500/15',
+    borderColor: 'border-emerald-400/80',
+    badgeBg: 'bg-emerald-600/90 text-white',
+  },
+];
+---
+
+<div class={`building-floor-explorer w-full max-w-5xl mx-auto ${className}`} id="building-floor-explorer">
+  <!-- Interactive Architectural Frame Card -->
+  <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 bg-slate-950 shadow-2xl shadow-slate-950/20">
+    
+    <!-- Top Control Bar: Floor Scrubber Tabs -->
+    <div class="relative z-30 p-3 sm:p-4 bg-slate-950/90 backdrop-blur-md border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+      <!-- Title & Live Status -->
+      <div class="flex items-center gap-2.5">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-white bg-white/10 border border-white/15">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Open Daily • 10 AM – 10 PM
+        </span>
+        <span class="hidden md:inline-flex items-center text-xs text-slate-400 font-medium">
+          📍 61 Ang Mo Kio Ave 8 (2 mins sheltered from AMK MRT Exit C)
+        </span>
+      </div>
+
+      <!-- Quick Lightbox Launcher -->
+      <button
+        type="button"
+        data-open-building-lightbox
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/15 border border-white/10 transition-all cursor-pointer"
+        aria-label="Enlarge building photo"
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+        Full Photo
+      </button>
+    </div>
+
+    <!-- Floor Scrubber Selector Buttons -->
+    <div class="relative z-30 px-3 sm:px-4 py-2.5 bg-slate-900/90 border-b border-white/5 overflow-x-auto no-scrollbar flex items-center gap-1.5 sm:gap-2 text-xs" role="tablist" aria-label="Explore stores by floor level">
+      <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1">
+        <span>🏢</span> Floors:
+      </span>
+      {FLOORS.map((f) => (
+        <button
+          type="button"
+          role="tab"
+          class={`floor-tab-btn shrink-0 px-3 py-1.5 rounded-xl font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+            f.id === 'all'
+              ? 'active bg-white text-slate-950 shadow-md ring-1 ring-white/20'
+              : 'bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white border border-white/10'
+          }`}
+          data-floor-id={f.id}
+          aria-selected={f.id === 'all' ? 'true' : 'false'}
+        >
+          <span>{f.label}</span>
+          <span class={`text-[10px] px-1.5 py-0.2 rounded-md ${f.id === 'all' ? 'bg-slate-900 text-white' : 'bg-white/15 text-slate-300'}`}>
+            {f.count}
+          </span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Building Facade Canvas -->
+    <div class="relative aspect-[16/10] sm:aspect-[21/9] max-h-[460px] overflow-hidden bg-slate-950 select-none">
+      <!-- High-Res Building Photo -->
+      <img
+        src="/images/jubilee_sq_building.jpg"
+        alt="Jubilee Square mall building facade with 4 levels of retail, dining, and enrichment in Ang Mo Kio Central"
+        class="w-full h-full object-cover object-center transition-transform duration-700 ease-out"
+        loading="eager"
+        fetchpriority="high"
+        width="1280"
+        height="720"
+      />
+
+      <!-- Dark Vignette / Scrim Gradient -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-slate-950/40 pointer-events-none"></div>
+
+      <!-- Architectural Floor Highlight Bands (Overlaying the Building storeys) -->
+      <div class="absolute inset-0 z-20 pointer-events-none" id="floor-highlight-bands">
+        <!-- Level 4 Band -->
+        <div
+          class="floor-band absolute left-0 right-0 transition-all duration-300 pointer-events-auto cursor-pointer"
+          data-floor="L4"
+          style="top: 6%; height: 22%;"
+          title="Click to focus Level 4: Music & Preschool"
+        >
+          <div class="floor-band-highlight w-full h-full opacity-0 transition-all duration-300 border-y border-amber-400/80 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 backdrop-blur-[0.5px]"></div>
+          <!-- Floating Floor Pin -->
+          <div class="absolute top-2 left-4 sm:left-6 floor-pin opacity-0 sm:opacity-90 transition-opacity duration-300">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/90 text-white backdrop-blur-md shadow-lg border border-amber-300/40">
+              <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+              L4 • Music &amp; Preschool (3)
+            </span>
+          </div>
+        </div>
+
+        <!-- Level 3 Band -->
+        <div
+          class="floor-band absolute left-0 right-0 transition-all duration-300 pointer-events-auto cursor-pointer"
+          data-floor="L3"
+          style="top: 28%; height: 24%;"
+          title="Click to focus Level 3: Academic Enrichment Hub"
+        >
+          <div class="floor-band-highlight w-full h-full opacity-0 transition-all duration-300 border-y border-indigo-400/80 bg-gradient-to-r from-indigo-500/20 via-indigo-400/10 to-indigo-500/20 backdrop-blur-[0.5px]"></div>
+          <!-- Floating Floor Pin -->
+          <div class="absolute top-2 left-4 sm:left-6 floor-pin opacity-0 sm:opacity-90 transition-opacity duration-300">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-indigo-600/90 text-white backdrop-blur-md shadow-lg border border-indigo-300/40">
+              <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+              L3 • Academic &amp; Arts (6)
+            </span>
+          </div>
+        </div>
+
+        <!-- Level 2 Band -->
+        <div
+          class="floor-band absolute left-0 right-0 transition-all duration-300 pointer-events-auto cursor-pointer"
+          data-floor="L2"
+          style="top: 52%; height: 24%;"
+          title="Click to focus Level 2: Dining Terrace & Wellness Spas"
+        >
+          <div class="floor-band-highlight w-full h-full opacity-0 transition-all duration-300 border-y border-rose-400/80 bg-gradient-to-r from-rose-500/20 via-rose-400/10 to-rose-500/20 backdrop-blur-[0.5px]"></div>
+          <!-- Floating Floor Pin -->
+          <div class="absolute top-2 left-4 sm:left-6 floor-pin opacity-0 sm:opacity-90 transition-opacity duration-300">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-600/90 text-white backdrop-blur-md shadow-lg border border-rose-300/40">
+              <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+              L2 • Dining &amp; Spas (7)
+            </span>
+          </div>
+        </div>
+
+        <!-- Level 1 Band -->
+        <div
+          class="floor-band absolute left-0 right-0 transition-all duration-300 pointer-events-auto cursor-pointer"
+          data-floor="L1"
+          style="top: 76%; height: 24%;"
+          title="Click to focus Level 1: Street Dining & Retail"
+        >
+          <div class="floor-band-highlight w-full h-full opacity-0 transition-all duration-300 border-y border-emerald-400/80 bg-gradient-to-r from-emerald-500/20 via-emerald-400/10 to-emerald-500/20 backdrop-blur-[0.5px]"></div>
+          <!-- Floating Floor Pin -->
+          <div class="absolute top-2 left-4 sm:left-6 floor-pin opacity-0 sm:opacity-90 transition-opacity duration-300">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-600/90 text-white backdrop-blur-md shadow-lg border border-emerald-300/40">
+              <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+              L1 • Street Retail &amp; Cafes (7)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Dynamic Floor Snapshot Panel -->
+      <div class="absolute bottom-0 left-0 right-0 z-30 p-4 sm:p-5 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent pointer-events-auto" id="floor-detail-panel">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 text-left">
+          <!-- Text Info -->
+          <div class="max-w-2xl">
+            <div class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-rose-300 mb-1" id="floor-panel-tag">
+              <span>🏛️</span> Whole Mall Overview
+            </div>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight leading-snug" id="floor-panel-title">
+              Jubilee Square (Ang Mo Kio Central)
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300 line-clamp-1 sm:line-clamp-2 mt-0.5" id="floor-panel-summary">
+              4 levels of curated dining, premier enrichment academies, wellness spas, and community healthcare.
+            </p>
+            
+            <!-- Quick Tenant Chips -->
+            <div class="mt-2.5 flex flex-wrap gap-1.5 text-[11px]" id="floor-panel-tenants">
+              {FLOORS[0].tenants.map((tenant) => (
+                <span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 border border-white/10 font-medium">
+                  {tenant}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <!-- Action Button: Link directly to Store Directory -->
+          <div class="shrink-0 flex items-center gap-2 pt-1 md:pt-0">
+            <button
+              type="button"
+              id="btn-filter-directory"
+              class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-jubilee-red hover:bg-jubilee-red-dark text-white text-xs sm:text-sm font-bold shadow-lg shadow-jubilee-red/30 transition-all duration-200 cursor-pointer w-full sm:w-auto"
+            >
+              <span>Explore Stores in Directory</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Serialized Floor Metadata for Client Script -->
+<script type="application/json" id="jubilee-floors-data" set:html={JSON.stringify(FLOORS)} />
+
+<script>
+  const floorsDataEl = document.getElementById('jubilee-floors-data');
+  const floorsList = floorsDataEl ? JSON.parse(floorsDataEl.textContent || '[]') : [];
+
+  const tabButtons = Array.from(document.querySelectorAll('.floor-tab-btn'));
+  const floorBands = Array.from(document.querySelectorAll('.floor-band'));
+  const panelTag = document.getElementById('floor-panel-tag');
+  const panelTitle = document.getElementById('floor-panel-title');
+  const panelSummary = document.getElementById('floor-panel-summary');
+  const panelTenants = document.getElementById('floor-panel-tenants');
+  const filterBtn = document.getElementById('btn-filter-directory');
+
+  let currentFloor = 'all';
+
+  function renderFloorState(floorId: string) {
+    currentFloor = floorId;
+    const floorInfo = floorsList.find((f: any) => f.id === floorId) || floorsList[0];
+
+    // 1. Update Tabs
+    tabButtons.forEach((btn) => {
+      const isSelected = btn.getAttribute('data-floor-id') === floorId;
+      btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+      if (isSelected) {
+        btn.classList.add('bg-white', 'text-slate-950', 'shadow-md', 'ring-1', 'ring-white/20');
+        btn.classList.remove('bg-white/5', 'text-slate-300');
+      } else {
+        btn.classList.remove('bg-white', 'text-slate-950', 'shadow-md', 'ring-1', 'ring-white/20');
+        btn.classList.add('bg-white/5', 'text-slate-300');
+      }
+    });
+
+    // 2. Update Building Facade Highlight Bands
+    floorBands.forEach((band) => {
+      const bandFloor = band.getAttribute('data-floor');
+      const highlight = band.querySelector('.floor-band-highlight');
+      const pin = band.querySelector('.floor-pin');
+
+      if (floorId === 'all') {
+        // Subtle resting mode
+        if (highlight) highlight.classList.replace('opacity-100', 'opacity-0');
+        if (pin) pin.classList.replace('opacity-100', 'opacity-0');
+      } else if (bandFloor === floorId) {
+        if (highlight) highlight.classList.replace('opacity-0', 'opacity-100');
+        if (pin) pin.classList.replace('opacity-0', 'opacity-100');
+      } else {
+        if (highlight) highlight.classList.replace('opacity-100', 'opacity-0');
+        if (pin) pin.classList.replace('opacity-100', 'opacity-0');
+      }
+    });
+
+    // 3. Update Bottom Info Panel
+    if (panelTag) {
+      panelTag.innerHTML = `<span>🏛️</span> ${floorInfo.tag || 'Whole Mall'}`;
+    }
+    if (panelTitle) {
+      panelTitle.textContent = floorInfo.name;
+    }
+    if (panelSummary) {
+      panelSummary.textContent = floorInfo.summary;
+    }
+    if (panelTenants && floorInfo.tenants) {
+      panelTenants.innerHTML = floorInfo.tenants
+        .map((t: string) => `<span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 border border-white/10 font-medium">${t}</span>`)
+        .join('');
+    }
+    if (filterBtn) {
+      const btnSpan = filterBtn.querySelector('span');
+      if (btnSpan) {
+        if (floorId === 'all') {
+          btnSpan.textContent = 'Explore All Stores in Directory';
+        } else {
+          btnSpan.textContent = `Explore ${floorInfo.label} Stores (${floorInfo.count}) ↓`;
+        }
+      }
+    }
+  }
+
+  // Tab click listeners
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const floorId = btn.getAttribute('data-floor-id') || 'all';
+      renderFloorState(floorId);
+    });
+  });
+
+  // Building band click/hover listeners
+  floorBands.forEach((band) => {
+    band.addEventListener('click', () => {
+      const floorId = band.getAttribute('data-floor') || 'all';
+      renderFloorState(floorId);
+    });
+    band.addEventListener('mouseenter', () => {
+      const floorId = band.getAttribute('data-floor') || 'all';
+      renderFloorState(floorId);
+    });
+  });
+
+  // Filter Directory Action Button
+  filterBtn?.addEventListener('click', () => {
+    // Dispatch custom event for DirectorySection to filter by floor
+    window.dispatchEvent(
+      new CustomEvent('jubilee:filter-floor', {
+        detail: { floor: currentFloor },
+      })
+    );
+
+    // Scroll smoothly to directory section
+    const dirSection = document.getElementById('directory');
+    if (dirSection) {
+      dirSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // Listen to floor filter changes initiated elsewhere (e.g. Directory Section)
+  window.addEventListener('jubilee:set-floor-explorer', (e: any) => {
+    const floor = e.detail?.floor;
+    if (floor) {
+      renderFloorState(floor);
+    }
+  });
+</script>
