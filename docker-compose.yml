@@ -9,8 +9,8 @@ services:
       POSTGRES_USER: ${DB_USER:-jubilee_admin}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-jubilee_secure_pass_2026}
       POSTGRES_DB: ${DB_NAME:-jubilee_square_v2}
-    ports:
-      - "${DB_PORT:-5432}:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
@@ -29,6 +29,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    expose:
+      - "8055"
     ports:
       - "${DIRECTUS_PORT:-8055}:8055"
     environment:
@@ -60,8 +62,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    expose:
+      - "3000"
     ports:
-      - "${PORT:-3000}:3000"
+      - "${PORT:-4000}:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -84,10 +88,13 @@ services:
     depends_on:
       catalog-api:
         condition: service_healthy
+    expose:
+      - "4321"
     ports:
       - "${WEB_PORT:-4321}:4321"
     environment:
       NODE_ENV: production
+      CATALOG_API_URL: http://catalog-api:3000
       PUBLIC_API_URL: http://catalog-api:3000
       PUBLIC_DIRECTUS_URL: http://directus:8055
       PORT: 4321
