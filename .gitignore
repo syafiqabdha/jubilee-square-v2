@@ -8,5 +8,6 @@ dist/
 .DS_Store
 coverage/
 .turbo/
+.vercel/
 .multica/
 AGENTS.md

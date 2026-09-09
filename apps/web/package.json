@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "npm run build --workspace=@jubilee/shared --workspace=@jubilee/db --if-present && astro build",
     "preview": "astro preview",
     "typecheck": "tsc --noEmit",
     "test": "node --loader ts-node/esm tests/api-client.test.ts"
@@ -13,6 +13,7 @@
   "dependencies": {
     "@astrojs/node": "^9.0.0",
     "@astrojs/tailwind": "^5.1.4",
+    "@astrojs/vercel": "^8.2.11",
     "@jubilee/db": "*",
     "@jubilee/shared": "*",
     "astro": "^5.0.0",
