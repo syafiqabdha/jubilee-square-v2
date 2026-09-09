@@ -6,74 +6,131 @@ interface Props {
 const { activePage = 'home' } = Astro.props;
 ---
 
-<nav class="nav" role="navigation" aria-label="Main navigation">
-  <div class="nav-inner">
-    <a href="/" class="nav-logo" aria-label="Jubilee Square home">
-      <div class="nav-logo-mark" aria-hidden="true">
-        <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
-          <rect x="2" y="2" width="5" height="5" rx="1" fill="#0a0a0a"/>
-          <rect x="9" y="2" width="5" height="5" rx="1" fill="#0a0a0a"/>
-          <rect x="2" y="9" width="5" height="5" rx="1" fill="#0a0a0a"/>
-          <rect x="9" y="9" width="5" height="5" rx="1" fill="#0a0a0a" opacity="0.4"/>
-        </svg>
-      </div>
-      Jubilee Square
+<header class="header-sticky" role="banner">
+  <div class="header-inner">
+    <!-- Brandmark with 0.5x clear margin -->
+    <a href="/" class="brand-logo-wrap" aria-label="Jubilee Square Home">
+      <img
+        src="/brand/jubilee-square-logo.svg"
+        alt="Jubilee Square by ENGWAH"
+        class="brand-logo-img"
+        width="160"
+        height="38"
+      />
     </a>
-    <div class="nav-links" role="list">
-      <a href="/directory" class={`nav-link ${activePage === 'directory' ? 'active' : ''}`} role="listitem">Directory</a>
-      <a href="/dine" class={`nav-link ${activePage === 'dine' ? 'active' : ''}`} role="listitem">Dine</a>
-      <a href="/learn" class={`nav-link ${activePage === 'learn' ? 'active' : ''}`} role="listitem">Learn</a>
-      <a href="/relax" class={`nav-link ${activePage === 'relax' ? 'active' : ''}`} role="listitem">Relax</a>
-      <a href="/location" class={`nav-link ${activePage === 'location' ? 'active' : ''}`} role="listitem">Location</a>
-    </div>
-    <a href="tel:+6564512388" class="nav-cta">+65 6451 2388</a>
-    <button class="nav-hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
-  <a href="/directory" class="mobile-menu-link">Directory</a>
-  <a href="/dine" class="mobile-menu-link">Dine &amp; Food</a>
-  <a href="/learn" class="mobile-menu-link">Learn &amp; Enrichment</a>
-  <a href="/relax" class="mobile-menu-link">Relax &amp; Wellness</a>
-  <a href="/shop" class="mobile-menu-link">Shop &amp; Retail</a>
-  <a href="/services" class="mobile-menu-link">Healthcare &amp; Services</a>
-  <a href="/location" class="mobile-menu-link">Location &amp; Parking</a>
-  <a href="tel:+6564512388" class="btn-primary" style="margin-top:24px;width:100%;justify-content:center;">Call Concierge</a>
-</div>
+    <!-- Predictive Global Search Trigger -->
+    <div class="hidden md:flex flex-1 max-w-xs mx-4">
+      <button
+        type="button"
+        class="nav-search-btn"
+        id="nav-search-trigger"
+        aria-label="Open search"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="color:var(--color-brand-navy);">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span>Search stores or food...</span>
+        <span class="search-kbd-badge">⌘K</span>
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="hidden lg:flex nav-links-wrap" aria-label="Main Navigation">
+      <a href="/directory" class={`nav-item-link ${activePage === 'directory' ? 'active' : ''}`}>Directory</a>
+      <a href="/dine" class={`nav-item-link ${activePage === 'dine' ? 'active' : ''}`}>Dine 🍜</a>
+      <a href="/learn" class={`nav-item-link ${activePage === 'learn' ? 'active' : ''}`}>Learn 📚</a>
+      <a href="/relax" class={`nav-item-link ${activePage === 'relax' ? 'active' : ''}`}>Relax 💆</a>
+      <a href="/location" class={`nav-item-link ${activePage === 'location' ? 'active' : ''}`}>Location</a>
+    </nav>
+
+    <!-- Getting Here CTA Button -->
+    <div class="flex items-center gap-2">
+      <!-- Mobile Search Icon Button -->
+      <button
+        type="button"
+        class="md:hidden p-2 text-slate-700 hover:text-jubilee-navy"
+        id="mobile-search-btn"
+        aria-label="Search"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/>
+          <path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <a href="/location" class="btn-cta-getting-here hidden sm:inline-flex">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 1.5C5 1.5 2.5 4 2.5 7c0 4.2 5.5 7.5 5.5 7.5s5.5-3.3 5.5-7.5c0-3-2.5-5.5-5.5-5.5zm0 7.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="currentColor"/>
+        </svg>
+        <span>Getting Here</span>
+      </a>
+
+      <!-- Mobile Hamburger Menu Button -->
+      <button
+        class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-md focus:outline-none"
+        id="nav-hamburger-btn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Dropdown Menu -->
+  <div
+    class="lg:hidden hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 shadow-lg"
+    id="mobile-nav-dropdown"
+  >
+    <div class="flex flex-col gap-2">
+      <a href="/directory" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🏬 Directory</a>
+      <a href="/dine" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🍜 Dine &amp; Food</a>
+      <a href="/learn" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">📚 Learn &amp; Enrichment</a>
+      <a href="/relax" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">💆 Relax &amp; Wellness</a>
+      <a href="/shop" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🛍️ Shop &amp; Retail</a>
+      <a href="/services" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🩺 Healthcare &amp; Services</a>
+      <a href="/location" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🧭 Location &amp; Parking</a>
+      <div class="pt-2">
+        <a href="tel:+6564512388" class="btn-primary-navy w-full justify-center">
+          📞 Call Concierge
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
 
 <script>
-  const hamburgerBtn = document.getElementById('hamburger-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
+  const searchTrigger = document.getElementById('nav-search-trigger');
+  const mobileSearchBtn = document.getElementById('mobile-search-btn');
+  const hamburgerBtn = document.getElementById('nav-hamburger-btn');
+  const mobileDropdown = document.getElementById('mobile-nav-dropdown');
 
-  function toggleMenu() {
-    const isOpen = mobileMenu?.classList.contains('open');
-    if (isOpen) {
-      closeMenu();
-    } else {
-      openMenu();
+  searchTrigger?.addEventListener('click', () => {
+    if (typeof (window as any).openGlobalSearch === 'function') {
+      (window as any).openGlobalSearch();
     }
-  }
+  });
 
-  function openMenu() {
-    mobileMenu?.classList.add('open');
-    hamburgerBtn?.setAttribute('aria-expanded', 'true');
-    mobileMenu?.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
+  mobileSearchBtn?.addEventListener('click', () => {
+    if (typeof (window as any).openGlobalSearch === 'function') {
+      (window as any).openGlobalSearch();
+    }
+  });
 
-  function closeMenu() {
-    mobileMenu?.classList.remove('open');
-    hamburgerBtn?.setAttribute('aria-expanded', 'false');
-    mobileMenu?.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  hamburgerBtn?.addEventListener('click', toggleMenu);
-  mobileMenu?.querySelectorAll('.mobile-menu-link').forEach(link => {
-    link.addEventListener('click', closeMenu);
+  hamburgerBtn?.addEventListener('click', () => {
+    const isHidden = mobileDropdown?.classList.contains('hidden');
+    if (isHidden) {
+      mobileDropdown?.classList.remove('hidden');
+      hamburgerBtn?.setAttribute('aria-expanded', 'true');
+    } else {
+      mobileDropdown?.classList.add('hidden');
+      hamburgerBtn?.setAttribute('aria-expanded', 'false');
+    }
   });
 </script>

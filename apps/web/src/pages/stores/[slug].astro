@@ -49,59 +49,66 @@ const jsonLd = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <div style="padding-top: 120px; max-width: 900px; margin: 0 auto; padding-left: 20px; padding-right: 20px; padding-bottom: 80px;">
-    <a href="/directory" class="btn-secondary" style="display: inline-flex; margin-bottom: 24px; padding: 6px 14px; font-size: 0.85rem;">
-      &larr; Back to Directory
+  <div class="max-w-4xl mx-auto px-4 py-8 md:py-12">
+    <a href="/directory" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-jubilee-navy mb-6 transition-colors">
+      &larr; Back to Full Directory
     </a>
 
-    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 36px; margin-bottom: 32px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-        <span class="card-cat" style={`--cat-color: ${tenant.categoryColor || '#c9f23e'}; font-size: 0.9rem; padding: 4px 12px;`}>
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm mb-8">
+      <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light px-3 py-1 rounded-full">
           {tenant.categoryName}
         </span>
-        <span class="card-unit" style="font-size: 1rem; font-weight: 700; color: var(--ink);">
-          {tenant.floorLevel} · {tenant.unitNumber}
+        <span class="text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">
+          📍 Level {tenant.floorLevel?.replace('L', '') || tenant.floorLevel} • {tenant.unitNumber}
         </span>
       </div>
 
-      <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.02em;">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
         {tenant.name}
       </h1>
 
-      <p style="font-size: 1.15rem; color: var(--muted); line-height: 1.6; margin-bottom: 24px;">
+      <p class="text-base sm:text-lg text-slate-600 leading-relaxed mb-8">
         {tenant.description || tenant.summary}
       </p>
 
-      <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px;">
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-3 mb-8">
         {tenant.phone && (
-          <a href={`tel:${tenant.phone.replace(/\s+/g, '')}`} class="btn-primary" style="display: inline-flex;">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3a1 1 0 011-1h2l1.5 3.5-1.5 1 2.5 2.5 1-1.5L13 9v2a1 1 0 01-1 1C6 12 4 7 3 3z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <a href={`tel:${tenant.phone.replace(/\s+/g, '')}`} class="btn-cta-getting-here text-sm py-2.5 px-5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
             Call {tenant.phone}
           </a>
         )}
-        <a href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814" target="_blank" rel="noopener" class="btn-secondary" style="display: inline-flex;">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2C5.24 2 3 4.24 3 7c0 4.17 5 9 5 9s5-4.83 5-9c0-2.76-2.24-5-5-5zm0 6.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/></svg>
+        <a href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814" target="_blank" rel="noopener noreferrer" class="btn-secondary-outline text-sm py-2.5 px-5">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+          </svg>
           Get Directions
         </a>
         {tenant.website && (
-          <a href={tenant.website} target="_blank" rel="noopener" class="btn-secondary" style="display: inline-flex;">
-            Visit Website &nearr;
+          <a href={tenant.website} target="_blank" rel="noopener noreferrer" class="btn-secondary-outline text-sm py-2.5 px-5">
+            Visit Store Website &nearr;
           </a>
         )}
       </div>
 
-      <div style="border-top: 1px solid var(--border); padding-top: 24px;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">Opening Hours</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+      <!-- Opening Hours Grid -->
+      <div class="border-t border-slate-100 pt-6">
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Weekly Operating Hours</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {(tenant.operatingHours || []).map((h: any) => (
-            <div style="background: var(--surface-2); padding: 12px 16px; border-radius: var(--radius-sm); display: flex; justify-content: space-between;">
-              <span style="font-weight: 600; font-size: 0.9rem;">{h.dayName}</span>
-              <span style="color: var(--muted); font-size: 0.9rem;">{h.openTime?.slice(0,5)} – {h.closeTime?.slice(0,5)}</span>
+            <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex justify-between items-center text-sm">
+              <span class="font-semibold text-slate-700">{h.dayName}</span>
+              <span class="font-bold text-slate-900">{h.isClosed ? 'Closed' : `${h.openTime?.slice(0,5)} – ${h.closeTime?.slice(0,5)}`}</span>
             </div>
           ))}
         </div>
       </div>
     </div>
   </div>
+  
   <CTA />
 </Layout>

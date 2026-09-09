@@ -1,159 +1,253 @@
 ---
 ---
 
-<div class="drawer-overlay" id="drawer-overlay" role="presentation"></div>
+<div class="drawer-backdrop" id="tenant-drawer-backdrop" role="presentation"></div>
 
-<aside class="drawer" id="tenant-drawer" role="dialog" aria-modal="true" aria-label="Tenant details" aria-hidden="true">
-  <div class="drawer-handle" aria-hidden="true"></div>
-  <div class="drawer-header">
-    <div class="drawer-header-top">
-      <div>
-        <div class="drawer-cat" id="drawer-cat">Category</div>
-        <h2 class="drawer-name text-balance" id="drawer-name">Tenant Name</h2>
-      </div>
-      <button class="drawer-close" id="drawer-close" aria-label="Close tenant details">
-        <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
-          <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </button>
+<aside
+  class="drawer-panel"
+  id="tenant-drawer-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Tenant Details"
+  aria-hidden="true"
+>
+  <!-- Top Bar -->
+  <div class="drawer-top-bar">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light px-2.5 py-1 rounded-full" id="drawer-category">
+        Category
+      </span>
     </div>
-    <div class="drawer-meta" id="drawer-meta">
-      <span class="meta-tag" id="drawer-unit">Unit</span>
-      <span class="meta-tag" id="drawer-floor">Floor</span>
-    </div>
+    <button class="drawer-btn-close" id="drawer-close-btn" aria-label="Close details">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
 
-  <div class="drawer-body">
-    <p class="drawer-section-title">About</p>
-    <p class="drawer-desc text-pretty" id="drawer-desc"></p>
-
-    <p class="drawer-section-title">Contact &amp; Information</p>
-    <div class="drawer-details-grid" id="drawer-details">
-      <!-- Injected by script -->
-    </div>
-
-    <div class="drawer-hours">
-      <p class="drawer-section-title">Opening Hours</p>
-      <div class="drawer-hours-list" id="drawer-hours-list">
-        <!-- Injected by script -->
+  <!-- Content Body -->
+  <div class="drawer-content-body">
+    <!-- Header -->
+    <div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-2" id="drawer-store-name">
+        Store Name
+      </h2>
+      <div class="flex items-center gap-3 text-sm font-semibold text-slate-600">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-lg" id="drawer-location-badge">
+          📍 Level 1 • #01-08
+        </span>
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg" id="drawer-status-pill">
+          🟢 Open Today
+        </span>
       </div>
     </div>
 
-    <div class="drawer-cta">
-      <a href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814" target="_blank" rel="noopener noreferrer" class="drawer-btn-primary" id="drawer-btn-directions">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2C5.24 2 3 4.24 3 7c0 4.17 5 9 5 9s5-4.83 5-9c0-2.76-2.24-5-5-5zm0 6.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/></svg>
-        Get Directions
+    <!-- Direct Action CTA Buttons -->
+    <div class="drawer-action-group">
+      <a href="tel:+6564512388" class="btn-drawer-action btn-drawer-primary" id="drawer-call-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <span id="drawer-call-text">Call Store</span>
       </a>
-      <a href="tel:+6564512388" class="drawer-btn-secondary" id="drawer-btn-call">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3a1 1 0 011-1h2l1.5 3.5-1.5 1 2.5 2.5 1-1.5L13 9v2a1 1 0 01-1 1C6 12 4 7 3 3z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span id="drawer-phone-text">Call Now</span>
+
+      <a href="https://wa.me/6591234567" target="_blank" rel="noopener noreferrer" class="btn-drawer-action btn-drawer-secondary" id="drawer-whatsapp-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+        <span>WhatsApp</span>
+      </a>
+    </div>
+
+    <!-- About Section -->
+    <div class="border-t border-slate-100 pt-5">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">About the Store</h3>
+      <p class="text-slate-700 leading-relaxed text-sm sm:text-base" id="drawer-description">
+        Store description goes here.
+      </p>
+    </div>
+
+    <!-- Interactive Floor Map Pin Callout -->
+    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-jubilee-navy-light text-jubilee-navy flex items-center justify-center font-bold text-lg">
+          🗺️
+        </div>
+        <div>
+          <div class="text-sm font-bold text-slate-900" id="drawer-map-level">Level 1 Directory Pin</div>
+          <div class="text-xs text-slate-500">Ang Mo Kio Jubilee Square</div>
+        </div>
+      </div>
+      <a href="/location" class="text-xs font-bold text-jubilee-navy hover:text-jubilee-red underline">
+        View Mall Map →
+      </a>
+    </div>
+
+    <!-- Contact & Details Grid -->
+    <div class="border-t border-slate-100 pt-5">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Store Details</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="drawer-details-grid">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Weekly Operating Hours -->
+    <div class="border-t border-slate-100 pt-5">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Weekly Operating Hours</h3>
+      <div class="flex flex-col gap-2" id="drawer-hours-list">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Directions CTA -->
+    <div class="pt-2">
+      <a
+        href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+        </svg>
+        Navigate to Jubilee Square on Google Maps
       </a>
     </div>
   </div>
 </aside>
 
 <script>
-  const overlay = document.getElementById('drawer-overlay');
-  const drawer = document.getElementById('tenant-drawer');
-  const closeBtn = document.getElementById('drawer-close');
-  const catEl = document.getElementById('drawer-cat');
-  const nameEl = document.getElementById('drawer-name');
-  const unitEl = document.getElementById('drawer-unit');
-  const floorEl = document.getElementById('drawer-floor');
-  const descEl = document.getElementById('drawer-desc');
-  const detailsEl = document.getElementById('drawer-details');
-  const hoursEl = document.getElementById('drawer-hours-list');
-  const callBtn = document.getElementById('drawer-btn-call') as HTMLAnchorElement | null;
-  const phoneText = document.getElementById('drawer-phone-text');
+  const backdrop = document.getElementById('tenant-drawer-backdrop');
+  const panel = document.getElementById('tenant-drawer-panel');
+  const closeBtn = document.getElementById('drawer-close-btn');
+
+  const catEl = document.getElementById('drawer-category');
+  const nameEl = document.getElementById('drawer-store-name');
+  const locationEl = document.getElementById('drawer-location-badge');
+  const statusPill = document.getElementById('drawer-status-pill');
+  const descEl = document.getElementById('drawer-description');
+  const mapLevelEl = document.getElementById('drawer-map-level');
+  const detailsGrid = document.getElementById('drawer-details-grid');
+  const hoursList = document.getElementById('drawer-hours-list');
+
+  const callBtn = document.getElementById('drawer-call-btn') as HTMLAnchorElement | null;
+  const callText = document.getElementById('drawer-call-text');
+  const waBtn = document.getElementById('drawer-whatsapp-btn') as HTMLAnchorElement | null;
 
   const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const todayIndex = new Date().getDay();
 
   function openDrawer(tenant: any) {
-    if (!drawer || !overlay) return;
+    if (!panel || !backdrop) return;
 
     if (catEl) catEl.textContent = tenant.categoryName || 'Directory';
     if (nameEl) nameEl.textContent = tenant.name;
-    if (unitEl) unitEl.textContent = tenant.unitNumber;
-    if (floorEl) floorEl.textContent = `Level ${tenant.floorLevel?.replace('L', '') || tenant.floorLevel}`;
+    if (locationEl) locationEl.textContent = `📍 ${tenant.floorLevel} • ${tenant.unitNumber}`;
+    if (mapLevelEl) mapLevelEl.textContent = `${tenant.floorLevel} Directory Pin (${tenant.unitNumber})`;
     if (descEl) descEl.textContent = tenant.description || tenant.summary;
 
+    const now = new Date();
+    const todayIndex = now.getDay();
+    const todaySchedule = tenant.operatingHours?.find((h: any) => h.dayOfWeek === todayIndex);
+
+    if (statusPill) {
+      if (todaySchedule?.isClosed) {
+        statusPill.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200';
+        statusPill.textContent = '🔴 Closed Today';
+      } else {
+        statusPill.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs border border-emerald-200';
+        statusPill.textContent = '🟢 Open Today';
+      }
+    }
+
+    // Phone / Call Button
     if (callBtn) {
       if (tenant.phone) {
         callBtn.href = `tel:${tenant.phone.replace(/\s+/g, '')}`;
         callBtn.style.display = 'inline-flex';
-        if (phoneText) phoneText.textContent = tenant.phone;
+        if (callText) callText.textContent = tenant.phone;
       } else {
         callBtn.style.display = 'none';
       }
     }
 
-    if (detailsEl) {
-      let detailsHtml = '';
-      if (tenant.phone) {
-        detailsHtml += `<div class="detail-item"><span class="detail-label">Phone</span><span class="detail-val">${tenant.phone}</span></div>`;
+    // WhatsApp Button
+    if (waBtn) {
+      if (tenant.whatsapp) {
+        const cleanWa = tenant.whatsapp.replace(/\D+/g, '');
+        waBtn.href = `https://wa.me/${cleanWa}?text=Hi%20${encodeURIComponent(tenant.name)}%2C%20I%20saw%20your%20store%20on%20Jubilee%20Square%20Directory.`;
+        waBtn.style.display = 'inline-flex';
+      } else {
+        waBtn.style.display = 'none';
       }
-      if (tenant.email) {
-        detailsHtml += `<div class="detail-item"><span class="detail-label">Email</span><span class="detail-val">${tenant.email}</span></div>`;
-      }
-      if (tenant.website) {
-        detailsHtml += `<div class="detail-item"><span class="detail-label">Website</span><a href="${tenant.website}" target="_blank" rel="noopener" class="detail-val" style="color:var(--accent);text-decoration:underline;">Visit Site</a></div>`;
-      }
-      if (tenant.amenities && tenant.amenities.length > 0) {
-        const amenityNames = tenant.amenities.map((a: any) => a.name).join(', ');
-        detailsHtml += `<div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">Amenities</span><span class="detail-val">${amenityNames}</span></div>`;
-      }
-      detailsEl.innerHTML = detailsHtml || '<div class="detail-item"><span class="detail-val">Standard Mall Facilities</span></div>';
     }
 
-    if (hoursEl) {
+    // Details Grid
+    if (detailsGrid) {
+      let html = '';
+      if (tenant.phone) {
+        html += `<div class="p-3 bg-slate-50 rounded-lg"><div class="text-xs font-semibold text-slate-400 uppercase">Phone</div><div class="text-sm font-bold text-slate-800">${tenant.phone}</div></div>`;
+      }
+      if (tenant.email) {
+        html += `<div class="p-3 bg-slate-50 rounded-lg"><div class="text-xs font-semibold text-slate-400 uppercase">Email</div><div class="text-sm font-bold text-slate-800 break-all">${tenant.email}</div></div>`;
+      }
+      if (tenant.website) {
+        html += `<div class="p-3 bg-slate-50 rounded-lg"><div class="text-xs font-semibold text-slate-400 uppercase">Website</div><a href="${tenant.website}" target="_blank" rel="noopener" class="text-sm font-bold text-jubilee-navy hover:underline">Visit Store Site ↗</a></div>`;
+      }
+      if (tenant.tags && tenant.tags.length > 0) {
+        const tagsStr = tenant.tags.join(', ');
+        html += `<div class="p-3 bg-slate-50 rounded-lg col-span-full"><div class="text-xs font-semibold text-slate-400 uppercase">Tags</div><div class="text-sm font-medium text-slate-700">${tagsStr}</div></div>`;
+      }
+      detailsGrid.innerHTML = html;
+    }
+
+    // Hours List
+    if (hoursList) {
       let hoursHtml = '';
       DAYS.forEach((dayName, idx) => {
         const isToday = idx === todayIndex;
         const tenantHour = tenant.operatingHours?.find((h: any) => h.dayOfWeek === idx);
-        const timeStr = tenantHour ? `${tenantHour.openTime?.slice(0, 5)} – ${tenantHour.closeTime?.slice(0, 5)}` : '10:00 – 21:30';
+        let timeStr = '10:00 AM – 9:30 PM';
+        if (tenantHour) {
+          if (tenantHour.isClosed) {
+            timeStr = 'Closed';
+          } else {
+            timeStr = `${tenantHour.openTime?.slice(0, 5)} – ${tenantHour.closeTime?.slice(0, 5)}`;
+          }
+        }
 
         hoursHtml += `
-          <div class="hours-row ${isToday ? 'current-day' : ''}">
-            <span class="day-name">${dayName} ${isToday ? '<span class="today-badge">Today</span>' : ''}</span>
-            <span class="day-hours">${timeStr}</span>
+          <div class="flex items-center justify-between text-sm py-2 px-3 rounded-lg ${isToday ? 'bg-jubilee-navy-light text-jubilee-navy font-bold border border-jubilee-navy/20' : 'text-slate-600'}">
+            <span>${dayName} ${isToday ? '<span class="text-xs bg-jubilee-navy text-white px-2 py-0.5 rounded-full ml-1">Today</span>' : ''}</span>
+            <span>${timeStr}</span>
           </div>
         `;
       });
-      hoursEl.innerHTML = hoursHtml;
+      hoursList.innerHTML = hoursHtml;
     }
 
-    drawer.classList.add('open');
-    overlay.classList.add('open');
-    drawer.setAttribute('aria-hidden', 'false');
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-
-    // Update URL hash
-    history.replaceState(null, '', `#tenant-${tenant.slug}`);
   }
 
   function closeDrawer() {
-    if (!drawer || !overlay) return;
-    drawer.classList.remove('open');
-    overlay.classList.remove('open');
-    drawer.setAttribute('aria-hidden', 'true');
+    if (!panel || !backdrop) return;
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-
-    if (window.location.hash.startsWith('#tenant-')) {
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
   }
 
-  window.addEventListener('open-tenant-drawer', ((e: CustomEvent) => {
-    openDrawer(e.detail);
-  }) as EventListener);
-
   closeBtn?.addEventListener('click', closeDrawer);
-  overlay?.addEventListener('click', closeDrawer);
+  backdrop?.addEventListener('click', closeDrawer);
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && drawer?.classList.contains('open')) {
+    if (e.key === 'Escape' && panel?.classList.contains('open')) {
       closeDrawer();
     }
   });
+
+  (window as any).openTenantDrawer = openDrawer;
+  (window as any).closeTenantDrawer = closeDrawer;
 </script>

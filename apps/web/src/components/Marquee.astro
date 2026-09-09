@@ -4,30 +4,42 @@ interface Props {
 }
 
 const defaultItems = [
-  'Bantianyao Grilled Fish',
-  'AGrader Learning Centre',
-  'Ya Kun Kaya Toast',
-  'My Drum School',
-  'Ashi Foot Reflexology',
-  'Jeong-In Taekwondo',
-  'Subway',
-  'Artlette Art Studio',
-  'Tianyi InMed TCM Clinic',
-  'LCentral English',
-  '7 Studio Hair Salon',
-  'The Chinese Wedding Shop',
+  'Bantianyao Grilled Fish 🐟',
+  'AGrader Learning Centre 📚',
+  'Ya Kun Kaya Toast ☕',
+  'My Drum School 🥁',
+  'Ashi Foot Reflexology 💆',
+  'Jeong-In Taekwondo 🥋',
+  'Subway 🥪',
+  'Artlette Art Studio 🎨',
+  'Tianyi InMed TCM Clinic 🩺',
+  'LCentral English 📖',
+  '7 Studio Hair Salon ✂️',
+  'The Chinese Wedding Shop 🛍️',
 ];
 
 const { items = defaultItems } = Astro.props;
 ---
 
-<div class="marquee-section" aria-hidden="true">
-  <div class="marquee-track">
-    {items.concat(items).map((item) => (
-      <div class="marquee-item">
-        <span>{item}</span>
-        <span class="marquee-dot"></span>
-      </div>
-    ))}
+<div class="py-3 bg-slate-100 border-y border-slate-200 overflow-hidden" aria-hidden="true">
+  <div class="flex whitespace-nowrap overflow-x-hidden">
+    <div class="inline-flex items-center gap-6 text-xs sm:text-sm font-bold tracking-wide uppercase text-slate-600 animate-[marquee_35s_linear_infinite]">
+      {items.concat(items).map((item) => (
+        <span class="inline-flex items-center gap-3">
+          <span>{item}</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-jubilee-red"></span>
+        </span>
+      ))}
+    </div>
   </div>
 </div>
+
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-\[marquee_35s_linear_infinite\] {
+    animation: marquee 35s linear infinite;
+  }
+</style>

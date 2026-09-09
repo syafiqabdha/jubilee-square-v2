@@ -1,50 +1,64 @@
 ---
 ---
 
-<footer class="footer" role="contentinfo">
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <div class="footer-logo-mark" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
-              <rect x="2" y="2" width="5" height="5" rx="1" fill="#0a0a0a"/>
-              <rect x="9" y="2" width="5" height="5" rx="1" fill="#0a0a0a"/>
-              <rect x="2" y="9" width="5" height="5" rx="1" fill="#0a0a0a"/>
-              <rect x="9" y="9" width="5" height="5" rx="1" fill="#0a0a0a" opacity="0.4"/>
-            </svg>
-          </div>
-          Jubilee Square
-        </div>
-        <p class="footer-tagline">
-          61 Ang Mo Kio Ave 8, Singapore 569814.<br>
-          Conveniently located 2 minutes walk from Ang Mo Kio MRT Station (NS16 Exit C).
+<footer class="bg-white border-t border-slate-200 pt-12 pb-16 md:pb-12 text-slate-600" role="contentinfo">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+      <!-- Brand & Info -->
+      <div class="md:col-span-2">
+        <a href="/" class="inline-block mb-4" aria-label="Jubilee Square Home">
+          <img
+            src="/brand/jubilee-square-logo.svg"
+            alt="Jubilee Square by ENGWAH"
+            class="h-9 w-auto"
+            width="160"
+            height="38"
+          />
+        </a>
+        <p class="text-sm text-slate-500 max-w-sm mb-4 leading-relaxed">
+          61 Ang Mo Kio Ave 8, Singapore 569814.<br />
+          Located in the heart of Ang Mo Kio, 2 minutes sheltered walk from Ang Mo Kio MRT Station (NS16 Exit C) &amp; Bus Interchange.
         </p>
+        <div class="text-xs text-slate-400">
+          Managed by Eng Wah Global Pte Ltd
+        </div>
       </div>
-      <div class="footer-links-group">
-        <div class="footer-links-col">
-          <span class="footer-links-col-title">Explore</span>
-          <a href="/directory" class="footer-link">Directory</a>
-          <a href="/dine" class="footer-link">Dine &amp; Food</a>
-          <a href="/learn" class="footer-link">Learn &amp; Enrichment</a>
-          <a href="/relax" class="footer-link">Relax &amp; Wellness</a>
-          <a href="/location" class="footer-link">Getting Here</a>
-        </div>
-        <div class="footer-links-col">
-          <span class="footer-links-col-title">Management</span>
-          <a href="mailto:leasing@jubileesq.com.sg" class="footer-link">Leasing Enquiry</a>
-          <a href="/location#parking" class="footer-link">Car Park Information</a>
-          <a href="/terms" class="footer-link">Terms &amp; Policies</a>
-          <a href="tel:+6564512388" class="footer-link">Contact Concierge</a>
-        </div>
+
+      <!-- Quick Navigation -->
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4">Explore Directory</h3>
+        <ul class="space-y-2.5 text-sm font-medium">
+          <li><a href="/directory" class="hover:text-jubilee-navy transition-colors">🏬 All 23 Stores</a></li>
+          <li><a href="/dine" class="hover:text-jubilee-navy transition-colors">🍜 Food &amp; Dining (6)</a></li>
+          <li><a href="/learn" class="hover:text-jubilee-navy transition-colors">📚 Tuition &amp; Music (9)</a></li>
+          <li><a href="/relax" class="hover:text-jubilee-navy transition-colors">💆 Beauty &amp; Wellness (5)</a></li>
+          <li><a href="/shop" class="hover:text-jubilee-navy transition-colors">🛍️ Retail &amp; Specialty (2)</a></li>
+          <li><a href="/services" class="hover:text-jubilee-navy transition-colors">🩺 TCM Clinic &amp; Care (1)</a></li>
+        </ul>
+      </div>
+
+      <!-- Mall & Management Info -->
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4">Mall Information</h3>
+        <ul class="space-y-2.5 text-sm font-medium">
+          <li><a href="/location" class="hover:text-jubilee-navy transition-colors">🧭 Getting Here &amp; Parking</a></li>
+          <li><a href="tel:+6564512388" class="hover:text-jubilee-navy transition-colors">📞 Concierge: +65 6451 2388</a></li>
+          <li><a href="mailto:leasing@jubileesq.com.sg" class="hover:text-jubilee-navy transition-colors">✉️ Leasing Enquiries</a></li>
+          <li><a href="/signage" class="hover:text-jubilee-navy transition-colors">📺 Digital Signage Kiosk</a></li>
+          <li><a href="/terms" class="hover:text-jubilee-navy transition-colors">📄 Privacy Policy &amp; Terms</a></li>
+        </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">&copy; 2026 Jubilee Square Management. All rights reserved.</p>
-      <div class="footer-legal">
-        <a href="/terms" class="footer-legal-link">Privacy Policy</a>
-        <a href="/terms" class="footer-legal-link">Terms of Use</a>
-        <a href="/signage" class="footer-legal-link">Digital Signage View</a>
+
+    <!-- Bottom Bar -->
+    <div class="pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div>
+        &copy; {new Date().getFullYear()} Jubilee Square. All rights reserved. Eng Wah Properties.
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="/terms" class="hover:text-slate-900 transition-colors">Terms of Service</a>
+        <a href="/terms" class="hover:text-slate-900 transition-colors">Privacy Policy</a>
+        <a href="/location#parking" class="hover:text-slate-900 transition-colors">Car Park Rates</a>
       </div>
     </div>
   </div>

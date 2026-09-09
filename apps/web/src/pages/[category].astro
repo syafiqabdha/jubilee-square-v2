@@ -19,7 +19,6 @@ if (!currentCategory) {
   return Astro.redirect('/directory');
 }
 
-const { tenants } = await api.getTenantsByCategory(categorySlug);
 const { tenants: allTenants } = await api.getTenants();
 ---
 
@@ -28,7 +27,6 @@ const { tenants: allTenants } = await api.getTenants();
   description={`Browse ${currentCategory.name} outlets at Jubilee Square AMK: ${currentCategory.description}`}
   activePage={categorySlug}
 >
-  <div style="padding-top: 100px;"></div>
   <DirectorySection
     categories={categories}
     tenants={allTenants}

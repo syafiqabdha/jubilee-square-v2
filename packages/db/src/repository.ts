@@ -75,7 +75,7 @@ export class InMemoryCatalogRepository implements CatalogRepository {
           t.name.toLowerCase().includes(q) ||
           t.unitNumber.toLowerCase().includes(q) ||
           t.summary.toLowerCase().includes(q) ||
-          t.tags.some((tag) => tag.toLowerCase().includes(q))
+          (t.tags || []).some((tag: string) => tag.toLowerCase().includes(q))
       );
     }
 

@@ -8,57 +8,83 @@ import CTA from '../components/CTA.astro';
   description="Directions to Jubilee Square at 61 Ang Mo Kio Ave 8, Singapore. MRT, bus guides, and car park rates."
   activePage="location"
 >
-  <div style="padding-top: 120px; max-width: 900px; margin: 0 auto; padding-left: 20px; padding-right: 20px; padding-bottom: 80px;">
-    <div class="section-label" style="text-align: center; margin-bottom: 12px;">Getting Here</div>
-    <h1 class="hero-h1" style="font-size: 2.5rem; text-align: center; margin-bottom: 24px;">
-      Location &amp; <em>Transit Guide</em>
-    </h1>
-
-    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; margin-bottom: 32px;">
-      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--accent);">Address</h2>
-      <p style="font-size: 1.1rem; line-height: 1.6; color: var(--ink); margin-bottom: 20px;">
-        <strong>Jubilee Square</strong><br />
-        61 Ang Mo Kio Ave 8<br />
-        Singapore 569814
+  <div class="max-w-5xl mx-auto px-4 py-12 md:py-16">
+    <!-- Header -->
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light mb-3">
+        Transit &amp; Parking
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        Getting to <span class="text-jubilee-navy">Jubilee Square</span>
+      </h1>
+      <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+        Located centrally in Ang Mo Kio Central, directly connected to Ang Mo Kio MRT Station and Bus Interchange via sheltered linkway.
       </p>
-
-      <a
-        href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn-primary"
-        style="display: inline-flex;"
-      >
-        Open in Google Maps
-      </a>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 32px;">
-      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
-        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🚇 By MRT</h3>
-        <p style="color: var(--muted); line-height: 1.6;">
-          <strong>Ang Mo Kio MRT Station (NS16)</strong><br />
+    <!-- Address Card -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Official Address</div>
+        <h2 class="text-xl font-extrabold text-slate-900 mb-1">Jubilee Square</h2>
+        <p class="text-slate-600 font-medium">61 Ang Mo Kio Ave 8, Singapore 569814</p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <a
+          href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-cta-getting-here"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+          </svg>
+          Open Google Maps
+        </a>
+      </div>
+    </div>
+
+    <!-- Transport Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <!-- MRT -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
+        <div class="w-12 h-12 rounded-xl bg-jubilee-navy-light text-jubilee-navy flex items-center justify-center text-2xl mb-4">
+          🚇
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">By MRT Train</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Alight at <strong>Ang Mo Kio MRT Station (NS16)</strong> on the North-South Line.<br /><br />
           Take <strong>Exit C</strong> and walk sheltered for 2 minutes past the bus interchange directly to Jubilee Square.
         </p>
       </div>
 
-      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
-        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🚌 By Bus</h3>
-        <p style="color: var(--muted); line-height: 1.6;">
+      <!-- Bus -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
+        <div class="w-12 h-12 rounded-xl bg-jubilee-red-light text-jubilee-red flex items-center justify-center text-2xl mb-4">
+          🚌
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">By Public Bus</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
           <strong>Ang Mo Kio Bus Interchange:</strong><br />
-          Bus services: 22, 24, 25, 73, 74, 76, 86, 88, 130, 132, 133, 136, 138, 166, 169, 261, 262, 265, 268, 269.
+          Feeder &amp; Trunk Services: 22, 24, 25, 73, 74, 76, 86, 88, 130, 132, 133, 136, 138, 166, 169, 261, 262, 265, 268, 269.
         </p>
       </div>
 
-      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;" id="parking">
-        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🚗 Car Park</h3>
-        <p style="color: var(--muted); line-height: 1.6;">
-          Sheltered basement parking available with EPS gantries.<br />
-          <strong>Mon – Sat (7am – 5pm):</strong> $1.20 / 30 mins<br />
-          <strong>After 5pm &amp; Sun/PH:</strong> $1.50 per entry
+      <!-- Parking -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col" id="parking">
+        <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-2xl mb-4">
+          🚗
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">Car Park Rates</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Sheltered basement parking equipped with EPS automated gantries.<br /><br />
+          <strong>Mon – Sat (7:00 AM – 5:00 PM):</strong><br />$1.20 per 30 minutes<br /><br />
+          <strong>After 5:00 PM, Sun &amp; PH:</strong><br />$1.50 per entry
         </p>
       </div>
     </div>
   </div>
+
   <CTA />
 </Layout>

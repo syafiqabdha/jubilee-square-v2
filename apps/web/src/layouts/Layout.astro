@@ -2,6 +2,8 @@
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import TenantDrawer from '../components/TenantDrawer.astro';
+import BottomNav from '../components/BottomNav.astro';
+import SearchModal from '../components/SearchModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -22,7 +24,7 @@ const {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="/brand/jubilee-square-mark.svg" />
   <title>{title}</title>
   <meta name="description" content={description} />
   
@@ -32,21 +34,21 @@ const {
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_SG" />
 
-  <!-- Fonts -->
+  <!-- Typography & Modern Sans Hierarchy (The Sans / Plus Jakarta Sans / Inter Fallback) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
-
-  <!-- GSAP for Smooth Animations -->
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-jubilee-red selection:text-white">
   <Nav activePage={activePage} />
-  <main style="overflow-x:hidden;width:100%;max-width:100%;">
+  
+  <main class="flex-1 w-full max-w-full overflow-x-hidden">
     <slot />
   </main>
+  
   <TenantDrawer />
+  <SearchModal />
+  <BottomNav activePage={activePage} />
   <Footer />
 </body>
 </html>

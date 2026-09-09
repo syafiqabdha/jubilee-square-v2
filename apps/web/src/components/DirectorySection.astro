@@ -9,68 +9,100 @@ interface Props {
 }
 
 const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Astro.props;
+
+const categoryEmojiMap: Record<string, string> = {
+  dine: '🍜',
+  learn: '📚',
+  relax: '💆',
+  shop: '🛍️',
+  services: '🩺',
+};
 ---
 
-<section class="directory" id="directory" aria-labelledby="directory-heading">
-  <div class="directory-header">
-    <div class="section-label" aria-hidden="true">Directory</div>
-    <h2 class="directory-h2 text-balance" id="directory-heading">Find what<br>you're looking for.</h2>
-    <p class="directory-desc text-pretty">Every shop, dining spot, enrichment centre, and clinic in Jubilee Square — searchable and filterable.</p>
+<section class="py-12 md:py-16 px-4 max-w-7xl mx-auto w-full" id="directory" aria-labelledby="directory-heading">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase text-jubilee-navy bg-jubilee-navy-light mb-3">
+      Store Directory
+    </div>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2" id="directory-heading">
+      Find What You Need
+    </h2>
+    <p class="text-slate-600 max-w-xl text-base sm:text-lg">
+      Explore all 23 stores, dining outlets, tuition &amp; music academies across 4 levels at Jubilee Square.
+    </p>
   </div>
 
-  <div class="search-filter" role="search">
-    <div class="search-wrap">
-      <svg class="search-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-        <circle cx="7.5" cy="7.5" r="5" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M12 12l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+  <!-- Search & Category Filter Controls -->
+  <div class="flex flex-col gap-4 mb-8">
+    <!-- Instant Search Bar -->
+    <div class="relative w-full max-w-xl">
+      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <circle cx="7.5" cy="7.5" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 12l3.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <input
         type="search"
-        id="search-input"
-        class="search-input"
-        placeholder="Search tenants, categories, or keywords..."
-        aria-label="Search tenants"
+        id="directory-search-input"
+        class="w-full pl-10 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-jubilee-navy focus:border-transparent shadow-sm transition-all"
+        placeholder="Filter by store name, food, course, or unit (e.g. #02-01)..."
+        aria-label="Filter stores"
         value={initialSearch}
         autocomplete="off"
         spellcheck="false"
       />
-      <button class="search-clear" id="search-clear" aria-label="Clear search" tabindex="-1">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <button
+        type="button"
+        id="directory-search-clear"
+        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 hidden"
+        aria-label="Clear search"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
     </div>
-    <div class="pills-wrap" id="pills-wrap" role="group" aria-label="Filter by category">
+
+    <!-- Interactive Category Pills with Emoji -->
+    <div class="pills-container" id="category-pills" role="group" aria-label="Filter by store category">
       <button
-        class={`pill ${initialCategory === 'all' ? 'active' : ''}`}
+        class={`category-pill ${initialCategory === 'all' ? 'active' : ''}`}
         data-category="all"
         type="button"
       >
-        All <span class="pill-count">{tenants.length}</span>
+        <span>All</span>
+        <span class="pill-count-badge">{tenants.length}</span>
       </button>
+
       {categories.map((cat) => {
         const count = tenants.filter((t) => t.categorySlug === cat.slug).length;
+        const emoji = categoryEmojiMap[cat.slug] || '';
         return (
           <button
-            class={`pill ${initialCategory === cat.slug ? 'active' : ''}`}
+            class={`category-pill ${initialCategory === cat.slug ? 'active' : ''}`}
             data-category={cat.slug}
             type="button"
           >
-            {cat.name} <span class="pill-count">{count}</span>
+            <span>{cat.name} {emoji}</span>
+            <span class="pill-count-badge">{count}</span>
           </button>
         );
       })}
     </div>
   </div>
 
-  <div class="results-summary" id="results-summary" aria-live="polite" aria-atomic="true">
-    Showing {tenants.length} tenants
+  <!-- Live Results Summary -->
+  <div class="flex items-center justify-between text-sm text-slate-500 font-medium mb-6" id="results-count-bar" aria-live="polite">
+    <span>Showing <strong id="results-count" class="text-slate-900">{tenants.length}</strong> tenants</span>
   </div>
 
-  <div class="tenant-grid" id="tenant-grid" role="list" aria-label="Tenant listings">
+  <!-- Modern Store Cards Grid -->
+  <div class="tenant-grid-modern" id="tenants-grid" role="list" aria-label="Tenant Directory Grid">
     {tenants.map((t) => (
       <article
-        class="tenant-card"
+        class="store-card group"
         data-id={t.id}
         data-slug={t.slug}
         data-category={t.categorySlug}
@@ -78,146 +110,217 @@ const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Ast
         role="listitem"
         tabindex="0"
       >
-        <div class="card-header">
-          <span class="card-cat" style={`--cat-color: ${t.categoryColor || '#c9f23e'}`}>
-            {t.categoryName}
+        <div class="store-card-header">
+          <span class="store-card-category">
+            {t.categoryName} {categoryEmojiMap[t.categorySlug] || ''}
           </span>
-          <span class="card-unit">{t.floorLevel} · {t.unitNumber}</span>
+          <span class="store-card-unit">
+            {t.floorLevel} • {t.unitNumber}
+          </span>
         </div>
-        <h3 class="card-name">{t.name}</h3>
-        <p class="card-summary text-pretty">{t.summary}</p>
-        <div class="card-footer">
-          <span class="card-cta">
-            View details
-            <svg viewBox="0 0 12 12" fill="none" width="12" height="12">
-              <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <div class="px-5 flex-1">
+          <h3 class="store-card-name group-hover:text-jubilee-navy transition-colors">
+            {t.name}
+          </h3>
+          <p class="store-card-summary">
+            {t.summary}
+          </p>
+        </div>
+
+        <div class="store-card-footer">
+          <!-- Real-time Open/Closed Badge Placeholder (hydrated via JS based on current time) -->
+          <div class="store-status-container" data-tenant-id={t.id}>
+            <span class="status-badge-open">
+              <span class="status-dot-open"></span>
+              <span>Open Today</span>
+            </span>
+          </div>
+
+          <span class="store-card-action">
+            Details
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="transition-transform group-hover:translate-x-1">
+              <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          {t.isFeatured && <span class="card-badge">Featured</span>}
         </div>
       </article>
     ))}
 
-    <div class="empty-state" id="empty-state" role="status" style="display: none;">
-      <div style="font-size:3rem;opacity:0.3;margin-bottom:16px" aria-hidden="true">◎</div>
-      <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:8px;">No tenants found</h3>
-      <p style="color:var(--muted);margin-bottom:16px;">Try a different search keyword or category filter.</p>
-      <button class="btn-secondary" id="reset-filters-btn" type="button" style="margin:0 auto;display:inline-flex">
+    <!-- Empty State -->
+    <div class="col-span-full py-16 text-center hidden bg-white rounded-2xl border border-slate-200 p-8 shadow-sm" id="directory-empty-state">
+      <div class="text-4xl mb-3">🔍</div>
+      <h3 class="text-lg font-bold text-slate-900 mb-1">No matching stores found</h3>
+      <p class="text-slate-500 text-sm mb-4">Try checking your spelling or choosing a different category.</p>
+      <button
+        type="button"
+        id="directory-reset-btn"
+        class="btn-primary-navy inline-flex items-center text-sm py-2 px-4"
+      >
         Reset Filters
       </button>
     </div>
   </div>
 </section>
 
-<script define:vars={{ tenantsData: tenants }}>
-  const searchInput = document.getElementById('search-input');
-  const searchClear = document.getElementById('search-clear');
-  const pillsWrap = document.getElementById('pills-wrap');
-  const resultsSummary = document.getElementById('results-summary');
-  const emptyState = document.getElementById('empty-state');
-  const tenantCards = Array.from(document.querySelectorAll('.tenant-card'));
-  const resetBtn = document.getElementById('reset-filters-btn');
+<script define:vars={{ tenantsList: tenants }}>
+  const searchInput = document.getElementById('directory-search-input');
+  const searchClear = document.getElementById('directory-search-clear');
+  const pills = Array.from(document.querySelectorAll('.category-pill'));
+  const storeCards = Array.from(document.querySelectorAll('.store-card'));
+  const resultsCount = document.getElementById('results-count');
+  const emptyState = document.getElementById('directory-empty-state');
+  const resetBtn = document.getElementById('directory-reset-btn');
 
   let activeCategory = 'all';
-  let searchQuery = searchInput?.value || '';
+  let activeSearchQuery = (searchInput?.value || '').trim().toLowerCase();
+
+  // Calculate real-time Open / Closed status for all cards
+  function updateStoreStatuses() {
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentHours = now.getHours();
+    const currentMinutes = now.getMinutes();
+    const currentTimeStr = `${String(currentHours).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}:00`;
+
+    document.querySelectorAll('.store-status-container').forEach((el) => {
+      const tenantId = el.getAttribute('data-tenant-id');
+      const tenant = tenantsList.find((t) => t.id === tenantId);
+      if (!tenant) return;
+
+      const todaySchedule = tenant.operatingHours?.find((h) => h.dayOfWeek === currentDay);
+      let isOpen = true;
+      let closeTime = '21:30';
+      let openTime = '10:00';
+
+      if (todaySchedule) {
+        if (todaySchedule.isClosed) {
+          isOpen = false;
+        } else {
+          openTime = todaySchedule.openTime?.slice(0, 5) || '10:00';
+          closeTime = todaySchedule.closeTime?.slice(0, 5) || '21:30';
+          if (currentTimeStr < todaySchedule.openTime || currentTimeStr > todaySchedule.closeTime) {
+            isOpen = false;
+          }
+        }
+      }
+
+      if (isOpen) {
+        el.innerHTML = `
+          <span class="status-badge-open">
+            <span class="status-dot-open"></span>
+            <span>Open • Closes ${closeTime}</span>
+          </span>
+        `;
+      } else {
+        el.innerHTML = `
+          <span class="status-badge-closed">
+            <span class="status-dot-closed"></span>
+            <span>Closed • Opens ${openTime}</span>
+          </span>
+        `;
+      }
+    });
+  }
 
   function filterCards() {
     let visibleCount = 0;
-    const q = (searchInput?.value || '').trim().toLowerCase();
 
-    tenantCards.forEach((card) => {
+    storeCards.forEach((card) => {
       const cardCategory = card.getAttribute('data-category');
       const cardSearch = card.getAttribute('data-search') || '';
 
-      const matchCategory = activeCategory === 'all' || cardCategory === activeCategory;
-      const matchSearch = !q || cardSearch.includes(q);
+      const matchesCat = activeCategory === 'all' || cardCategory === activeCategory;
+      const matchesSearch = !activeSearchQuery || cardSearch.includes(activeSearchQuery);
 
-      if (matchCategory && matchSearch) {
-        card.style.display = '';
+      if (matchesCat && matchesSearch) {
+        card.style.display = 'flex';
         visibleCount++;
       } else {
         card.style.display = 'none';
       }
     });
 
-    if (resultsSummary) {
-      resultsSummary.textContent = `Showing ${visibleCount} ${visibleCount === 1 ? 'tenant' : 'tenants'}`;
-    }
+    if (resultsCount) resultsCount.textContent = String(visibleCount);
 
     if (emptyState) {
-      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
-
-    if (searchClear) {
-      searchClear.style.display = q.length > 0 ? 'flex' : 'none';
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
     }
   }
 
-  // Category pills click handler
-  pillsWrap?.addEventListener('click', (e) => {
-    const target = e.target.closest('.pill');
-    if (!target) return;
-
-    pillsWrap.querySelectorAll('.pill').forEach((p) => p.classList.remove('active'));
-    target.classList.add('active');
-    activeCategory = target.getAttribute('data-category') || 'all';
-    filterCards();
+  // Pill click handlers
+  pills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      pills.forEach((p) => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeCategory = pill.getAttribute('data-category') || 'all';
+      filterCards();
+    });
   });
 
-  // Search input handler with debounce
-  let debounceTimeout;
-  searchInput?.addEventListener('input', () => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(filterCards, 120);
+  // Search input handler
+  searchInput?.addEventListener('input', (e) => {
+    activeSearchQuery = e.target.value.trim().toLowerCase();
+    if (activeSearchQuery) {
+      searchClear?.classList.remove('hidden');
+    } else {
+      searchClear?.classList.add('hidden');
+    }
+    filterCards();
   });
 
   searchClear?.addEventListener('click', () => {
     if (searchInput) {
       searchInput.value = '';
+      activeSearchQuery = '';
+      searchClear.classList.add('hidden');
       searchInput.focus();
       filterCards();
     }
   });
 
   resetBtn?.addEventListener('click', () => {
-    if (searchInput) searchInput.value = '';
     activeCategory = 'all';
-    pillsWrap?.querySelectorAll('.pill').forEach((p) => {
-      p.classList.toggle('active', p.getAttribute('data-category') === 'all');
+    activeSearchQuery = '';
+    if (searchInput) searchInput.value = '';
+    searchClear?.classList.add('hidden');
+    pills.forEach((p) => {
+      if (p.getAttribute('data-category') === 'all') {
+        p.classList.add('active');
+      } else {
+        p.classList.remove('active');
+      }
     });
     filterCards();
   });
 
-  // Card click triggers tenant drawer event
-  tenantCards.forEach((card) => {
-    const slug = card.getAttribute('data-slug');
-    const tenant = tenantsData.find((t) => t.slug === slug);
-
-    card.addEventListener('click', () => {
-      if (tenant) {
-        window.dispatchEvent(new CustomEvent('open-tenant-drawer', { detail: tenant }));
+  // Card click opens drawer
+  storeCards.forEach((card) => {
+    const handleCardClick = () => {
+      const tenantId = card.getAttribute('data-id');
+      const tenant = tenantsList.find((t) => t.id === tenantId);
+      if (tenant && typeof window.openTenantDrawer === 'function') {
+        window.openTenantDrawer(tenant);
+      } else {
+        const slug = card.getAttribute('data-slug');
+        window.location.href = `/stores/${slug}`;
       }
-    });
+    };
 
+    card.addEventListener('click', handleCardClick);
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        if (tenant) {
-          window.dispatchEvent(new CustomEvent('open-tenant-drawer', { detail: tenant }));
-        }
+        handleCardClick();
       }
     });
   });
 
-  // Deep linking check on mount
-  const hash = window.location.hash;
-  if (hash.startsWith('#tenant-')) {
-    const slug = hash.replace('#tenant-', '');
-    const tenant = tenantsData.find((t) => t.slug === slug);
-    if (tenant) {
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('open-tenant-drawer', { detail: tenant }));
-      }, 300);
-    }
-  }
+  // Initial runs
+  updateStoreStatuses();
+  filterCards();
 </script>

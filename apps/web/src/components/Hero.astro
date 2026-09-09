@@ -6,103 +6,67 @@ interface Props {
 }
 
 const {
-  title = "Every store,<br>one square.",
-  subtitle = "Jubilee Square brings together 23 curated tenants across 4 levels in Ang Mo Kio. Discover premier enrichment, dining, beauty, and wellness under one roof.",
-  eyebrow = "Now open · Ang Mo Kio, Singapore"
+  title = "Your Community & Lifestyle Hub in Ang Mo Kio",
+  subtitle = "Discover 23 curated eateries, premier enrichment academies, wellness spas, and essential community healthcare across 4 convenient levels — just 2 minutes from Ang Mo Kio MRT.",
+  eyebrow = "Ang Mo Kio Ave 8 • Singapore 569814"
 } = Astro.props;
 ---
 
-<section class="hero" aria-labelledby="hero-heading">
-  <div class="hero-bg" aria-hidden="true">
-    <canvas id="hero-canvas"></canvas>
-    <div class="hero-radial"></div>
-    <div class="hero-grain"></div>
-  </div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">
-      <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+<section class="relative overflow-hidden bg-white border-b border-slate-200/80 py-16 md:py-24 px-4" aria-labelledby="hero-heading">
+  <!-- Subtle Brand Gradient Orbs -->
+  <div class="absolute -top-24 -left-24 w-96 h-96 bg-jubilee-navy-light rounded-full blur-3xl opacity-50 pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-jubilee-red-light rounded-full blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative max-w-5xl mx-auto text-center z-10">
+    <!-- Eyebrow Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase text-jubilee-navy bg-jubilee-navy-light border border-jubilee-navy/10 mb-6 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-jubilee-red animate-pulse" aria-hidden="true"></span>
       {eyebrow}
     </div>
-    <h1 class="hero-h1 text-balance" id="hero-heading" set:html={title} />
-    <p class="hero-subtitle text-pretty">
+
+    <!-- Main Heading -->
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-6 text-balance" id="hero-heading">
+      {title}
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8 text-pretty">
       {subtitle}
     </p>
-    <div class="hero-actions">
-      <a href="/directory" class="btn-primary">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        Browse Directory
+
+    <!-- CTAs -->
+    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-12">
+      <a href="/directory" class="btn-primary-navy">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Browse Store Directory
       </a>
-      <a href="/location" class="btn-secondary">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v6l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg>
-        Getting Here
+
+      <a href="/location" class="btn-secondary-outline">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+        </svg>
+        Getting Here &amp; Parking
+      </a>
+    </div>
+
+    <!-- Quick Discovery Category Chips -->
+    <div class="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm font-semibold">
+      <span class="text-xs uppercase tracking-wider text-slate-400 mr-1">Quick Jump:</span>
+      <a href="/dine" class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-jubilee-red-light text-slate-700 hover:text-jubilee-red border border-slate-200 transition-colors">
+        🍜 Dine &amp; Food
+      </a>
+      <a href="/learn" class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-jubilee-navy-light text-slate-700 hover:text-jubilee-navy border border-slate-200 transition-colors">
+        📚 Tuition &amp; Music
+      </a>
+      <a href="/relax" class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border border-slate-200 transition-colors">
+        💆 Hair &amp; Spa
+      </a>
+      <a href="/services" class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 transition-colors">
+        🩺 TCM &amp; Clinic
       </a>
     </div>
   </div>
-  <div class="scroll-indicator" aria-hidden="true">
-    <svg viewBox="0 0 20 20" fill="none">
-      <path d="M10 4v10M6 11l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Scroll
-  </div>
 </section>
-
-<script>
-  // Hero interactive particle canvas animation
-  const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const particles: Array<{
-      x: number;
-      y: number;
-      radius: number;
-      vx: number;
-      vy: number;
-      alpha: number;
-    }> = [];
-
-    for (let i = 0; i < 45; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 1.8 + 0.5,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        alpha: Math.random() * 0.4 + 0.1,
-      });
-    }
-
-    function render() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, width, height);
-
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(201, 242, 62, ${p.alpha})`;
-        ctx.fill();
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    }
-
-    render();
-
-    window.addEventListener('resize', () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-  }
-</script>

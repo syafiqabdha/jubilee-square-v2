@@ -1,9 +1,26 @@
+export const BRAND_COLORS = {
+  navy: '#252F81', // Pantone 2745 C
+  navyDark: '#1A2160',
+  navyLight: '#EAEBF5',
+  magenta: '#C60A4D', // Pantone 207 C
+  magentaDark: '#9E083E',
+  magentaLight: '#FDF2F5',
+  canvas: '#F8FAFC',
+  surface: '#FFFFFF',
+  surfaceMuted: '#F1F5F9',
+  border: '#E2E8F0',
+  borderHover: '#CBD5E1',
+  textPrimary: '#0F172A',
+  textSecondary: '#334155',
+  textMuted: '#64748B',
+} as const;
+
 export const CATEGORIES = [
-  { slug: 'dine', name: 'Dine', shortCode: 'FNB', color: '#EF4444', icon: 'utensils' },
-  { slug: 'learn', name: 'Learn', shortCode: 'EDU', color: '#3B82F6', icon: 'graduation-cap' },
-  { slug: 'relax', name: 'Relax', shortCode: 'WLN', color: '#EC4899', icon: 'sparkles' },
-  { slug: 'shop', name: 'Shop', shortCode: 'RET', color: '#F59E0B', icon: 'shopping-bag' },
-  { slug: 'services', name: 'Services', shortCode: 'SVC', color: '#10B981', icon: 'heart-pulse' },
+  { slug: 'dine', name: 'Dine', shortCode: 'FNB', color: '#C60A4D', icon: 'utensils', emoji: '🍜' },
+  { slug: 'learn', name: 'Learn', shortCode: 'EDU', color: '#252F81', icon: 'graduation-cap', emoji: '📚' },
+  { slug: 'relax', name: 'Relax', shortCode: 'WLN', color: '#7C3AED', icon: 'sparkles', emoji: '💆' },
+  { slug: 'shop', name: 'Shop', shortCode: 'RET', color: '#D97706', icon: 'shopping-bag', emoji: '🛍️' },
+  { slug: 'services', name: 'Services', shortCode: 'SVC', color: '#059669', icon: 'heart-pulse', emoji: '🩺' },
 ] as const;
 
 export type CategorySlug = typeof CATEGORIES[number]['slug'];
