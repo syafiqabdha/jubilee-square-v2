@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "echo \"Directus schema integration ready\"",
-    "bootstrap": "node --loader ts-node/esm bootstrap.ts",
-    "test": "node --loader ts-node/esm bootstrap.ts"
+    "bootstrap": "npx tsx bootstrap.ts",
+    "test": "npx tsx bootstrap.ts"
   },
   "dependencies": {
     "@directus/sdk": "^18.0.0",
