@@ -18,7 +18,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-jubilee_admin} -d ${DB_NAME:-jubilee_square_v2}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 5s
     networks:
       - jubilee-net
 
@@ -72,10 +73,11 @@ services:
       HOST: 0.0.0.0
       DATABASE_URL: postgresql://${DB_USER:-jubilee_admin}:${DB_PASSWORD:-jubilee_secure_pass_2026}@postgres:5432/${DB_NAME:-jubilee_square_v2}
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
-      interval: 10s
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
+      interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 10
+      start_period: 10s
     networks:
       - jubilee-net
 
@@ -99,6 +101,12 @@ services:
       PUBLIC_DIRECTUS_URL: http://directus:8055
       PORT: 4321
       HOST: 0.0.0.0
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4321/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     networks:
       - jubilee-net
 
