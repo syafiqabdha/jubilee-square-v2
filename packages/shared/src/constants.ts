@@ -15,6 +15,14 @@ export const BRAND_COLORS = {
   textMuted: '#64748B',
 } as const;
 
+export const CATEGORY_EMOJI_MAP: Record<string, string> = {
+  dine: '🍜',
+  learn: '📚',
+  relax: '💆',
+  shop: '🛍️',
+  services: '🩺',
+};
+
 export const CATEGORIES = [
   { slug: 'dine', name: 'Dine', shortCode: 'FNB', color: '#C60A4D', icon: 'utensils', emoji: '🍜' },
   { slug: 'learn', name: 'Learn', shortCode: 'EDU', color: '#252F81', icon: 'graduation-cap', emoji: '📚' },

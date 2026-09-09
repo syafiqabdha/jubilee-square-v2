@@ -1,5 +1,6 @@
 ---
 import type { Category, Tenant } from '@jubilee/shared';
+import { CATEGORY_EMOJI_MAP } from '@jubilee/shared';
 
 interface Props {
   categories: Category[];
@@ -9,14 +10,6 @@ interface Props {
 }
 
 const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Astro.props;
-
-const categoryEmojiMap: Record<string, string> = {
-  dine: '🍜',
-  learn: '📚',
-  relax: '💆',
-  shop: '🛍️',
-  services: '🩺',
-};
 ---
 
 <section class="py-12 md:py-16 px-4 max-w-7xl mx-auto w-full" id="directory" aria-labelledby="directory-heading">
@@ -29,7 +22,7 @@ const categoryEmojiMap: Record<string, string> = {
       Find What You Need
     </h2>
     <p class="text-slate-600 max-w-xl text-base sm:text-lg">
-      Explore all 23 stores, dining outlets, tuition &amp; music academies across 4 levels at Jubilee Square.
+      Explore all {tenants.length} stores, dining outlets, tuition &amp; music academies across 4 levels at Jubilee Square.
     </p>
   </div>
 
@@ -39,7 +32,7 @@ const categoryEmojiMap: Record<string, string> = {
     <div class="relative w-full max-w-xl">
       <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-          <circle cx="7.5" cy="7.5" r="5" stroke="currentColor" stroke-width="2"/>
+          <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="2"/>
           <path d="M12 12l3.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
@@ -71,6 +64,7 @@ const categoryEmojiMap: Record<string, string> = {
         class={`category-pill ${initialCategory === 'all' ? 'active' : ''}`}
         data-category="all"
         type="button"
+        aria-pressed={initialCategory === 'all' ? 'true' : 'false'}
       >
         <span>All</span>
         <span class="pill-count-badge">{tenants.length}</span>
@@ -78,12 +72,14 @@ const categoryEmojiMap: Record<string, string> = {
 
       {categories.map((cat) => {
         const count = tenants.filter((t) => t.categorySlug === cat.slug).length;
-        const emoji = categoryEmojiMap[cat.slug] || '';
+        const emoji = CATEGORY_EMOJI_MAP[cat.slug] || '';
+        const isSelected = initialCategory === cat.slug;
         return (
           <button
-            class={`category-pill ${initialCategory === cat.slug ? 'active' : ''}`}
+            class={`category-pill ${isSelected ? 'active' : ''}`}
             data-category={cat.slug}
             type="button"
+            aria-pressed={isSelected ? 'true' : 'false'}
           >
             <span>{cat.name} {emoji}</span>
             <span class="pill-count-badge">{count}</span>
@@ -106,13 +102,13 @@ const categoryEmojiMap: Record<string, string> = {
         data-id={t.id}
         data-slug={t.slug}
         data-category={t.categorySlug}
-        data-search={`${t.name} ${t.summary} ${t.unitNumber} ${t.floorLevel} ${t.categoryName} ${(t.tags || []).join(' ')}`.toLowerCase()}
+        data-search={`${t.name} ${t.summary} ${t.unitNumber} ${t.floorLevel} ${t.categoryName || ''} ${(t.tags || []).join(' ')}`.toLowerCase()}
         role="listitem"
         tabindex="0"
       >
         <div class="store-card-header">
           <span class="store-card-category">
-            {t.categoryName} {categoryEmojiMap[t.categorySlug] || ''}
+            {t.categoryName} {t.categorySlug ? CATEGORY_EMOJI_MAP[t.categorySlug] || '' : ''}
           </span>
           <span class="store-card-unit">
             {t.floorLevel} • {t.unitNumber}
@@ -129,7 +125,7 @@ const categoryEmojiMap: Record<string, string> = {
         </div>
 
         <div class="store-card-footer">
-          <!-- Real-time Open/Closed Badge Placeholder (hydrated via JS based on current time) -->
+          <!-- Real-time Open/Closed Badge Container (hydrated dynamically) -->
           <div class="store-status-container" data-tenant-id={t.id}>
             <span class="status-badge-open">
               <span class="status-dot-open"></span>
@@ -163,8 +159,16 @@ const categoryEmojiMap: Record<string, string> = {
   </div>
 </section>
 
-<script define:vars={{ tenantsList: tenants }}>
-  const searchInput = document.getElementById('directory-search-input');
+<!-- JSON Data serialization for clean client script module bundling -->
+<script type="application/json" id="jubilee-directory-tenants" set:html={JSON.stringify(tenants)} />
+
+<script>
+  import { getTenantOpeningStatus } from '../lib/opening-hours';
+
+  const dataEl = document.getElementById('jubilee-directory-tenants');
+  const tenantsList: any[] = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+
+  const searchInput = document.getElementById('directory-search-input') as HTMLInputElement | null;
   const searchClear = document.getElementById('directory-search-clear');
   const pills = Array.from(document.querySelectorAll('.category-pill'));
   const storeCards = Array.from(document.querySelectorAll('.store-card'));
@@ -175,51 +179,31 @@ const categoryEmojiMap: Record<string, string> = {
   let activeCategory = 'all';
   let activeSearchQuery = (searchInput?.value || '').trim().toLowerCase();
 
-  // Calculate real-time Open / Closed status for all cards
+  // Calculate real-time Open / Closed status using centralized engine
   function updateStoreStatuses() {
     const now = new Date();
-    const currentDay = now.getDay();
-    const currentHours = now.getHours();
-    const currentMinutes = now.getMinutes();
-    const currentTimeStr = `${String(currentHours).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}:00`;
-
     document.querySelectorAll('.store-status-container').forEach((el) => {
       const tenantId = el.getAttribute('data-tenant-id');
-      const tenant = tenantsList.find((t) => t.id === tenantId);
+      const tenant = tenantsList.find((t: any) => t.id === tenantId);
       if (!tenant) return;
 
-      const todaySchedule = tenant.operatingHours?.find((h) => h.dayOfWeek === currentDay);
-      let isOpen = true;
-      let closeTime = '21:30';
-      let openTime = '10:00';
+      const status = getTenantOpeningStatus(tenant.operatingHours, now);
 
-      if (todaySchedule) {
-        if (todaySchedule.isClosed) {
-          isOpen = false;
-        } else {
-          openTime = todaySchedule.openTime?.slice(0, 5) || '10:00';
-          closeTime = todaySchedule.closeTime?.slice(0, 5) || '21:30';
-          if (currentTimeStr < todaySchedule.openTime || currentTimeStr > todaySchedule.closeTime) {
-            isOpen = false;
-          }
-        }
-      }
+      const badge = document.createElement('span');
+      const dot = document.createElement('span');
+      const text = document.createElement('span');
 
-      if (isOpen) {
-        el.innerHTML = `
-          <span class="status-badge-open">
-            <span class="status-dot-open"></span>
-            <span>Open • Closes ${closeTime}</span>
-          </span>
-        `;
+      if (status.isOpen) {
+        badge.className = 'status-badge-open';
+        dot.className = 'status-dot-open';
       } else {
-        el.innerHTML = `
-          <span class="status-badge-closed">
-            <span class="status-dot-closed"></span>
-            <span>Closed • Opens ${openTime}</span>
-          </span>
-        `;
+        badge.className = 'status-badge-closed';
+        dot.className = 'status-dot-closed';
       }
+
+      text.textContent = status.statusText;
+      badge.append(dot, text);
+      el.replaceChildren(badge);
     });
   }
 
@@ -234,10 +218,10 @@ const categoryEmojiMap: Record<string, string> = {
       const matchesSearch = !activeSearchQuery || cardSearch.includes(activeSearchQuery);
 
       if (matchesCat && matchesSearch) {
-        card.style.display = 'flex';
+        (card as HTMLElement).style.display = 'flex';
         visibleCount++;
       } else {
-        card.style.display = 'none';
+        (card as HTMLElement).style.display = 'none';
       }
     });
 
@@ -255,16 +239,20 @@ const categoryEmojiMap: Record<string, string> = {
   // Pill click handlers
   pills.forEach((pill) => {
     pill.addEventListener('click', () => {
-      pills.forEach((p) => p.classList.remove('active'));
+      pills.forEach((p) => {
+        p.classList.remove('active');
+        p.setAttribute('aria-pressed', 'false');
+      });
       pill.classList.add('active');
+      pill.setAttribute('aria-pressed', 'true');
       activeCategory = pill.getAttribute('data-category') || 'all';
       filterCards();
     });
   });
 
   // Search input handler
-  searchInput?.addEventListener('input', (e) => {
-    activeSearchQuery = e.target.value.trim().toLowerCase();
+  searchInput?.addEventListener('input', (e: Event) => {
+    activeSearchQuery = ((e.target as HTMLInputElement).value || '').trim().toLowerCase();
     if (activeSearchQuery) {
       searchClear?.classList.remove('hidden');
     } else {
@@ -291,8 +279,10 @@ const categoryEmojiMap: Record<string, string> = {
     pills.forEach((p) => {
       if (p.getAttribute('data-category') === 'all') {
         p.classList.add('active');
+        p.setAttribute('aria-pressed', 'true');
       } else {
         p.classList.remove('active');
+        p.setAttribute('aria-pressed', 'false');
       }
     });
     filterCards();
@@ -302,19 +292,20 @@ const categoryEmojiMap: Record<string, string> = {
   storeCards.forEach((card) => {
     const handleCardClick = () => {
       const tenantId = card.getAttribute('data-id');
-      const tenant = tenantsList.find((t) => t.id === tenantId);
-      if (tenant && typeof window.openTenantDrawer === 'function') {
-        window.openTenantDrawer(tenant);
+      const tenant = tenantsList.find((t: any) => t.id === tenantId);
+      if (tenant && typeof (window as any).openTenantDrawer === 'function') {
+        (window as any).openTenantDrawer(tenant);
       } else {
         const slug = card.getAttribute('data-slug');
-        window.location.href = `/stores/${slug}`;
+        window.location.href = `/stores/${encodeURIComponent(slug || '')}`;
       }
     };
 
     card.addEventListener('click', handleCardClick);
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
+    card.addEventListener('keydown', (e: Event) => {
+      const keyEvent = e as KeyboardEvent;
+      if (keyEvent.key === 'Enter' || keyEvent.key === ' ') {
+        keyEvent.preventDefault();
         handleCardClick();
       }
     });

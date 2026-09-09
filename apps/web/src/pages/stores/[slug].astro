@@ -88,7 +88,7 @@ const jsonLd = {
           </svg>
           Get Directions
         </a>
-        {tenant.website && (
+        {tenant.website && (tenant.website.startsWith('http://') || tenant.website.startsWith('https://')) && (
           <a href={tenant.website} target="_blank" rel="noopener noreferrer" class="btn-secondary-outline text-sm py-2.5 px-5">
             Visit Store Website &nearr;
           </a>

@@ -16,6 +16,10 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
         placeholder="Type a store, category (e.g. food, tuition), or unit #..."
         autocomplete="off"
         spellcheck="false"
+        role="combobox"
+        aria-expanded="false"
+        aria-autocomplete="list"
+        aria-controls="search-modal-results"
       />
       <button class="drawer-btn-close" id="search-modal-close" aria-label="Close search modal" style="width:28px;height:28px;">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -24,8 +28,8 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
       </button>
     </div>
 
-    <div class="search-modal-results" id="search-modal-results" role="listbox">
-      <!-- Search results will populate here -->
+    <div class="search-modal-results" id="search-modal-results" role="listbox" aria-label="Search results">
+      <!-- Search results populate dynamically via safe DOM nodes -->
       <div style="padding: 24px 16px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem;" id="search-empty-hint">
         Type keywords to instantly search 23 directory tenants across 4 levels.
       </div>
@@ -62,8 +66,41 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+    }
     renderResults([]);
+  }
+
+  function selectTenant(tenant) {
+    if (!tenant) return;
+    closeSearchModal();
+    if (typeof window.openTenantDrawer === 'function') {
+      window.openTenantDrawer(tenant);
+    } else {
+      window.location.href = `/stores/${encodeURIComponent(tenant.slug)}`;
+    }
+  }
+
+  function updateSelection() {
+    if (!resultsContainer) return;
+    const items = resultsContainer.querySelectorAll('.search-result-item');
+    items.forEach((item, idx) => {
+      if (idx === selectedIndex) {
+        item.classList.add('highlighted');
+        item.setAttribute('aria-selected', 'true');
+        input?.setAttribute('aria-activedescendant', item.id);
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('highlighted');
+        item.setAttribute('aria-selected', 'false');
+      }
+    });
+    if (selectedIndex === -1) {
+      input?.removeAttribute('aria-activedescendant');
+    }
   }
 
   function renderResults(matches) {
@@ -71,50 +108,82 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
     selectedIndex = -1;
     if (!resultsContainer) return;
 
-    if (!input?.value.trim()) {
-      resultsContainer.innerHTML = `
-        <div style="padding: 24px 16px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem;">
-          Type keywords to instantly search 23 directory tenants across 4 levels.
-        </div>
-      `;
+    const query = (input?.value || '').trim();
+
+    if (!query) {
+      input?.setAttribute('aria-expanded', 'false');
+      const hint = document.createElement('div');
+      hint.style.cssText = 'padding: 24px 16px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem;';
+      hint.textContent = 'Type keywords to instantly search 23 directory tenants across 4 levels.';
+      resultsContainer.replaceChildren(hint);
       return;
     }
 
     if (matches.length === 0) {
-      resultsContainer.innerHTML = `
-        <div style="padding: 24px 16px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem;">
-          No stores found matching "<strong>${input.value}</strong>".
-        </div>
-      `;
+      input?.setAttribute('aria-expanded', 'false');
+      const emptyDiv = document.createElement('div');
+      emptyDiv.style.cssText = 'padding: 24px 16px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem;';
+      emptyDiv.appendChild(document.createTextNode('No stores found matching "'));
+      const strong = document.createElement('strong');
+      strong.textContent = query;
+      emptyDiv.appendChild(strong);
+      emptyDiv.appendChild(document.createTextNode('".'));
+      resultsContainer.replaceChildren(emptyDiv);
       return;
     }
 
-    resultsContainer.innerHTML = matches.map((t, idx) => `
-      <div class="search-result-item" data-index="${idx}" data-slug="${t.slug}" data-id="${t.id}" role="option">
-        <div>
-          <div class="search-result-title">${t.name}</div>
-          <div class="search-result-meta">
-            <span>${t.categoryName}</span>
-            <span>•</span>
-            <span>${t.unitNumber} (${t.floorLevel})</span>
-          </div>
-        </div>
-        <span style="font-size:0.8rem;font-weight:700;color:var(--color-brand-magenta);">View →</span>
-      </div>
-    `).join('');
+    input?.setAttribute('aria-expanded', 'true');
+    const fragment = document.createDocumentFragment();
 
-    resultsContainer.querySelectorAll('.search-result-item').forEach((item) => {
-      item.addEventListener('click', () => {
-        const tenantId = item.getAttribute('data-id');
-        const tenant = tenants.find((t) => t.id === tenantId);
-        if (tenant && typeof window.openTenantDrawer === 'function') {
-          closeSearchModal();
-          window.openTenantDrawer(tenant);
-        } else {
-          window.location.href = `/stores/${item.getAttribute('data-slug')}`;
-        }
+    matches.forEach((t, idx) => {
+      const item = document.createElement('div');
+      item.className = 'search-result-item';
+      item.id = `search-opt-${idx}`;
+      item.setAttribute('data-index', String(idx));
+      item.setAttribute('data-slug', t.slug || '');
+      item.setAttribute('data-id', t.id || '');
+      item.setAttribute('role', 'option');
+      item.setAttribute('aria-selected', 'false');
+
+      const infoDiv = document.createElement('div');
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'search-result-title';
+      titleDiv.textContent = t.name || '';
+
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'search-result-meta';
+
+      const catSpan = document.createElement('span');
+      catSpan.textContent = t.categoryName || '';
+
+      const dotSpan = document.createElement('span');
+      dotSpan.textContent = '•';
+
+      const unitSpan = document.createElement('span');
+      unitSpan.textContent = `${t.unitNumber || ''} (${t.floorLevel || ''})`;
+
+      metaDiv.append(catSpan, dotSpan, unitSpan);
+      infoDiv.append(titleDiv, metaDiv);
+
+      const actionSpan = document.createElement('span');
+      actionSpan.style.cssText = 'font-size:0.8rem;font-weight:700;color:var(--color-brand-magenta);';
+      actionSpan.textContent = 'View →';
+
+      item.append(infoDiv, actionSpan);
+
+      item.addEventListener('mouseenter', () => {
+        selectedIndex = idx;
+        updateSelection();
       });
+
+      item.addEventListener('click', () => {
+        selectTenant(t);
+      });
+
+      fragment.appendChild(item);
     });
+
+    resultsContainer.replaceChildren(fragment);
   }
 
   function handleSearch(query) {
@@ -125,7 +194,7 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
     }
 
     const matches = tenants.filter((t) => {
-      const name = t.name.toLowerCase();
+      const name = (t.name || '').toLowerCase();
       const cat = (t.categoryName || '').toLowerCase();
       const unit = (t.unitNumber || '').toLowerCase();
       const summary = (t.summary || '').toLowerCase();
@@ -140,6 +209,29 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
     handleSearch(e.target.value);
   });
 
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentResults.length > 0) {
+        selectedIndex = (selectedIndex + 1) % currentResults.length;
+        updateSelection();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentResults.length > 0) {
+        selectedIndex = selectedIndex <= 0 ? currentResults.length - 1 : selectedIndex - 1;
+        updateSelection();
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < currentResults.length) {
+        selectTenant(currentResults[selectedIndex]);
+      } else if (currentResults.length > 0) {
+        selectTenant(currentResults[0]);
+      }
+    }
+  });
+
   closeBtn?.addEventListener('click', closeSearchModal);
 
   modal?.addEventListener('click', (e) => {
@@ -150,7 +242,7 @@ import { FALLBACK_TENANTS } from '../lib/tenant-roster';
 
   window.addEventListener('keydown', (e) => {
     // Cmd+K or Ctrl+K trigger
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
       if (modal?.classList.contains('open')) {
         closeSearchModal();

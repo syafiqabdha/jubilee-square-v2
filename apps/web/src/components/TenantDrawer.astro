@@ -44,7 +44,7 @@
 
     <!-- Direct Action CTA Buttons -->
     <div class="drawer-action-group">
-      <a href="tel:+6564512388" class="btn-drawer-action btn-drawer-primary" id="drawer-call-btn">
+      <a href="tel:+6560000000" class="btn-drawer-action btn-drawer-primary" id="drawer-call-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
         </svg>
@@ -87,7 +87,7 @@
     <div class="border-t border-slate-100 pt-5">
       <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Store Details</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="drawer-details-grid">
-        <!-- Injected dynamically -->
+        <!-- Injected dynamically via safe DOM nodes -->
       </div>
     </div>
 
@@ -95,7 +95,7 @@
     <div class="border-t border-slate-100 pt-5">
       <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Weekly Operating Hours</h3>
       <div class="flex flex-col gap-2" id="drawer-hours-list">
-        <!-- Injected dynamically -->
+        <!-- Injected dynamically via safe DOM nodes -->
       </div>
     </div>
 
@@ -117,6 +117,8 @@
 </aside>
 
 <script>
+  import { getTenantOpeningStatus, DAYS_OF_WEEK, formatTimeShort } from '../lib/opening-hours';
+
   const backdrop = document.getElementById('tenant-drawer-backdrop');
   const panel = document.getElementById('tenant-drawer-panel');
   const closeBtn = document.getElementById('drawer-close-btn');
@@ -134,35 +136,63 @@
   const callText = document.getElementById('drawer-call-text');
   const waBtn = document.getElementById('drawer-whatsapp-btn') as HTMLAnchorElement | null;
 
-  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  function isValidWebUrl(urlString: string | null | undefined): boolean {
+    if (!urlString || typeof urlString !== 'string') return false;
+    try {
+      const parsed = new URL(urlString.trim());
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
 
-  function openDrawer(tenant: any) {
-    if (!panel || !backdrop) return;
+  function sanitizeTenantData(data: any) {
+    if (!data || typeof data !== 'object') return null;
+    return {
+      id: typeof data.id === 'string' ? data.id : '',
+      slug: typeof data.slug === 'string' ? data.slug : '',
+      name: typeof data.name === 'string' ? data.name : 'Store Profile',
+      categoryName: typeof data.categoryName === 'string' ? data.categoryName : 'Directory',
+      floorLevel: typeof data.floorLevel === 'string' ? data.floorLevel : 'L1',
+      unitNumber: typeof data.unitNumber === 'string' ? data.unitNumber : '',
+      summary: typeof data.summary === 'string' ? data.summary : '',
+      description: typeof data.description === 'string' ? data.description : (typeof data.summary === 'string' ? data.summary : ''),
+      phone: typeof data.phone === 'string' ? data.phone : null,
+      whatsapp: typeof data.whatsapp === 'string' ? data.whatsapp : null,
+      email: typeof data.email === 'string' ? data.email : null,
+      website: typeof data.website === 'string' ? data.website : null,
+      tags: Array.isArray(data.tags) ? data.tags.filter((t: any) => typeof t === 'string') : [],
+      operatingHours: Array.isArray(data.operatingHours) ? data.operatingHours : [],
+    };
+  }
 
-    if (catEl) catEl.textContent = tenant.categoryName || 'Directory';
+  function populateDrawerUI(rawTenant: any) {
+    const tenant = sanitizeTenantData(rawTenant);
+    if (!tenant) return;
+
+    if (catEl) catEl.textContent = tenant.categoryName;
     if (nameEl) nameEl.textContent = tenant.name;
     if (locationEl) locationEl.textContent = `📍 ${tenant.floorLevel} • ${tenant.unitNumber}`;
     if (mapLevelEl) mapLevelEl.textContent = `${tenant.floorLevel} Directory Pin (${tenant.unitNumber})`;
-    if (descEl) descEl.textContent = tenant.description || tenant.summary;
+    if (descEl) descEl.textContent = tenant.description || tenant.summary || 'Visit us in Jubilee Square.';
 
-    const now = new Date();
-    const todayIndex = now.getDay();
-    const todaySchedule = tenant.operatingHours?.find((h: any) => h.dayOfWeek === todayIndex);
-
+    // Live status using shared engine
+    const status = getTenantOpeningStatus(tenant.operatingHours);
     if (statusPill) {
-      if (todaySchedule?.isClosed) {
-        statusPill.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200';
-        statusPill.textContent = '🔴 Closed Today';
-      } else {
+      if (status.isOpen) {
         statusPill.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs border border-emerald-200';
-        statusPill.textContent = '🟢 Open Today';
+        statusPill.textContent = `🟢 ${status.statusText}`;
+      } else {
+        statusPill.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200';
+        statusPill.textContent = `🔴 ${status.statusText}`;
       }
     }
 
     // Phone / Call Button
     if (callBtn) {
       if (tenant.phone) {
-        callBtn.href = `tel:${tenant.phone.replace(/\s+/g, '')}`;
+        const cleanPhone = tenant.phone.replace(/[^\d+]/g, '');
+        callBtn.href = `tel:${cleanPhone}`;
         callBtn.style.display = 'inline-flex';
         if (callText) callText.textContent = tenant.phone;
       } else {
@@ -181,50 +211,118 @@
       }
     }
 
-    // Details Grid
+    // Details Grid constructed with safe DOM nodes
     if (detailsGrid) {
-      let html = '';
+      const fragment = document.createDocumentFragment();
+
       if (tenant.phone) {
-        html += `<div class="p-3 bg-slate-50 rounded-lg"><div class="text-xs font-semibold text-slate-400 uppercase">Phone</div><div class="text-sm font-bold text-slate-800">${tenant.phone}</div></div>`;
+        const card = document.createElement('div');
+        card.className = 'p-3 bg-slate-50 rounded-lg';
+        const label = document.createElement('div');
+        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.textContent = 'Phone';
+        const val = document.createElement('div');
+        val.className = 'text-sm font-bold text-slate-800';
+        val.textContent = tenant.phone;
+        card.append(label, val);
+        fragment.appendChild(card);
       }
+
       if (tenant.email) {
-        html += `<div class="p-3 bg-slate-50 rounded-lg"><div class="text-xs font-semibold text-slate-400 uppercase">Email</div><div class="text-sm font-bold text-slate-800 break-all">${tenant.email}</div></div>`;
+        const card = document.createElement('div');
+        card.className = 'p-3 bg-slate-50 rounded-lg';
+        const label = document.createElement('div');
+        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.textContent = 'Email';
+        const val = document.createElement('a');
+        val.className = 'text-sm font-bold text-jubilee-navy hover:underline break-all';
+        val.href = `mailto:${encodeURIComponent(tenant.email)}`;
+        val.textContent = tenant.email;
+        card.append(label, val);
+        fragment.appendChild(card);
       }
-      if (tenant.website) {
-        html += `<div class="p-3 bg-slate-50 rounded-lg"><div class="text-xs font-semibold text-slate-400 uppercase">Website</div><a href="${tenant.website}" target="_blank" rel="noopener" class="text-sm font-bold text-jubilee-navy hover:underline">Visit Store Site ↗</a></div>`;
+
+      if (tenant.website && isValidWebUrl(tenant.website)) {
+        const card = document.createElement('div');
+        card.className = 'p-3 bg-slate-50 rounded-lg';
+        const label = document.createElement('div');
+        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.textContent = 'Website';
+        const link = document.createElement('a');
+        link.className = 'text-sm font-bold text-jubilee-navy hover:underline';
+        link.href = tenant.website;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'Visit Store Site ↗';
+        card.append(label, link);
+        fragment.appendChild(card);
       }
+
       if (tenant.tags && tenant.tags.length > 0) {
-        const tagsStr = tenant.tags.join(', ');
-        html += `<div class="p-3 bg-slate-50 rounded-lg col-span-full"><div class="text-xs font-semibold text-slate-400 uppercase">Tags</div><div class="text-sm font-medium text-slate-700">${tagsStr}</div></div>`;
+        const card = document.createElement('div');
+        card.className = 'p-3 bg-slate-50 rounded-lg col-span-full';
+        const label = document.createElement('div');
+        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.textContent = 'Tags';
+        const val = document.createElement('div');
+        val.className = 'text-sm font-medium text-slate-700';
+        val.textContent = tenant.tags.join(', ');
+        card.append(label, val);
+        fragment.appendChild(card);
       }
-      detailsGrid.innerHTML = html;
+
+      detailsGrid.replaceChildren(fragment);
     }
 
-    // Hours List
+    // Operating Hours List constructed with safe DOM nodes
     if (hoursList) {
-      let hoursHtml = '';
-      DAYS.forEach((dayName, idx) => {
+      const fragment = document.createDocumentFragment();
+      const todayIndex = new Date().getDay();
+
+      DAYS_OF_WEEK.forEach((dayName, idx) => {
         const isToday = idx === todayIndex;
         const tenantHour = tenant.operatingHours?.find((h: any) => h.dayOfWeek === idx);
-        let timeStr = '10:00 AM – 9:30 PM';
+
+        let timeStr = '10:00 – 21:30';
         if (tenantHour) {
           if (tenantHour.isClosed) {
             timeStr = 'Closed';
           } else {
-            timeStr = `${tenantHour.openTime?.slice(0, 5)} – ${tenantHour.closeTime?.slice(0, 5)}`;
+            timeStr = `${formatTimeShort(tenantHour.openTime)} – ${formatTimeShort(tenantHour.closeTime, '21:30')}`;
           }
         }
 
-        hoursHtml += `
-          <div class="flex items-center justify-between text-sm py-2 px-3 rounded-lg ${isToday ? 'bg-jubilee-navy-light text-jubilee-navy font-bold border border-jubilee-navy/20' : 'text-slate-600'}">
-            <span>${dayName} ${isToday ? '<span class="text-xs bg-jubilee-navy text-white px-2 py-0.5 rounded-full ml-1">Today</span>' : ''}</span>
-            <span>${timeStr}</span>
-          </div>
-        `;
-      });
-      hoursList.innerHTML = hoursHtml;
-    }
+        const row = document.createElement('div');
+        row.className = `flex items-center justify-between text-sm py-2 px-3 rounded-lg ${
+          isToday
+            ? 'bg-jubilee-navy-light text-jubilee-navy font-bold border border-jubilee-navy/20'
+            : 'text-slate-600'
+        }`;
 
+        const leftSpan = document.createElement('span');
+        leftSpan.textContent = dayName;
+
+        if (isToday) {
+          const badge = document.createElement('span');
+          badge.className = 'text-xs bg-jubilee-navy text-white px-2 py-0.5 rounded-full ml-1.5 font-semibold';
+          badge.textContent = 'Today';
+          leftSpan.appendChild(badge);
+        }
+
+        const rightSpan = document.createElement('span');
+        rightSpan.textContent = timeStr;
+
+        row.append(leftSpan, rightSpan);
+        fragment.appendChild(row);
+      });
+
+      hoursList.replaceChildren(fragment);
+    }
+  }
+
+  function openDrawer(rawTenant: any) {
+    if (!panel || !backdrop) return;
+    populateDrawerUI(rawTenant);
     panel.classList.add('open');
     backdrop.classList.add('open');
     panel.setAttribute('aria-hidden', 'false');
