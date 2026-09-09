@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
+import StatsStrip from '../components/StatsStrip.astro';
+import DirectorySection from '../components/DirectorySection.astro';
+import CTA from '../components/CTA.astro';
+import { api } from '../lib/api-client';
+
+const categories = await api.getCategories();
+const { tenants } = await api.getTenants();
+---
+
+<Layout
+  title="Jubilee Square — Mall Directory, Food & Education Hub AMK"
+  description="Explore all 23 stores, dining outlets, tuition & music academies at Jubilee Square, Ang Mo Kio. 2 mins from MRT."
+  activePage="home"
+>
+  <Hero />
+  <Marquee />
+  <StatsStrip />
+  <DirectorySection categories={categories} tenants={tenants} />
+  <CTA />
+</Layout>

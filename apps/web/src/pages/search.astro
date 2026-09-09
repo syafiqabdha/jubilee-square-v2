@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DirectorySection from '../components/DirectorySection.astro';
+import CTA from '../components/CTA.astro';
+import { api } from '../lib/api-client';
+
+export const prerender = false;
+
+const q = Astro.url.searchParams.get('q') || '';
+const categories = await api.getCategories();
+const { tenants } = await api.getTenants();
+---
+
+<Layout
+  title={`Search "${q}" — Jubilee Square Directory`}
+  description="Search stores, dining concepts, and services at Jubilee Square."
+  activePage="directory"
+>
+  <div style="padding-top: 100px;"></div>
+  <DirectorySection
+    categories={categories}
+    tenants={tenants}
+    initialSearch={q}
+  />
+  <CTA />
+</Layout>

@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DirectorySection from '../components/DirectorySection.astro';
+import CTA from '../components/CTA.astro';
+import { api } from '../lib/api-client';
+
+const categories = await api.getCategories();
+const { tenants } = await api.getTenants();
+---
+
+<Layout
+  title="Tenant Directory — Jubilee Square Ang Mo Kio"
+  description="Search and filter through 23 stores, enrichment centres, hair salons, and dining spots at Jubilee Square AMK."
+  activePage="directory"
+>
+  <div style="padding-top: 100px;"></div>
+  <DirectorySection categories={categories} tenants={tenants} />
+  <CTA />
+</Layout>

@@ -1,0 +1,95 @@
+---
+import { getCatalogRepository } from '@jubilee/db';
+
+const repo = getCatalogRepository();
+const slides = await repo.getSignageSlides('all');
+const directory = await repo.getSignageDirectory();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Signage & Wayfinding Kiosk — Jubilee Square</title>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col font-sans">
+  <header class="bg-slate-900 border-b border-slate-800 p-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded bg-amber-500 flex items-center justify-center font-bold text-slate-950">
+          📺
+        </div>
+        <div>
+          <h1 class="text-sm font-bold tracking-wider uppercase">Jubilee Square — Digital Signage Controller</h1>
+          <p class="text-[11px] text-slate-400">7 On-Site Units Deployed • Sync Rate: 60s</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-emerald-400 font-bold">API Feed Online</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto p-6 w-full space-y-8">
+    <!-- Active Slides Section -->
+    <section>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-amber-400">Rotating Promotional Slides ({slides.length})</h2>
+        <code class="text-xs bg-slate-900 px-3 py-1 rounded text-slate-300 border border-slate-800">
+          GET /api/v1/signage/featured
+        </code>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {slides.map((s) => (
+          <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between text-[11px] text-slate-400 mb-2">
+                <span class="bg-slate-800 px-2 py-0.5 rounded font-mono">Priority: {s.priority}</span>
+                <span>⏱ {s.durationSeconds}s</span>
+              </div>
+              <h3 class="font-bold text-base text-white">{s.title}</h3>
+              <p class="text-xs text-amber-400/90 mt-1 font-semibold">{s.headline}</p>
+              <p class="text-xs text-slate-400 mt-1">{s.subheadline}</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-500">
+              <span>Targets: {s.targetLocations.join(', ')}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Signage Directory Feed Section -->
+    <section>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-amber-400">Wayfinding Kiosk Directory Grouping</h2>
+        <code class="text-xs bg-slate-900 px-3 py-1 rounded text-slate-300 border border-slate-800">
+          GET /api/v1/signage/directory
+        </code>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {directory.map((floor) => (
+          <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5">
+            <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800">
+              <span class="font-black text-amber-400 text-lg">{floor.floorLevel}</span>
+              <span class="text-xs text-slate-300 font-semibold">{floor.tenants.length} Stores</span>
+            </div>
+            <ul class="space-y-2 text-xs">
+              {floor.tenants.map((t) => (
+                <li class="flex justify-between items-center py-1 border-b border-slate-800/40 last:border-0">
+                  <span class="text-slate-200 font-medium truncate mr-2">{t.tenantName}</span>
+                  <span class="font-mono text-slate-400 text-[10px] shrink-0">{t.unitNumber}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</body>
+</html>

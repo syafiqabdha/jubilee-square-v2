@@ -1,0 +1,159 @@
+---
+---
+
+<div class="drawer-overlay" id="drawer-overlay" role="presentation"></div>
+
+<aside class="drawer" id="tenant-drawer" role="dialog" aria-modal="true" aria-label="Tenant details" aria-hidden="true">
+  <div class="drawer-handle" aria-hidden="true"></div>
+  <div class="drawer-header">
+    <div class="drawer-header-top">
+      <div>
+        <div class="drawer-cat" id="drawer-cat">Category</div>
+        <h2 class="drawer-name text-balance" id="drawer-name">Tenant Name</h2>
+      </div>
+      <button class="drawer-close" id="drawer-close" aria-label="Close tenant details">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
+          <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="drawer-meta" id="drawer-meta">
+      <span class="meta-tag" id="drawer-unit">Unit</span>
+      <span class="meta-tag" id="drawer-floor">Floor</span>
+    </div>
+  </div>
+
+  <div class="drawer-body">
+    <p class="drawer-section-title">About</p>
+    <p class="drawer-desc text-pretty" id="drawer-desc"></p>
+
+    <p class="drawer-section-title">Contact &amp; Information</p>
+    <div class="drawer-details-grid" id="drawer-details">
+      <!-- Injected by script -->
+    </div>
+
+    <div class="drawer-hours">
+      <p class="drawer-section-title">Opening Hours</p>
+      <div class="drawer-hours-list" id="drawer-hours-list">
+        <!-- Injected by script -->
+      </div>
+    </div>
+
+    <div class="drawer-cta">
+      <a href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814" target="_blank" rel="noopener noreferrer" class="drawer-btn-primary" id="drawer-btn-directions">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2C5.24 2 3 4.24 3 7c0 4.17 5 9 5 9s5-4.83 5-9c0-2.76-2.24-5-5-5zm0 6.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/></svg>
+        Get Directions
+      </a>
+      <a href="tel:+6564512388" class="drawer-btn-secondary" id="drawer-btn-call">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3a1 1 0 011-1h2l1.5 3.5-1.5 1 2.5 2.5 1-1.5L13 9v2a1 1 0 01-1 1C6 12 4 7 3 3z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="drawer-phone-text">Call Now</span>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<script>
+  const overlay = document.getElementById('drawer-overlay');
+  const drawer = document.getElementById('tenant-drawer');
+  const closeBtn = document.getElementById('drawer-close');
+  const catEl = document.getElementById('drawer-cat');
+  const nameEl = document.getElementById('drawer-name');
+  const unitEl = document.getElementById('drawer-unit');
+  const floorEl = document.getElementById('drawer-floor');
+  const descEl = document.getElementById('drawer-desc');
+  const detailsEl = document.getElementById('drawer-details');
+  const hoursEl = document.getElementById('drawer-hours-list');
+  const callBtn = document.getElementById('drawer-btn-call') as HTMLAnchorElement | null;
+  const phoneText = document.getElementById('drawer-phone-text');
+
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const todayIndex = new Date().getDay();
+
+  function openDrawer(tenant: any) {
+    if (!drawer || !overlay) return;
+
+    if (catEl) catEl.textContent = tenant.categoryName || 'Directory';
+    if (nameEl) nameEl.textContent = tenant.name;
+    if (unitEl) unitEl.textContent = tenant.unitNumber;
+    if (floorEl) floorEl.textContent = `Level ${tenant.floorLevel?.replace('L', '') || tenant.floorLevel}`;
+    if (descEl) descEl.textContent = tenant.description || tenant.summary;
+
+    if (callBtn) {
+      if (tenant.phone) {
+        callBtn.href = `tel:${tenant.phone.replace(/\s+/g, '')}`;
+        callBtn.style.display = 'inline-flex';
+        if (phoneText) phoneText.textContent = tenant.phone;
+      } else {
+        callBtn.style.display = 'none';
+      }
+    }
+
+    if (detailsEl) {
+      let detailsHtml = '';
+      if (tenant.phone) {
+        detailsHtml += `<div class="detail-item"><span class="detail-label">Phone</span><span class="detail-val">${tenant.phone}</span></div>`;
+      }
+      if (tenant.email) {
+        detailsHtml += `<div class="detail-item"><span class="detail-label">Email</span><span class="detail-val">${tenant.email}</span></div>`;
+      }
+      if (tenant.website) {
+        detailsHtml += `<div class="detail-item"><span class="detail-label">Website</span><a href="${tenant.website}" target="_blank" rel="noopener" class="detail-val" style="color:var(--accent);text-decoration:underline;">Visit Site</a></div>`;
+      }
+      if (tenant.amenities && tenant.amenities.length > 0) {
+        const amenityNames = tenant.amenities.map((a: any) => a.name).join(', ');
+        detailsHtml += `<div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">Amenities</span><span class="detail-val">${amenityNames}</span></div>`;
+      }
+      detailsEl.innerHTML = detailsHtml || '<div class="detail-item"><span class="detail-val">Standard Mall Facilities</span></div>';
+    }
+
+    if (hoursEl) {
+      let hoursHtml = '';
+      DAYS.forEach((dayName, idx) => {
+        const isToday = idx === todayIndex;
+        const tenantHour = tenant.operatingHours?.find((h: any) => h.dayOfWeek === idx);
+        const timeStr = tenantHour ? `${tenantHour.openTime?.slice(0, 5)} – ${tenantHour.closeTime?.slice(0, 5)}` : '10:00 – 21:30';
+
+        hoursHtml += `
+          <div class="hours-row ${isToday ? 'current-day' : ''}">
+            <span class="day-name">${dayName} ${isToday ? '<span class="today-badge">Today</span>' : ''}</span>
+            <span class="day-hours">${timeStr}</span>
+          </div>
+        `;
+      });
+      hoursEl.innerHTML = hoursHtml;
+    }
+
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    // Update URL hash
+    history.replaceState(null, '', `#tenant-${tenant.slug}`);
+  }
+
+  function closeDrawer() {
+    if (!drawer || !overlay) return;
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+
+    if (window.location.hash.startsWith('#tenant-')) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }
+
+  window.addEventListener('open-tenant-drawer', ((e: CustomEvent) => {
+    openDrawer(e.detail);
+  }) as EventListener);
+
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay?.addEventListener('click', closeDrawer);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer?.classList.contains('open')) {
+      closeDrawer();
+    }
+  });
+</script>

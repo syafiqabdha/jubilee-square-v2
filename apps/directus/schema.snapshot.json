@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "directus": "11.4.1",
+  "collections": [
+    {
+      "collection": "categories",
+      "meta": {
+        "collection": "categories",
+        "icon": "category",
+        "note": "Mall tenant categories (Dine, Learn, Relax, Shop, Services)",
+        "display_template": "{{name}} ({{short_code}})",
+        "hidden": false,
+        "singleton": false,
+        "sort_field": "display_order"
+      },
+      "schema": {
+        "name": "categories"
+      }
+    },
+    {
+      "collection": "tenants",
+      "meta": {
+        "collection": "tenants",
+        "icon": "storefront",
+        "note": "23 Mall Stores and Educational Centres",
+        "display_template": "{{name}} [{{floor_level}} {{unit_number}}]",
+        "hidden": false,
+        "singleton": false,
+        "sort_field": "display_order"
+      },
+      "schema": {
+        "name": "tenants"
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "meta": {
+        "collection": "operating_hours",
+        "icon": "schedule",
+        "note": "Daily store operating hours",
+        "display_template": "{{day_name}}: {{open_time}} - {{close_time}}",
+        "hidden": false,
+        "singleton": false
+      },
+      "schema": {
+        "name": "operating_hours"
+      }
+    },
+    {
+      "collection": "promotions",
+      "meta": {
+        "collection": "promotions",
+        "icon": "local_offer",
+        "note": "Special store deals and mall-wide campaigns",
+        "display_template": "{{title}} ({{badge_text}})",
+        "hidden": false,
+        "singleton": false,
+        "sort_field": "display_order"
+      },
+      "schema": {
+        "name": "promotions"
+      }
+    },
+    {
+      "collection": "amenities",
+      "meta": {
+        "collection": "amenities",
+        "icon": "room_service",
+        "note": "Store and mall amenities",
+        "display_template": "{{name}}",
+        "hidden": false,
+        "singleton": false
+      },
+      "schema": {
+        "name": "amenities"
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "meta": {
+        "collection": "signage_slides",
+        "icon": "tv",
+        "note": "Digital display slides across 7 units on Levels 1–4",
+        "display_template": "{{title}} [Priority {{priority}}]",
+        "hidden": false,
+        "singleton": false,
+        "sort_field": "priority"
+      },
+      "schema": {
+        "name": "signage_slides"
+      }
+    }
+  ],
+  "fields": [
+    {
+      "collection": "categories",
+      "field": "id",
+      "type": "uuid",
+      "meta": { "hidden": true, "readonly": true }
+    },
+    {
+      "collection": "categories",
+      "field": "slug",
+      "type": "string",
+      "meta": { "interface": "input", "required": true }
+    },
+    {
+      "collection": "categories",
+      "field": "name",
+      "type": "string",
+      "meta": { "interface": "input", "required": true }
+    },
+    {
+      "collection": "categories",
+      "field": "short_code",
+      "type": "string",
+      "meta": { "interface": "input", "required": true }
+    },
+    {
+      "collection": "categories",
+      "field": "description",
+      "type": "text",
+      "meta": { "interface": "input-multiline" }
+    },
+    {
+      "collection": "categories",
+      "field": "icon",
+      "type": "string",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "categories",
+      "field": "accent_color",
+      "type": "string",
+      "meta": { "interface": "input-color" }
+    },
+    {
+      "collection": "categories",
+      "field": "display_order",
+      "type": "integer",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "tenants",
+      "field": "id",
+      "type": "uuid",
+      "meta": { "hidden": true, "readonly": true }
+    },
+    {
+      "collection": "tenants",
+      "field": "name",
+      "type": "string",
+      "meta": { "interface": "input", "required": true }
+    },
+    {
+      "collection": "tenants",
+      "field": "slug",
+      "type": "string",
+      "meta": { "interface": "input", "required": true }
+    },
+    {
+      "collection": "tenants",
+      "field": "category_id",
+      "type": "uuid",
+      "meta": { "interface": "select-dropdown-m2o", "required": true }
+    },
+    {
+      "collection": "tenants",
+      "field": "floor_level",
+      "type": "string",
+      "meta": {
+        "interface": "select-dropdown",
+        "options": {
+          "choices": [
+            { "text": "Level 1", "value": "L1" },
+            { "text": "Level 2", "value": "L2" },
+            { "text": "Level 3", "value": "L3" },
+            { "text": "Level 4", "value": "L4" },
+            { "text": "Basement 1", "value": "B1" }
+          ]
+        }
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "unit_number",
+      "type": "string",
+      "meta": { "interface": "input", "required": true }
+    },
+    {
+      "collection": "tenants",
+      "field": "summary",
+      "type": "string",
+      "meta": { "interface": "input-multiline", "required": true }
+    },
+    {
+      "collection": "tenants",
+      "field": "description",
+      "type": "text",
+      "meta": { "interface": "input-rich-text-html" }
+    },
+    {
+      "collection": "tenants",
+      "field": "phone",
+      "type": "string",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "tenants",
+      "field": "whatsapp",
+      "type": "string",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "tenants",
+      "field": "website",
+      "type": "string",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "tenants",
+      "field": "logo_url",
+      "type": "string",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "tenants",
+      "field": "hero_image_url",
+      "type": "string",
+      "meta": { "interface": "input" }
+    },
+    {
+      "collection": "tenants",
+      "field": "tags",
+      "type": "json",
+      "meta": { "interface": "tags" }
+    },
+    {
+      "collection": "tenants",
+      "field": "metadata",
+      "type": "json",
+      "meta": { "interface": "input-code", "options": { "language": "json" } }
+    },
+    {
+      "collection": "tenants",
+      "field": "is_active",
+      "type": "boolean",
+      "meta": { "interface": "boolean" }
+    },
+    {
+      "collection": "tenants",
+      "field": "is_featured",
+      "type": "boolean",
+      "meta": { "interface": "boolean" }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "tenants",
+      "field": "category_id",
+      "related_collection": "categories",
+      "schema": {
+        "table": "tenants",
+        "column": "category_id",
+        "foreign_key_table": "categories",
+        "foreign_key_column": "id",
+        "on_delete": "RESTRICT"
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "tenant_id",
+      "related_collection": "tenants",
+      "schema": {
+        "table": "operating_hours",
+        "column": "tenant_id",
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id",
+        "on_delete": "CASCADE"
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "tenant_id",
+      "related_collection": "tenants",
+      "schema": {
+        "table": "promotions",
+        "column": "tenant_id",
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id",
+        "on_delete": "SET NULL"
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "tenant_id",
+      "related_collection": "tenants",
+      "schema": {
+        "table": "signage_slides",
+        "column": "tenant_id",
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id",
+        "on_delete": "SET NULL"
+      }
+    }
+  ]
+}

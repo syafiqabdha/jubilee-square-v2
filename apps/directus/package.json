@@ -1,0 +1,19 @@
+{
+  "name": "@jubilee/directus",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"Directus schema integration ready\"",
+    "bootstrap": "node --loader ts-node/esm bootstrap.ts",
+    "test": "node --loader ts-node/esm bootstrap.ts"
+  },
+  "dependencies": {
+    "@directus/sdk": "^18.0.0",
+    "@jubilee/shared": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

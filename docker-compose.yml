@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: jubilee-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-jubilee_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-jubilee_secure_pass_2026}
+      POSTGRES_DB: ${DB_NAME:-jubilee_square_v2}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-jubilee_admin} -d ${DB_NAME:-jubilee_square_v2}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jubilee-net
+
+  directus:
+    image: directus/directus:11.4.1
+    container_name: jubilee-directus
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${DIRECTUS_PORT:-8055}:8055"
+    environment:
+      KEY: "${KEY:-32-char-random-key-jubilee-sq-v2}"
+      SECRET: "${SECRET:-32-char-random-secret-jubilee-sq-v2}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@jubileesq.com.sg}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-JubileeAdmin2026!}"
+      DB_CLIENT: "pg"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_DATABASE: "${DB_NAME:-jubilee_square_v2}"
+      DB_USER: "${DB_USER:-jubilee_admin}"
+      DB_PASSWORD: "${DB_PASSWORD:-jubilee_secure_pass_2026}"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "*"
+      PUBLIC_URL: "${DIRECTUS_PUBLIC_URL:-http://localhost:8055}"
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_extensions:/directus/extensions
+    networks:
+      - jubilee-net
+
+  catalog-api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    container_name: jubilee-catalog-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://${DB_USER:-jubilee_admin}:${DB_PASSWORD:-jubilee_secure_pass_2026}@postgres:5432/${DB_NAME:-jubilee_square_v2}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - jubilee-net
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+    container_name: jubilee-web
+    restart: unless-stopped
+    depends_on:
+      catalog-api:
+        condition: service_healthy
+    ports:
+      - "${WEB_PORT:-4321}:4321"
+    environment:
+      NODE_ENV: production
+      PUBLIC_API_URL: http://catalog-api:3000
+      PUBLIC_DIRECTUS_URL: http://directus:8055
+      PORT: 4321
+      HOST: 0.0.0.0
+    networks:
+      - jubilee-net
+
+volumes:
+  postgres_data:
+    driver: local
+  directus_uploads:
+    driver: local
+  directus_extensions:
+    driver: local
+
+networks:
+  jubilee-net:
+    driver: bridge

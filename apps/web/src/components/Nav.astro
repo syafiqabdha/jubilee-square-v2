@@ -1,0 +1,79 @@
+---
+interface Props {
+  activePage?: string;
+}
+
+const { activePage = 'home' } = Astro.props;
+---
+
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="Jubilee Square home">
+      <div class="nav-logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
+          <rect x="2" y="2" width="5" height="5" rx="1" fill="#0a0a0a"/>
+          <rect x="9" y="2" width="5" height="5" rx="1" fill="#0a0a0a"/>
+          <rect x="2" y="9" width="5" height="5" rx="1" fill="#0a0a0a"/>
+          <rect x="9" y="9" width="5" height="5" rx="1" fill="#0a0a0a" opacity="0.4"/>
+        </svg>
+      </div>
+      Jubilee Square
+    </a>
+    <div class="nav-links" role="list">
+      <a href="/directory" class={`nav-link ${activePage === 'directory' ? 'active' : ''}`} role="listitem">Directory</a>
+      <a href="/dine" class={`nav-link ${activePage === 'dine' ? 'active' : ''}`} role="listitem">Dine</a>
+      <a href="/learn" class={`nav-link ${activePage === 'learn' ? 'active' : ''}`} role="listitem">Learn</a>
+      <a href="/relax" class={`nav-link ${activePage === 'relax' ? 'active' : ''}`} role="listitem">Relax</a>
+      <a href="/location" class={`nav-link ${activePage === 'location' ? 'active' : ''}`} role="listitem">Location</a>
+    </div>
+    <a href="tel:+6564512388" class="nav-cta">+65 6451 2388</a>
+    <button class="nav-hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
+  <a href="/directory" class="mobile-menu-link">Directory</a>
+  <a href="/dine" class="mobile-menu-link">Dine &amp; Food</a>
+  <a href="/learn" class="mobile-menu-link">Learn &amp; Enrichment</a>
+  <a href="/relax" class="mobile-menu-link">Relax &amp; Wellness</a>
+  <a href="/shop" class="mobile-menu-link">Shop &amp; Retail</a>
+  <a href="/services" class="mobile-menu-link">Healthcare &amp; Services</a>
+  <a href="/location" class="mobile-menu-link">Location &amp; Parking</a>
+  <a href="tel:+6564512388" class="btn-primary" style="margin-top:24px;width:100%;justify-content:center;">Call Concierge</a>
+</div>
+
+<script>
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  function toggleMenu() {
+    const isOpen = mobileMenu?.classList.contains('open');
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  function openMenu() {
+    mobileMenu?.classList.add('open');
+    hamburgerBtn?.setAttribute('aria-expanded', 'true');
+    mobileMenu?.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileMenu?.classList.remove('open');
+    hamburgerBtn?.setAttribute('aria-expanded', 'false');
+    mobileMenu?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  hamburgerBtn?.addEventListener('click', toggleMenu);
+  mobileMenu?.querySelectorAll('.mobile-menu-link').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+</script>

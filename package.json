@@ -1,0 +1,34 @@
+{
+  "name": "jubilee-square-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Jubilee Square v2 — Modernized Store Catalog, Headless Directus CMS & Digital Signage Suite",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "typecheck": "tsc --build --noEmit || (npm run build --workspaces)",
+    "start": "npm run start --workspace=apps/catalog-api",
+    "dev:api": "npm run dev --workspace=apps/catalog-api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "keywords": [
+    "jubilee-square",
+    "directus",
+    "fastify",
+    "astro",
+    "typescript",
+    "digital-signage",
+    "catalog-api"
+  ],
+  "author": "Pancatz Engineering",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}

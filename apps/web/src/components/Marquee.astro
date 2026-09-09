@@ -1,0 +1,33 @@
+---
+interface Props {
+  items?: string[];
+}
+
+const defaultItems = [
+  'Bantianyao Grilled Fish',
+  'AGrader Learning Centre',
+  'Ya Kun Kaya Toast',
+  'My Drum School',
+  'Ashi Foot Reflexology',
+  'Jeong-In Taekwondo',
+  'Subway',
+  'Artlette Art Studio',
+  'Tianyi InMed TCM Clinic',
+  'LCentral English',
+  '7 Studio Hair Salon',
+  'The Chinese Wedding Shop',
+];
+
+const { items = defaultItems } = Astro.props;
+---
+
+<div class="marquee-section" aria-hidden="true">
+  <div class="marquee-track">
+    {items.concat(items).map((item) => (
+      <div class="marquee-item">
+        <span>{item}</span>
+        <span class="marquee-dot"></span>
+      </div>
+    ))}
+  </div>
+</div>

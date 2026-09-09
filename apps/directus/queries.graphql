@@ -1,0 +1,146 @@
+# ============================================================================
+# Jubilee Square v2: Directus 11 Headless CMS GraphQL Query Suite
+# ============================================================================
+
+# 1. Fetch Mall Categories with Nested Active Tenants
+query GetCategoriesWithTenants {
+  categories(sort: ["display_order"]) {
+    id
+    slug
+    name
+    short_code
+    icon
+    accent_color
+    description
+    tenants(filter: { is_active: { _eq: true } }, sort: ["display_order"]) {
+      id
+      slug
+      name
+      floor_level
+      unit_number
+      summary
+      logo_url
+      phone
+      whatsapp
+      is_featured
+    }
+  }
+}
+
+# 2. Store Details Page Query by Slug (includes Operating Hours & Active Deals)
+query GetStoreBySlug($slug: String!) {
+  tenants(filter: { slug: { _eq: $slug }, is_active: { _eq: true } }, limit: 1) {
+    id
+    slug
+    name
+    floor_level
+    unit_number
+    summary
+    description
+    phone
+    whatsapp
+    email
+    website
+    logo_url
+    hero_image_url
+    gallery
+    tags
+    metadata
+    is_featured
+    category_id {
+      name
+      slug
+      accent_color
+      icon
+    }
+    operating_hours(sort: ["day_of_week"]) {
+      day_of_week
+      day_name
+      open_time
+      close_time
+      is_closed
+      special_notes
+    }
+    promotions(filter: { is_active: { _eq: true } }, sort: ["display_order"]) {
+      id
+      title
+      slug
+      summary
+      banner_url
+      badge_text
+      start_date
+      end_date
+    }
+  }
+}
+
+# 3. Digital Signage Rotating Playlist Feed (Filtered by Hardware Display Location)
+query GetDigitalSignagePlaylist($location: String!) {
+  signage_slides(
+    filter: {
+      is_active: { _eq: true }
+      _or: [
+        { target_locations: { _contains: "all" } }
+        { target_locations: { _contains: $location } }
+      ]
+    }
+    sort: ["priority"]
+  ) {
+    id
+    title
+    slide_type
+    media_url
+    duration_seconds
+    headline
+    subheadline
+    target_locations
+    tenant_id {
+      name
+      slug
+      unit_number
+      floor_level
+    }
+  }
+}
+
+# 4. Wayfinding Interactive Kiosk Feed (Grouped by Floor)
+query GetWayfindingDirectory {
+  tenants(
+    filter: { is_active: { _eq: true } }
+    sort: ["floor_level", "unit_number"]
+  ) {
+    name
+    slug
+    floor_level
+    unit_number
+    summary
+    logo_url
+    phone
+    category_id {
+      name
+      slug
+      icon
+    }
+  }
+}
+
+# 5. Live Promotions & Special Events
+query GetActivePromotions {
+  promotions(filter: { is_active: { _eq: true } }, sort: ["display_order"]) {
+    id
+    title
+    slug
+    summary
+    description
+    banner_url
+    badge_text
+    start_date
+    end_date
+    tenant_id {
+      name
+      slug
+      unit_number
+      floor_level
+    }
+  }
+}

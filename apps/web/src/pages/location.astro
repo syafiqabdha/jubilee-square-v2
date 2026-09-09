@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<Layout
+  title="Getting Here & Parking — Jubilee Square AMK"
+  description="Directions to Jubilee Square at 61 Ang Mo Kio Ave 8, Singapore. MRT, bus guides, and car park rates."
+  activePage="location"
+>
+  <div style="padding-top: 120px; max-width: 900px; margin: 0 auto; padding-left: 20px; padding-right: 20px; padding-bottom: 80px;">
+    <div class="section-label" style="text-align: center; margin-bottom: 12px;">Getting Here</div>
+    <h1 class="hero-h1" style="font-size: 2.5rem; text-align: center; margin-bottom: 24px;">
+      Location &amp; <em>Transit Guide</em>
+    </h1>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; margin-bottom: 32px;">
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--accent);">Address</h2>
+      <p style="font-size: 1.1rem; line-height: 1.6; color: var(--ink); margin-bottom: 20px;">
+        <strong>Jubilee Square</strong><br />
+        61 Ang Mo Kio Ave 8<br />
+        Singapore 569814
+      </p>
+
+      <a
+        href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary"
+        style="display: inline-flex;"
+      >
+        Open in Google Maps
+      </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 32px;">
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🚇 By MRT</h3>
+        <p style="color: var(--muted); line-height: 1.6;">
+          <strong>Ang Mo Kio MRT Station (NS16)</strong><br />
+          Take <strong>Exit C</strong> and walk sheltered for 2 minutes past the bus interchange directly to Jubilee Square.
+        </p>
+      </div>
+
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🚌 By Bus</h3>
+        <p style="color: var(--muted); line-height: 1.6;">
+          <strong>Ang Mo Kio Bus Interchange:</strong><br />
+          Bus services: 22, 24, 25, 73, 74, 76, 86, 88, 130, 132, 133, 136, 138, 166, 169, 261, 262, 265, 268, 269.
+        </p>
+      </div>
+
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;" id="parking">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🚗 Car Park</h3>
+        <p style="color: var(--muted); line-height: 1.6;">
+          Sheltered basement parking available with EPS gantries.<br />
+          <strong>Mon – Sat (7am – 5pm):</strong> $1.20 / 30 mins<br />
+          <strong>After 5pm &amp; Sun/PH:</strong> $1.50 per entry
+        </p>
+      </div>
+    </div>
+  </div>
+  <CTA />
+</Layout>

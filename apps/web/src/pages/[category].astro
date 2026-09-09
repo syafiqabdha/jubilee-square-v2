@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DirectorySection from '../components/DirectorySection.astro';
+import CTA from '../components/CTA.astro';
+import { api } from '../lib/api-client';
+
+export const prerender = false;
+
+const { category: categorySlug } = Astro.params;
+
+if (!categorySlug) {
+  return Astro.redirect('/directory');
+}
+
+const categories = await api.getCategories();
+const currentCategory = categories.find((c) => c.slug === categorySlug);
+
+if (!currentCategory) {
+  return Astro.redirect('/directory');
+}
+
+const { tenants } = await api.getTenantsByCategory(categorySlug);
+const { tenants: allTenants } = await api.getTenants();
+---
+
+<Layout
+  title={`${currentCategory.name} — Jubilee Square Directory`}
+  description={`Browse ${currentCategory.name} outlets at Jubilee Square AMK: ${currentCategory.description}`}
+  activePage={categorySlug}
+>
+  <div style="padding-top: 100px;"></div>
+  <DirectorySection
+    categories={categories}
+    tenants={allTenants}
+    initialCategory={categorySlug}
+  />
+  <CTA />
+</Layout>

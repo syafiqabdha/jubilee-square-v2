@@ -1,0 +1,223 @@
+---
+import type { Category, Tenant } from '@jubilee/shared';
+
+interface Props {
+  categories: Category[];
+  tenants: Tenant[];
+  initialCategory?: string;
+  initialSearch?: string;
+}
+
+const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Astro.props;
+---
+
+<section class="directory" id="directory" aria-labelledby="directory-heading">
+  <div class="directory-header">
+    <div class="section-label" aria-hidden="true">Directory</div>
+    <h2 class="directory-h2 text-balance" id="directory-heading">Find what<br>you're looking for.</h2>
+    <p class="directory-desc text-pretty">Every shop, dining spot, enrichment centre, and clinic in Jubilee Square — searchable and filterable.</p>
+  </div>
+
+  <div class="search-filter" role="search">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <circle cx="7.5" cy="7.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M12 12l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input
+        type="search"
+        id="search-input"
+        class="search-input"
+        placeholder="Search tenants, categories, or keywords..."
+        aria-label="Search tenants"
+        value={initialSearch}
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="search-clear" id="search-clear" aria-label="Clear search" tabindex="-1">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="pills-wrap" id="pills-wrap" role="group" aria-label="Filter by category">
+      <button
+        class={`pill ${initialCategory === 'all' ? 'active' : ''}`}
+        data-category="all"
+        type="button"
+      >
+        All <span class="pill-count">{tenants.length}</span>
+      </button>
+      {categories.map((cat) => {
+        const count = tenants.filter((t) => t.categorySlug === cat.slug).length;
+        return (
+          <button
+            class={`pill ${initialCategory === cat.slug ? 'active' : ''}`}
+            data-category={cat.slug}
+            type="button"
+          >
+            {cat.name} <span class="pill-count">{count}</span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+
+  <div class="results-summary" id="results-summary" aria-live="polite" aria-atomic="true">
+    Showing {tenants.length} tenants
+  </div>
+
+  <div class="tenant-grid" id="tenant-grid" role="list" aria-label="Tenant listings">
+    {tenants.map((t) => (
+      <article
+        class="tenant-card"
+        data-id={t.id}
+        data-slug={t.slug}
+        data-category={t.categorySlug}
+        data-search={`${t.name} ${t.summary} ${t.unitNumber} ${t.floorLevel} ${t.categoryName} ${(t.tags || []).join(' ')}`.toLowerCase()}
+        role="listitem"
+        tabindex="0"
+      >
+        <div class="card-header">
+          <span class="card-cat" style={`--cat-color: ${t.categoryColor || '#c9f23e'}`}>
+            {t.categoryName}
+          </span>
+          <span class="card-unit">{t.floorLevel} · {t.unitNumber}</span>
+        </div>
+        <h3 class="card-name">{t.name}</h3>
+        <p class="card-summary text-pretty">{t.summary}</p>
+        <div class="card-footer">
+          <span class="card-cta">
+            View details
+            <svg viewBox="0 0 12 12" fill="none" width="12" height="12">
+              <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          {t.isFeatured && <span class="card-badge">Featured</span>}
+        </div>
+      </article>
+    ))}
+
+    <div class="empty-state" id="empty-state" role="status" style="display: none;">
+      <div style="font-size:3rem;opacity:0.3;margin-bottom:16px" aria-hidden="true">◎</div>
+      <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:8px;">No tenants found</h3>
+      <p style="color:var(--muted);margin-bottom:16px;">Try a different search keyword or category filter.</p>
+      <button class="btn-secondary" id="reset-filters-btn" type="button" style="margin:0 auto;display:inline-flex">
+        Reset Filters
+      </button>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ tenantsData: tenants }}>
+  const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear');
+  const pillsWrap = document.getElementById('pills-wrap');
+  const resultsSummary = document.getElementById('results-summary');
+  const emptyState = document.getElementById('empty-state');
+  const tenantCards = Array.from(document.querySelectorAll('.tenant-card'));
+  const resetBtn = document.getElementById('reset-filters-btn');
+
+  let activeCategory = 'all';
+  let searchQuery = searchInput?.value || '';
+
+  function filterCards() {
+    let visibleCount = 0;
+    const q = (searchInput?.value || '').trim().toLowerCase();
+
+    tenantCards.forEach((card) => {
+      const cardCategory = card.getAttribute('data-category');
+      const cardSearch = card.getAttribute('data-search') || '';
+
+      const matchCategory = activeCategory === 'all' || cardCategory === activeCategory;
+      const matchSearch = !q || cardSearch.includes(q);
+
+      if (matchCategory && matchSearch) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (resultsSummary) {
+      resultsSummary.textContent = `Showing ${visibleCount} ${visibleCount === 1 ? 'tenant' : 'tenants'}`;
+    }
+
+    if (emptyState) {
+      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    if (searchClear) {
+      searchClear.style.display = q.length > 0 ? 'flex' : 'none';
+    }
+  }
+
+  // Category pills click handler
+  pillsWrap?.addEventListener('click', (e) => {
+    const target = e.target.closest('.pill');
+    if (!target) return;
+
+    pillsWrap.querySelectorAll('.pill').forEach((p) => p.classList.remove('active'));
+    target.classList.add('active');
+    activeCategory = target.getAttribute('data-category') || 'all';
+    filterCards();
+  });
+
+  // Search input handler with debounce
+  let debounceTimeout;
+  searchInput?.addEventListener('input', () => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(filterCards, 120);
+  });
+
+  searchClear?.addEventListener('click', () => {
+    if (searchInput) {
+      searchInput.value = '';
+      searchInput.focus();
+      filterCards();
+    }
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    activeCategory = 'all';
+    pillsWrap?.querySelectorAll('.pill').forEach((p) => {
+      p.classList.toggle('active', p.getAttribute('data-category') === 'all');
+    });
+    filterCards();
+  });
+
+  // Card click triggers tenant drawer event
+  tenantCards.forEach((card) => {
+    const slug = card.getAttribute('data-slug');
+    const tenant = tenantsData.find((t) => t.slug === slug);
+
+    card.addEventListener('click', () => {
+      if (tenant) {
+        window.dispatchEvent(new CustomEvent('open-tenant-drawer', { detail: tenant }));
+      }
+    });
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (tenant) {
+          window.dispatchEvent(new CustomEvent('open-tenant-drawer', { detail: tenant }));
+        }
+      }
+    });
+  });
+
+  // Deep linking check on mount
+  const hash = window.location.hash;
+  if (hash.startsWith('#tenant-')) {
+    const slug = hash.replace('#tenant-', '');
+    const tenant = tenantsData.find((t) => t.slug === slug);
+    if (tenant) {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('open-tenant-drawer', { detail: tenant }));
+      }, 300);
+    }
+  }
+</script>
