@@ -5,14 +5,14 @@ import CTA from '../components/CTA.astro';
 
 <Layout
   title="Getting Here & Parking — Jubilee Square AMK"
-  description="Directions to Jubilee Square at 61 Ang Mo Kio Ave 8, Singapore. MRT, bus guides, and car park rates."
+  description="Directions to Jubilee Square at 61 Ang Mo Kio Ave 8, Singapore. MRT, bus guides, car park rates, and building landmark photos."
   activePage="location"
 >
   <div class="max-w-5xl mx-auto px-4 py-12 md:py-16">
     <!-- Header -->
-    <div class="text-center max-w-2xl mx-auto mb-12">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light mb-3">
-        Transit &amp; Parking
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light mb-3">
+        Transit &amp; Parking Guide
       </div>
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
         Getting to <span class="text-jubilee-navy">Jubilee Square</span>
@@ -20,6 +20,96 @@ import CTA from '../components/CTA.astro';
       <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
         Located centrally in Ang Mo Kio Central, directly connected to Ang Mo Kio MRT Station and Bus Interchange via sheltered linkway.
       </p>
+    </div>
+
+    <!-- Building Landmark Visual Arrival Card -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+        <!-- Photo Column -->
+        <div class="lg:col-span-6">
+          <div class="group relative rounded-2xl overflow-hidden bg-slate-900 aspect-[4/3] sm:aspect-[16/10] border border-slate-200 shadow-md">
+            <img
+              src="/images/jubilee_sq_building.jpg"
+              alt="Jubilee Square building exterior facade with colorful geometric triangles and street signage in Ang Mo Kio Central"
+              class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+              loading="eager"
+              width="800"
+              height="600"
+            />
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent pointer-events-none"></div>
+
+            <div class="absolute top-3 left-3 pointer-events-none">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-slate-950/80 backdrop-blur-md border border-white/20 shadow-sm">
+                🏛️ Exterior Landmark
+              </span>
+            </div>
+
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white pointer-events-none">
+              <span class="text-xs font-semibold drop-shadow-sm">
+                61 Ang Mo Kio Ave 8
+              </span>
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-lg">
+                🔍 Click to Enlarge
+              </span>
+            </div>
+
+            <!-- Lightbox trigger -->
+            <button
+              type="button"
+              class="absolute inset-0 w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-jubilee-navy z-10"
+              data-open-building-lightbox
+              aria-label="Click to enlarge building photograph"
+            >
+              <span class="sr-only">Enlarge Jubilee Square building photo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recognition & Directions Details Column -->
+        <div class="lg:col-span-6 flex flex-col justify-center space-y-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-jubilee-red mb-1 block">
+              What to Look For
+            </span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+              Finding Jubilee Square
+            </h2>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              When arriving from Ang Mo Kio Central or the MRT station, look out for the building's iconic features:
+            </p>
+          </div>
+
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-700">
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-jubilee-red-light text-jubilee-red flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">✓</span>
+              <span><strong>Signature Facade:</strong> High-profile white building featuring the vibrant rainbow geometric triangle mosaic and "jubilee sq" logo.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-jubilee-navy-light text-jubilee-navy flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">✓</span>
+              <span><strong>Sheltered Access:</strong> 2 minutes fully sheltered walkway from <strong>Ang Mo Kio MRT Station (Exit C)</strong> and AMK Bus Interchange.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">✓</span>
+              <span><strong>Key Neighbours:</strong> Next to Ang Mo Kio Polyclinic, AMK Public Library, and directly opposite AMK Hub.</span>
+            </li>
+          </ul>
+
+          <div class="pt-2">
+            <a
+              href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-cta-getting-here text-sm py-2.5 px-5 w-full sm:w-auto justify-center"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+              </svg>
+              Open in Google Maps &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Address Card -->
@@ -35,12 +125,17 @@ import CTA from '../components/CTA.astro';
           href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
           target="_blank"
           rel="noopener noreferrer"
-          class="btn-cta-getting-here"
+          class="btn-secondary-outline text-sm py-2 px-4"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
-          </svg>
-          Open Google Maps
+          Google Maps
+        </a>
+        <a
+          href="https://maps.apple.com/?address=61+Ang+Mo+Kio+Ave+8,Singapore"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-secondary-outline text-sm py-2 px-4"
+        >
+          Apple Maps
         </a>
       </div>
     </div>

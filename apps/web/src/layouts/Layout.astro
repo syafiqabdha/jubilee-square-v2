@@ -4,18 +4,21 @@ import Footer from '../components/Footer.astro';
 import TenantDrawer from '../components/TenantDrawer.astro';
 import BottomNav from '../components/BottomNav.astro';
 import SearchModal from '../components/SearchModal.astro';
+import BuildingLightbox from '../components/BuildingLightbox.astro';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
   activePage?: string;
+  image?: string;
 }
 
 const {
   title = 'Jubilee Square — Ang Mo Kio Shopping, Dining & Enrichment Hub',
   description = 'Jubilee Square at 61 Ang Mo Kio Ave 8 offers 23 curated tenants across dining, enrichment tuition, beauty wellness, and healthcare. 2 min from AMK MRT.',
   activePage = 'home',
+  image = '/images/jubilee_sq_building.jpg',
 } = Astro.props;
 ---
 
@@ -29,11 +32,19 @@ const {
   <title>{title}</title>
   <meta name="description" content={description} />
   
-  <!-- Open Graph -->
+  <!-- Open Graph / Social Sharing Previews -->
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_SG" />
+  <meta property="og:image" content={image} />
+  <meta property="og:site_name" content="Jubilee Square" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={image} />
 
   <!-- Typography & Modern Sans Hierarchy (The Sans / Plus Jakarta Sans / Inter Fallback) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,6 +60,7 @@ const {
   
   <TenantDrawer />
   <SearchModal />
+  <BuildingLightbox />
   <BottomNav activePage={activePage} />
   <Footer />
 </body>
