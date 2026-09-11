@@ -58,6 +58,10 @@ jubilee-square-v2/
 - **Real-Time "Open Now" Engine**: Timezone-accurate calculation pegged to `Asia/Singapore` (UTC+8) handling standard hours, scheduled closure days, and overnight rollover.
 - **Predictive Search**: Instant ⌘K search autocomplete matching tenant names, categories, tags, and floor units (`#01-08`).
 - **Interactive Wayfinding Drawer**: Accessible slide-over drawer with floor locators, tap-to-call, Google Maps directions, and 7-day schedule.
+- **Interactive Building Floor Explorer**: Visual level-by-level floor plan navigator (`/location`) with tenant positioning, floor switching, and accessible keyboard controls.
+- **Tactical Arrival Guide**: Step-by-step multi-modal directions (MRT, bus, car, taxi) with landmark callouts and real-time context — integrated into the location page.
+- **Building Landmark Showcase**: Photo-driven landmark gallery with lightbox modal (`BuildingLightbox`) for full-resolution building imagery and ambient hero backdrop.
+- **Location Visual Guide**: Dedicated `/location` page with Google Maps embed, surrounding landmark cards, and wayfinding cues for first-time visitors.
 - **Mobile-First Experience**: Glassmorphism sticky header and fixed bottom navigation dock (`Home`, `Stores`, `Deals`, `Transit`).
 - **Digital Signage Kiosk**: Real-time interactive kiosk controller (`/signage`) with rotating promotions and directory wayfinding.
 - **Standards & Accessibility**: WCAG 2.1 AA compliant color contrast, Schema.org `ShoppingCenter` + `LocalBusiness` JSON-LD structured data, and `prefers-reduced-motion` animations.
@@ -102,5 +106,8 @@ npm run dev:api
 ## Live Deployments
 
 - **Production URL**: [https://jubilee-square-v2.vercel.app](https://jubilee-square-v2.vercel.app)
-- **API Swagger Docs**: `http://localhost:4000/docs`
+- **Location & Wayfinding**: [https://jubilee-square-v2.vercel.app/location](https://jubilee-square-v2.vercel.app/location)
 - **Digital Signage**: [https://jubilee-square-v2.vercel.app/signage](https://jubilee-square-v2.vercel.app/signage)
+- **API Swagger Docs**: `http://localhost:4000/docs`
+
+> Last deployed: `fe243ef` — feat(ui): implement interactive building floor explorer and tactical arrival guide
