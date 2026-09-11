@@ -1,6 +1,4 @@
 ---
-import BuildingFloorExplorer from './BuildingFloorExplorer.astro';
-
 interface Props {
   title?: string;
   subtitle?: string;
@@ -47,7 +45,7 @@ const {
     </div>
 
     <!-- Quick Discovery Category Chips -->
-    <div class="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm font-semibold mb-12">
+    <div class="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm font-semibold">
       <span class="text-xs uppercase tracking-wider text-slate-400 mr-1">Quick Jump:</span>
       <a href="/dine" class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-jubilee-red-light text-slate-700 hover:text-jubilee-red border border-slate-200 transition-colors">
         🍜 Dine &amp; Food
@@ -62,8 +60,5 @@ const {
         🩺 TCM &amp; Clinic
       </a>
     </div>
-
-    <!-- Interactive Architectural Mall Facade Floor Explorer -->
-    <BuildingFloorExplorer />
   </div>
 </section>

@@ -11,13 +11,6 @@ interface Props {
 
 const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Astro.props;
 
-const FLOOR_GROUPS = [
-  { id: 'all', label: 'All Levels' },
-  { id: 'L4', label: 'L4 • Music & Preschool' },
-  { id: 'L3', label: 'L3 • Academic & Arts' },
-  { id: 'L2', label: 'L2 • Dining & Spas' },
-  { id: 'L1', label: 'L1 • Street Retail & Cafes' },
-];
 ---
 
 <section class="py-12 md:py-16 px-4 max-w-7xl mx-auto w-full" id="directory" aria-labelledby="directory-heading">
@@ -96,32 +89,6 @@ const FLOOR_GROUPS = [
       })}
     </div>
 
-    <!-- Interactive Architectural Floor Level Filter Pills -->
-    <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-1 text-xs" id="directory-floor-pills" role="group" aria-label="Filter by floor level">
-      <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 shrink-0 flex items-center gap-1">
-        <span>🏢</span> Level:
-      </span>
-      {FLOOR_GROUPS.map((fg) => {
-        const count = fg.id === 'all' ? tenants.length : tenants.filter((t) => t.floorLevel === fg.id).length;
-        return (
-          <button
-            class={`floor-filter-pill px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
-              fg.id === 'all'
-                ? 'active bg-slate-900 text-white shadow-sm ring-1 ring-slate-900/10'
-                : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
-            }`}
-            data-floor={fg.id}
-            type="button"
-            aria-pressed={fg.id === 'all' ? 'true' : 'false'}
-          >
-            <span>{fg.label}</span>
-            <span class={`text-[10px] px-1.5 py-0.2 rounded-md ${fg.id === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>
-              {count}
-            </span>
-          </button>
-        );
-      })}
-    </div>
   </div>
 
   <!-- Live Results Summary -->
@@ -221,14 +188,12 @@ const FLOOR_GROUPS = [
   const searchInput = document.getElementById('directory-search-input') as HTMLInputElement | null;
   const searchClear = document.getElementById('directory-search-clear');
   const categoryPills = Array.from(document.querySelectorAll('.category-pill'));
-  const floorPills = Array.from(document.querySelectorAll('.floor-filter-pill'));
   const storeCards = Array.from(document.querySelectorAll('.store-card'));
   const resultsCount = document.getElementById('results-count');
   const emptyState = document.getElementById('directory-empty-state');
   const resetBtn = document.getElementById('directory-reset-btn');
 
   let activeCategory = 'all';
-  let activeFloor = 'all';
   let activeSearchQuery = (searchInput?.value || '').trim().toLowerCase();
 
   // Calculate real-time Open / Closed status using centralized engine
@@ -265,13 +230,11 @@ const FLOOR_GROUPS = [
     storeCards.forEach((card) => {
       const cardCategory = card.getAttribute('data-category');
       const cardSearch = card.getAttribute('data-search') || '';
-      const cardFloor = card.getAttribute('data-floor') || '';
 
       const matchesCat = activeCategory === 'all' || cardCategory === activeCategory;
-      const matchesFloor = activeFloor === 'all' || cardFloor === activeFloor;
       const matchesSearch = !activeSearchQuery || cardSearch.includes(activeSearchQuery);
 
-      if (matchesCat && matchesFloor && matchesSearch) {
+      if (matchesCat && matchesSearch) {
         (card as HTMLElement).style.display = 'flex';
         visibleCount++;
       } else {
@@ -290,22 +253,6 @@ const FLOOR_GROUPS = [
     }
   }
 
-  function setFloor(floor: string) {
-    activeFloor = floor;
-    floorPills.forEach((p) => {
-      const isMatch = (p.getAttribute('data-floor') || 'all') === floor;
-      p.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
-      if (isMatch) {
-        p.classList.add('active', 'bg-slate-900', 'text-white', 'shadow-sm', 'ring-1', 'ring-slate-900/10');
-        p.classList.remove('bg-white', 'text-slate-700');
-      } else {
-        p.classList.remove('active', 'bg-slate-900', 'text-white', 'shadow-sm', 'ring-1', 'ring-slate-900/10');
-        p.classList.add('bg-white', 'text-slate-700');
-      }
-    });
-    filterCards();
-  }
-
   // Category Pill click handlers
   categoryPills.forEach((pill) => {
     pill.addEventListener('click', () => {
@@ -318,22 +265,6 @@ const FLOOR_GROUPS = [
       activeCategory = pill.getAttribute('data-category') || 'all';
       filterCards();
     });
-  });
-
-  // Floor Pill click handlers
-  floorPills.forEach((pill) => {
-    pill.addEventListener('click', () => {
-      const floor = pill.getAttribute('data-floor') || 'all';
-      setFloor(floor);
-      // Synchronize floor explorer if visible
-      window.dispatchEvent(new CustomEvent('jubilee:set-floor-explorer', { detail: { floor } }));
-    });
-  });
-
-  // External floor filter event from BuildingFloorExplorer
-  window.addEventListener('jubilee:filter-floor', (e: any) => {
-    const floor = e.detail?.floor || 'all';
-    setFloor(floor);
   });
 
   // Search input handler
@@ -359,7 +290,6 @@ const FLOOR_GROUPS = [
 
   resetBtn?.addEventListener('click', () => {
     activeCategory = 'all';
-    setFloor('all');
     activeSearchQuery = '';
     if (searchInput) searchInput.value = '';
     searchClear?.classList.add('hidden');
@@ -373,7 +303,6 @@ const FLOOR_GROUPS = [
       }
     });
     filterCards();
-    window.dispatchEvent(new CustomEvent('jubilee:set-floor-explorer', { detail: { floor: 'all' } }));
   });
 
   // Card click opens drawer

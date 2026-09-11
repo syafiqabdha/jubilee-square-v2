@@ -21,7 +21,7 @@ const { activePage = 'home' } = Astro.props;
       />
     </a>
 
-    <!-- Predictive Global Search Trigger -->
+    <!-- Predictive Global Search Trigger (Desktop) -->
     <div class="hidden md:flex flex-1 max-w-xs mx-4">
       <button
         type="button"
@@ -38,7 +38,7 @@ const { activePage = 'home' } = Astro.props;
       </button>
     </div>
 
-    <!-- Navigation Links -->
+    <!-- Desktop Navigation Links -->
     <nav class="hidden lg:flex nav-links-wrap" aria-label="Main Navigation">
       <a href="/directory" class={`nav-item-link ${activePage === 'directory' ? 'active' : ''}`}>Directory</a>
       <a href="/dine" class={`nav-item-link ${activePage === 'dine' ? 'active' : ''}`}>Dine 🍜</a>
@@ -47,21 +47,23 @@ const { activePage = 'home' } = Astro.props;
       <a href="/location" class={`nav-item-link ${activePage === 'location' ? 'active' : ''}`}>Location</a>
     </nav>
 
-    <!-- Getting Here CTA Button -->
+    <!-- Right Actions -->
     <div class="flex items-center gap-2">
-      <!-- Mobile Search Icon Button -->
+      <!-- Mobile Search Icon Button (44px touch target) -->
       <button
         type="button"
-        class="md:hidden p-2 text-slate-700 hover:text-jubilee-navy"
+        class="mobile-search-btn"
         id="mobile-search-btn"
         aria-label="Search"
+        aria-expanded="false"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/>
           <path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
 
+      <!-- Getting Here CTA Button -->
       <a href="/location" class="btn-cta-getting-here hidden sm:inline-flex">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M8 1.5C5 1.5 2.5 4 2.5 7c0 4.2 5.5 7.5 5.5 7.5s5.5-3.3 5.5-7.5c0-3-2.5-5.5-5.5-5.5zm0 7.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="currentColor"/>
@@ -69,12 +71,13 @@ const { activePage = 'home' } = Astro.props;
         <span>Getting Here</span>
       </a>
 
-      <!-- Mobile Hamburger Menu Button -->
+      <!-- Mobile Hamburger Menu Button (44px touch target) -->
       <button
-        class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-md focus:outline-none"
+        class="hamburger-btn"
         id="nav-hamburger-btn"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
+        aria-controls="mobile-nav-dropdown"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -87,17 +90,19 @@ const { activePage = 'home' } = Astro.props;
 
   <!-- Mobile Drawer Dropdown Menu -->
   <div
-    class="lg:hidden hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 shadow-lg"
+    class="mobile-nav-dropdown"
     id="mobile-nav-dropdown"
+    role="navigation"
+    aria-label="Mobile Navigation"
   >
-    <div class="flex flex-col gap-2">
-      <a href="/directory" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🏬 Directory</a>
-      <a href="/dine" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🍜 Dine &amp; Food</a>
-      <a href="/learn" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">📚 Learn &amp; Enrichment</a>
-      <a href="/relax" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">💆 Relax &amp; Wellness</a>
-      <a href="/shop" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🛍️ Shop &amp; Retail</a>
-      <a href="/services" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🩺 Healthcare &amp; Services</a>
-      <a href="/location" class="px-4 py-2.5 rounded-lg text-slate-800 font-semibold hover:bg-slate-50">🧭 Location &amp; Parking</a>
+    <div class="mobile-nav-content">
+      <a href="/directory" class="mobile-nav-item" data-page="directory">🏬 Directory</a>
+      <a href="/dine" class="mobile-nav-item" data-page="dine">🍜 Dine &amp; Food</a>
+      <a href="/learn" class="mobile-nav-item" data-page="learn">📚 Learn &amp; Enrichment</a>
+      <a href="/relax" class="mobile-nav-item" data-page="relax">💆 Relax &amp; Wellness</a>
+      <a href="/shop" class="mobile-nav-item" data-page="shop">🛍️ Shop &amp; Retail</a>
+      <a href="/services" class="mobile-nav-item" data-page="services">🩺 Healthcare &amp; Services</a>
+      <a href="/location" class="mobile-nav-item" data-page="location">🧭 Location &amp; Parking</a>
     </div>
   </div>
 </header>
@@ -107,27 +112,61 @@ const { activePage = 'home' } = Astro.props;
   const mobileSearchBtn = document.getElementById('mobile-search-btn');
   const hamburgerBtn = document.getElementById('nav-hamburger-btn');
   const mobileDropdown = document.getElementById('mobile-nav-dropdown');
+  const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
 
-  searchTrigger?.addEventListener('click', () => {
+  // Open search
+  function openSearch() {
     if (typeof (window as any).openGlobalSearch === 'function') {
       (window as any).openGlobalSearch();
     }
-  });
+  }
 
-  mobileSearchBtn?.addEventListener('click', () => {
-    if (typeof (window as any).openGlobalSearch === 'function') {
-      (window as any).openGlobalSearch();
-    }
-  });
+  searchTrigger?.addEventListener('click', openSearch);
+  mobileSearchBtn?.addEventListener('click', openSearch);
 
+  // Mobile menu toggle with keyboard support
   hamburgerBtn?.addEventListener('click', () => {
-    const isHidden = mobileDropdown?.classList.contains('hidden');
-    if (isHidden) {
-      mobileDropdown?.classList.remove('hidden');
-      hamburgerBtn?.setAttribute('aria-expanded', 'true');
+    const isExpanded = hamburgerBtn?.getAttribute('aria-expanded') === 'true';
+    if (isExpanded) {
+      closeMobileMenu();
     } else {
-      mobileDropdown?.classList.add('hidden');
-      hamburgerBtn?.setAttribute('aria-expanded', 'false');
+      openMobileMenu();
     }
+  });
+
+  function openMobileMenu() {
+    mobileDropdown?.classList.add('is-open');
+    hamburgerBtn?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileMenu() {
+    mobileDropdown?.classList.remove('is-open');
+    hamburgerBtn?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  // Click outside to close
+  document.addEventListener('click', (e) => {
+    if (!mobileDropdown?.contains(e.target as Node) && !hamburgerBtn?.contains(e.target as Node)) {
+      closeMobileMenu();
+    }
+  });
+
+  // Escape key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileDropdown?.classList.contains('is-open')) {
+      closeMobileMenu();
+      hamburgerBtn?.focus();
+    }
+  });
+
+  // Active state sync
+  mobileNavItems.forEach((item) => {
+    const page = item.getAttribute('data-page') || '';
+    if (page === activePage) {
+      item.classList.add('is-active');
+    }
+    item.addEventListener('click', closeMobileMenu);
   });
 </script>
