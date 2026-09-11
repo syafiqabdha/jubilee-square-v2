@@ -178,9 +178,13 @@ a { color: inherit; text-decoration: none; }
 
 /* Navigation Links */
 .nav-links-wrap {
-  display: flex;
   align-items: center;
   gap: 4px;
+}
+@media (min-width: 1024px) {
+  .nav-links-wrap {
+    display: flex;
+  }
 }
 
 .nav-item-link {
@@ -203,7 +207,6 @@ a { color: inherit; text-decoration: none; }
 
 /* Primary CTA Button (Pantone 207 C Magenta) */
 .btn-cta-getting-here {
-  display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 9px 18px;
@@ -215,6 +218,11 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 2px 6px rgba(198, 10, 77, 0.25);
   transition: all 0.2s var(--ease-out);
   flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .btn-cta-getting-here {
+    display: inline-flex;
+  }
 }
 .btn-cta-getting-here:hover {
   background: var(--color-brand-magenta-dark);
