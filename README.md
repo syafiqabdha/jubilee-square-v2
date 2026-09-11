@@ -110,4 +110,4 @@ npm run dev:api
 - **Digital Signage**: [https://jubilee-square-v2.vercel.app/signage](https://jubilee-square-v2.vercel.app/signage)
 - **API Swagger Docs**: `http://localhost:4000/docs`
 
-> Last deployed: `fe243ef` — feat(ui): implement interactive building floor explorer and tactical arrival guide
+> Last deployed: `0660f04` — fix(ui): remove floor explorer and fix mobile header responsiveness (PAN-28, PAN-29)
