@@ -320,6 +320,7 @@ import CTA from '../components/CTA.astro';
   const stepCards = Array.from(document.querySelectorAll('.waypoint-step-card'));
 
   let waypointsVisible = true;
+  const svgWaypoints = document.querySelectorAll('.wp1, .wp2, .wp3, .wp4');
 
   // Toggle Pins visibility
   toggleBtn?.addEventListener('click', () => {
@@ -327,6 +328,9 @@ import CTA from '../components/CTA.astro';
     if (markersLayer) {
       markersLayer.style.display = waypointsVisible ? 'block' : 'none';
     }
+    svgWaypoints.forEach((el) => {
+      el.style.display = waypointsVisible ? '' : 'none';
+    });
     if (toggleText) {
       toggleText.textContent = waypointsVisible ? 'Pins: ON' : 'Pins: OFF';
     }
