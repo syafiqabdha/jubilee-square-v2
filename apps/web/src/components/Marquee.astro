@@ -1,45 +1,59 @@
 ---
-interface Props {
-  items?: string[];
-}
-
-const defaultItems = [
-  'Bantianyao Grilled Fish 🐟',
-  'AGrader Learning Centre 📚',
-  'Ya Kun Kaya Toast ☕',
-  'My Drum School 🥁',
-  'Ashi Foot Reflexology 💆',
-  'Jeong-In Taekwondo 🥋',
-  'Subway 🥪',
-  'Artlette Art Studio 🎨',
-  'Tianyi InMed TCM Clinic 🩺',
-  'LCentral English 📖',
-  '7 Studio Hair Salon ✂️',
-  'The Chinese Wedding Shop 🛍️',
+const defaultRow1 = [
+  { alt: 'Bantianyao Grilled Fish logo', src: 'https://placehold.co/120x40/transparent/333?text=Bantianyao' },
+  { alt: 'AGrader Learning Centre logo', src: 'https://placehold.co/140x40/transparent/333?text=AGrader' },
+  { alt: 'Ya Kun Kaya Toast logo', src: 'https://placehold.co/130x40/transparent/333?text=Ya+Kun' },
+  { alt: 'My Drum School logo', src: 'https://placehold.co/110x40/transparent/333?text=Drum+School' },
+  { alt: 'Ashi Foot Reflexology logo', src: 'https://placehold.co/150x40/transparent/333?text=Ashi' },
+  { alt: 'Jeong-In Taekwondo logo', src: 'https://placehold.co/120x40/transparent/333?text=Jeong-In' }
 ];
 
-const { items = defaultItems } = Astro.props;
+const defaultRow2 = [
+  { alt: 'Subway logo', src: 'https://placehold.co/100x40/transparent/333?text=Subway' },
+  { alt: 'Artlette Art Studio logo', src: 'https://placehold.co/140x40/transparent/333?text=Artlette' },
+  { alt: 'Tianyi InMed TCM Clinic logo', src: 'https://placehold.co/150x40/transparent/333?text=Tianyi' },
+  { alt: 'LCentral English logo', src: 'https://placehold.co/120x40/transparent/333?text=LCentral' },
+  { alt: '7 Studio Hair Salon logo', src: 'https://placehold.co/130x40/transparent/333?text=7+Studio' },
+  { alt: 'The Chinese Wedding Shop logo', src: 'https://placehold.co/150x40/transparent/333?text=Wedding+Shop' }
+];
 ---
 
-<div class="py-3 bg-slate-100 border-y border-slate-200 overflow-hidden" aria-hidden="true">
-  <div class="flex whitespace-nowrap overflow-x-hidden">
-    <div class="inline-flex items-center gap-6 text-xs sm:text-sm font-bold tracking-wide uppercase text-slate-600 animate-[marquee_35s_linear_infinite]">
-      {items.concat(items).map((item) => (
-        <span class="inline-flex items-center gap-3">
-          <span>{item}</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-jubilee-red"></span>
-        </span>
-      ))}
-    </div>
+<div class="flex flex-col gap-3 py-6 bg-transparent border-none overflow-hidden" style="mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);" aria-hidden="true">
+  <!-- Row 1 -->
+  <div class="marquee-track flex w-max items-center gap-12 px-6">
+    {defaultRow1.concat(defaultRow1).map((item) => (
+      <img
+        src={item.src}
+        alt={item.alt}
+        class="h-10 w-auto object-contain grayscale opacity-70 transition-all duration-300 hover:grayscale-0 hover:opacity-100"
+      />
+    ))}
+  </div>
+
+  <!-- Row 2 -->
+  <div class="marquee-track reverse flex w-max items-center gap-12 px-6">
+    {defaultRow2.concat(defaultRow2).map((item) => (
+      <img
+        src={item.src}
+        alt={item.alt}
+        class="h-10 w-auto object-contain grayscale opacity-70 transition-all duration-300 hover:grayscale-0 hover:opacity-100"
+      />
+    ))}
   </div>
 </div>
 
 <style>
-  @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
+  @keyframes marquee-scroll {
+    to { transform: translateX(-50%); }
   }
-  .animate-\[marquee_35s_linear_infinite\] {
-    animation: marquee 35s linear infinite;
+  .marquee-track {
+    animation: marquee-scroll 70s linear infinite;
+    will-change: transform;
+  }
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+  .marquee-track.reverse {
+    animation-direction: reverse;
   }
 </style>
