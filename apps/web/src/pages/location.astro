@@ -28,21 +28,20 @@ import CTA from '../components/CTA.astro';
         <!-- Photo & Interactive Waypoint Canvas -->
         <div class="lg:col-span-7">
           <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3] sm:aspect-[16/10] border border-slate-200 shadow-md select-none" id="waypoint-canvas">
+            <!-- Stylized Wayfinding SVG Map -->
             <img
-              src="/images/jubilee_sq_building.jpg"
-              alt="Jubilee Square building exterior facade with colorful geometric triangles and street signage in Ang Mo Kio Central"
-              class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 ease-out"
+              src="/images/arrival-guide-map.svg"
+              alt="Stylized wayfinding map showing the route from Ang Mo Kio MRT Exit C through sheltered linkway to Jubilee Square with 4 interactive landmark waypoints"
+              class="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500 ease-out bg-white"
               loading="eager"
               width="800"
-              height="600"
+              height="500"
             />
-            
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-slate-950/40 pointer-events-none"></div>
 
             <!-- Top Header & Mode Toggle -->
             <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-20 pointer-events-none">
               <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-slate-950/80 backdrop-blur-md border border-white/20 shadow-sm">
-                <span>📍</span> Street-Level Wayfinding
+                <span>🗺️</span> Wayfinding Map
               </span>
               <button
                 type="button"
@@ -60,16 +59,16 @@ import CTA from '../components/CTA.astro';
               <!-- Waypoint 1: Sheltered Linkway (AMK MRT Exit C) -->
               <div
                 class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
-                style="left: 18%; top: 68%;"
+                style="left: 38%; top: 48%;"
                 data-waypoint-id="wp-linkway"
               >
                 <div class="relative flex items-center justify-center">
-                  <span class="absolute w-6 h-6 rounded-full bg-jubilee-navy/50 animate-ping"></span>
-                  <span class="relative w-8 h-8 rounded-full bg-jubilee-navy border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                  <span class="absolute w-7 h-7 rounded-full bg-[#1e3a5f]/40 animate-ping"></span>
+                  <span class="relative w-9 h-9 rounded-full bg-[#1e3a5f] border-3 border-white text-white text-sm font-black shadow-xl flex items-center justify-center ring-2 ring-white/30">
                     1
                   </span>
                   <!-- Tooltip -->
-                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                  <div class="waypoint-tooltip hidden absolute bottom-10 left-1/2 -translate-x-1/2 px-3 py-2 rounded-xl bg-slate-950/95 text-white text-[12px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
                     🚇 MRT Exit C Sheltered Walkway
                   </div>
                 </div>
@@ -78,15 +77,15 @@ import CTA from '../components/CTA.astro';
               <!-- Waypoint 2: Rainbow Geometric Triangle Facade -->
               <div
                 class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
-                style="left: 56%; top: 28%;"
+                style="left: 80%; top: 32%;"
                 data-waypoint-id="wp-facade"
               >
                 <div class="relative flex items-center justify-center">
-                  <span class="absolute w-6 h-6 rounded-full bg-jubilee-red/50 animate-ping"></span>
-                  <span class="relative w-8 h-8 rounded-full bg-jubilee-red border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                  <span class="absolute w-7 h-7 rounded-full bg-[#C60A4D]/40 animate-ping"></span>
+                  <span class="relative w-9 h-9 rounded-full bg-[#C60A4D] border-3 border-white text-white text-sm font-black shadow-xl flex items-center justify-center ring-2 ring-white/30">
                     2
                   </span>
-                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                  <div class="waypoint-tooltip hidden absolute bottom-10 left-1/2 -translate-x-1/2 px-3 py-2 rounded-xl bg-slate-950/95 text-white text-[12px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
                     🎨 Rainbow Triangle Mosaic Landmark
                   </div>
                 </div>
@@ -95,15 +94,15 @@ import CTA from '../components/CTA.astro';
               <!-- Waypoint 3: Ground Floor Main Entrance -->
               <div
                 class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
-                style="left: 52%; top: 78%;"
+                style="left: 80%; top: 70%;"
                 data-waypoint-id="wp-entrance"
               >
                 <div class="relative flex items-center justify-center">
-                  <span class="absolute w-6 h-6 rounded-full bg-emerald-500/50 animate-ping"></span>
-                  <span class="relative w-8 h-8 rounded-full bg-emerald-600 border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                  <span class="absolute w-7 h-7 rounded-full bg-emerald-500/40 animate-ping"></span>
+                  <span class="relative w-9 h-9 rounded-full bg-emerald-600 border-3 border-white text-white text-sm font-black shadow-xl flex items-center justify-center ring-2 ring-white/30">
                     3
                   </span>
-                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                  <div class="waypoint-tooltip hidden absolute bottom-10 left-1/2 -translate-x-1/2 px-3 py-2 rounded-xl bg-slate-950/95 text-white text-[12px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
                     🚪 Ground Entrance (Ya Kun &amp; Subway)
                   </div>
                 </div>
@@ -112,22 +111,22 @@ import CTA from '../components/CTA.astro';
               <!-- Waypoint 4: Carpark & Drop-off Access -->
               <div
                 class="waypoint-marker absolute transition-all duration-300 cursor-pointer"
-                style="left: 82%; top: 72%;"
+                style="left: 88%; top: 70%;"
                 data-waypoint-id="wp-carpark"
               >
                 <div class="relative flex items-center justify-center">
-                  <span class="absolute w-6 h-6 rounded-full bg-amber-500/50 animate-ping"></span>
-                  <span class="relative w-8 h-8 rounded-full bg-amber-600 border-2 border-white text-white text-xs font-black shadow-lg flex items-center justify-center">
+                  <span class="absolute w-7 h-7 rounded-full bg-amber-500/40 animate-ping"></span>
+                  <span class="relative w-9 h-9 rounded-full bg-amber-600 border-3 border-white text-white text-sm font-black shadow-xl flex items-center justify-center ring-2 ring-white/30">
                     4
                   </span>
-                  <div class="waypoint-tooltip hidden absolute bottom-9 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-slate-950/95 text-white text-[11px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
+                  <div class="waypoint-tooltip hidden absolute bottom-10 left-1/2 -translate-x-1/2 px-3 py-2 rounded-xl bg-slate-950/95 text-white text-[12px] font-bold whitespace-nowrap shadow-xl border border-white/20 z-30 pointer-events-none">
                     🚗 Basement Carpark &amp; Lift Access
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Bottom Caption & Lightbox Launcher -->
+            <!-- Bottom Caption -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-20 pointer-events-none">
               <span class="text-xs font-semibold drop-shadow-sm flex items-center gap-1.5">
                 <span>📍</span> 61 Ang Mo Kio Ave 8
@@ -137,7 +136,7 @@ import CTA from '../components/CTA.astro';
                 data-open-building-lightbox
                 class="pointer-events-auto inline-flex items-center gap-1 text-[11px] font-bold bg-white/20 hover:bg-white/30 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 transition-all cursor-pointer"
               >
-                🔍 Expand Full Photo
+                📷 View Building Photo
               </button>
             </div>
           </div>
@@ -321,6 +320,7 @@ import CTA from '../components/CTA.astro';
   const stepCards = Array.from(document.querySelectorAll('.waypoint-step-card'));
 
   let waypointsVisible = true;
+  const svgWaypoints = document.querySelectorAll('.wp1, .wp2, .wp3, .wp4');
 
   // Toggle Pins visibility
   toggleBtn?.addEventListener('click', () => {
@@ -328,6 +328,9 @@ import CTA from '../components/CTA.astro';
     if (markersLayer) {
       markersLayer.style.display = waypointsVisible ? 'block' : 'none';
     }
+    svgWaypoints.forEach((el) => {
+      el.style.display = waypointsVisible ? '' : 'none';
+    });
     if (toggleText) {
       toggleText.textContent = waypointsVisible ? 'Pins: ON' : 'Pins: OFF';
     }
