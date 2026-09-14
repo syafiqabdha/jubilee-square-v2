@@ -30,7 +30,9 @@ let mockQueryFn: (sql: string, values?: unknown[]) => { rows: Record<string, unk
 // instantiate the real class but immediately replace its private pool with
 // our mock object using Object.defineProperty.
 
-import { PostgresCatalogRepository } from './postgres-repository.js';
+import { PostgresCatalogRepository, sanitizeTsQuery } from './postgres-repository.js';
+
+let mockEndCalled = 0;
 
 // We'll monkey-patch the pool on constructed instances.
 function makeRepo() {
@@ -42,6 +44,10 @@ function makeRepo() {
   const stubPool = {
     query: (sql: string, values?: unknown[]) => {
       return Promise.resolve(mockQueryFn(sql, values));
+    },
+    end: () => {
+      mockEndCalled++;
+      return Promise.resolve();
     },
   };
   // Use bracket notation to reach the private field (compiled JS; no type error at runtime).
@@ -606,6 +612,110 @@ describe('PostgresCatalogRepository — unit tests (mocked pool)', () => {
       const results = await repo.searchTenants('kaya');
       assert.equal(results.length, 1);
       assert.equal(results[0].slug, 'ya-kun-kaya-toast');
+    });
+
+    test('sanitizes boolean/tsquery operators (| & !) to prevent syntax errors', async () => {
+      const params: unknown[][] = [];
+      mockQueryFn = (_sql, values) => {
+        params.push(values ?? []);
+        return { rows: [] };
+      };
+      await repo.searchTenants('kaya | toast');
+      assert.ok(params.some((v) => v.includes('kaya & toast')), 'pipe should be sanitized into valid & joined terms');
+
+      await repo.searchTenants('!kaya');
+      assert.ok(params.some((v) => v.includes('kaya')), 'exclamation should be stripped to prevent syntax errors');
+
+      await repo.searchTenants('kaya & toast');
+      assert.ok(params.some((v) => v.includes('kaya & toast')), 'raw ampersand should be sanitized');
+    });
+
+    test('sanitizes parentheses, colons, asterisks, and quotes', async () => {
+      const params: unknown[][] = [];
+      mockQueryFn = (_sql, values) => {
+        params.push(values ?? []);
+        return { rows: [] };
+      };
+      await repo.searchTenants('(kaya) :toast*');
+      assert.ok(params.some((v) => v.includes('kaya & toast')), 'parentheses, colon, and asterisk should be sanitized');
+    });
+
+    test('returns empty array without hitting DB when query contains only special characters', async () => {
+      let called = false;
+      mockQueryFn = () => {
+        called = true;
+        return { rows: [] };
+      };
+      const result = await repo.searchTenants('! & | : * ( ) < > \' " \\');
+      assert.deepEqual(result, []);
+      assert.equal(called, false, 'DB should not be hit for query containing only special characters');
+    });
+
+    test('handles punctuation and hyphens cleanly (e.g. #02-01, a-grader)', async () => {
+      const params: unknown[][] = [];
+      mockQueryFn = (_sql, values) => {
+        params.push(values ?? []);
+        return { rows: [] };
+      };
+      await repo.searchTenants('unit #02-01');
+      assert.ok(params.some((v) => v.includes('unit & 02-01')), 'hash should be stripped while unit number preserved');
+    });
+  });
+
+  // ---- sanitizeTsQuery() ---------------------------------------------------
+
+  describe('sanitizeTsQuery() unit tests', () => {
+    test('handles empty, blank, or invalid inputs', () => {
+      assert.equal(sanitizeTsQuery(''), '');
+      assert.equal(sanitizeTsQuery('   '), '');
+      assert.equal(sanitizeTsQuery(null as unknown as string), '');
+      assert.equal(sanitizeTsQuery(undefined as unknown as string), '');
+    });
+
+    test('strips tsquery operators & | ! ( ) : * < > \' " \\', () => {
+      assert.equal(sanitizeTsQuery('kaya | toast'), 'kaya & toast');
+      assert.equal(sanitizeTsQuery('kaya & toast'), 'kaya & toast');
+      assert.equal(sanitizeTsQuery('!kaya'), 'kaya');
+      assert.equal(sanitizeTsQuery('(kaya) (toast)'), 'kaya & toast');
+      assert.equal(sanitizeTsQuery('kaya:toast*'), 'kaya & toast');
+      assert.equal(sanitizeTsQuery("don't stop"), 'don & t & stop');
+    });
+
+    test('preserves valid word hyphens while stripping boundary hyphens', () => {
+      assert.equal(sanitizeTsQuery('unit #02-01'), 'unit & 02-01');
+      assert.equal(sanitizeTsQuery('a-grader'), 'a-grader');
+      assert.equal(sanitizeTsQuery('--test--'), 'test');
+      assert.equal(sanitizeTsQuery('---'), '');
+    });
+
+    test('returns empty string when no valid search tokens remain', () => {
+      assert.equal(sanitizeTsQuery('! & | : * ( ) < >'), '');
+      assert.equal(sanitizeTsQuery('??? @@@ $$$ %%%'), '');
+    });
+  });
+
+  // ---- Pool lifecycle and graceful drain -----------------------------------
+
+  describe('Pool lifecycle and graceful drain', () => {
+    test('repo.end() drains the underlying pg.Pool', async () => {
+      mockEndCalled = 0;
+      await repo.end();
+      assert.equal(mockEndCalled, 1, 'repo.end() should call pool.end()');
+    });
+
+    test('repo.close() drains the underlying pg.Pool', async () => {
+      mockEndCalled = 0;
+      await repo.close();
+      assert.equal(mockEndCalled, 1, 'repo.close() should call pool.end()');
+    });
+
+    test('closeCatalogRepository() drains defaultRepo when initialized', async () => {
+      const { getCatalogRepository, closeCatalogRepository } = await import('./client.js');
+      const r = getCatalogRepository();
+      assert.ok(r);
+      await closeCatalogRepository();
+      // Verifies no throw and graceful completion
+      assert.ok(true);
     });
   });
 

@@ -9,21 +9,28 @@ import type {
 } from '@jubilee/shared';
 import pg from 'pg';
 import { SEED_CATEGORIES } from './seed-data.js';
+import { type CatalogRepository } from './repository.js';
 
 const { Pool } = pg;
 
-export interface CatalogRepository {
-  getCategories(): Promise<Category[]>;
-  getCategoryBySlug(slug: string): Promise<Category | null>;
-  getTenants(params?: TenantFilterParams): Promise<{ tenants: Tenant[]; total: number }>;
-  getTenantById(id: string): Promise<Tenant | null>;
-  getTenantBySlug(slug: string): Promise<Tenant | null>;
-  getTenantsByCategory(categorySlug: string): Promise<Tenant[]>;
-  getPromotions(activeOnly?: boolean): Promise<Promotion[]>;
-  getPromotionBySlug(slug: string): Promise<Promotion | null>;
-  getSignageSlides(location?: string): Promise<SignageSlide[]>;
-  getSignageDirectory(): Promise<SignageDirectoryFloorGroup[]>;
-  searchTenants(query: string): Promise<Tenant[]>;
+export { type CatalogRepository };
+
+/**
+ * Sanitizes a raw search input string into a valid PostgreSQL tsquery format.
+ * Strips tsquery operators (&, |, !, (, ), :, *, <, >, ', ", \) and punctuation
+ * that cause syntax errors in to_tsquery(), trims boundary hyphens, and joins
+ * valid search terms with ' & '.
+ * Returns an empty string if no valid terms remain.
+ */
+export function sanitizeTsQuery(query: string): string {
+  if (!query || typeof query !== 'string') return '';
+  const cleaned = query.replace(/[^\w\s-]/g, ' ');
+  const terms = cleaned
+    .split(/\s+/)
+    .map((term) => term.replace(/^-+|-+$/g, ''))
+    .filter((term) => term.length > 0);
+
+  return terms.join(' & ');
 }
 
 export class PostgresCatalogRepository implements CatalogRepository {
@@ -33,6 +40,18 @@ export class PostgresCatalogRepository implements CatalogRepository {
     this.pool = new Pool({
       connectionString: connectionString || process.env.DATABASE_URL,
     });
+  }
+
+  getPool(): pg.Pool {
+    return this.pool;
+  }
+
+  async close(): Promise<void> {
+    await this.pool.end();
+  }
+
+  async end(): Promise<void> {
+    await this.pool.end();
   }
 
   async getCategories(): Promise<Category[]> {
@@ -89,10 +108,17 @@ export class PostgresCatalogRepository implements CatalogRepository {
     }
 
     if (params.search && params.search.trim()) {
-      const tsQuery = params.search.trim().split(/\s+/).join(' & ');
-      query += ` AND t.search_vector @@ to_tsquery('english', $${paramIndex})`;
-      values.push(tsQuery);
-      paramIndex++;
+      const tsQuery = sanitizeTsQuery(params.search);
+      if (tsQuery) {
+        query += ` AND t.search_vector @@ to_tsquery('english', $${paramIndex})`;
+        values.push(tsQuery);
+        paramIndex++;
+      } else {
+        return {
+          tenants: [],
+          total: 0,
+        };
+      }
     }
 
     query += ` ORDER BY t.display_order OFFSET $${paramIndex} LIMIT $${paramIndex + 1}`;
@@ -221,10 +247,9 @@ export class PostgresCatalogRepository implements CatalogRepository {
 
   async searchTenants(query: string): Promise<Tenant[]> {
     if (!query || !query.trim()) return [];
-    
-    // Convert to tsquery (e.g. 'kaya & toast')
-    const terms = query.trim().split(/\s+/).filter(Boolean);
-    const tsQuery = terms.join(' & ');
+
+    const tsQuery = sanitizeTsQuery(query);
+    if (!tsQuery) return [];
 
     const sql = `
       SELECT t.*, c.name as category_name, c.slug as category_slug
