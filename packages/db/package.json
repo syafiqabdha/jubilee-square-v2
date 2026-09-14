@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "echo \"DB package verified\""
+    "test": "node --test --import tsx/esm src/postgres-repository.test.ts"
   },
   "dependencies": {
     "@jubilee/shared": "*",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",
+    "tsx": "^4.23.13",
     "typescript": "^5.7.2"
   }
 }

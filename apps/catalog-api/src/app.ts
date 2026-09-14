@@ -9,6 +9,7 @@ import { tenantRoutes } from './routes/tenants.js';
 import { promotionRoutes } from './routes/promotions.js';
 import { signageRoutes } from './routes/signage.js';
 import { searchRoutes } from './routes/search.js';
+import { closeCatalogRepository } from '@jubilee/db';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = fastify({
@@ -74,6 +75,11 @@ export async function buildApp(): Promise<FastifyInstance> {
     },
     { prefix: '/api/v1' }
   );
+
+  // Drain database connections when Fastify closes
+  app.addHook('onClose', async () => {
+    await closeCatalogRepository();
+  });
 
   return app;
 }

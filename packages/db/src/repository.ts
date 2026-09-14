@@ -27,6 +27,8 @@ export interface CatalogRepository {
   getSignageSlides(location?: string): Promise<SignageSlide[]>;
   getSignageDirectory(): Promise<SignageDirectoryFloorGroup[]>;
   searchTenants(query: string): Promise<Tenant[]>;
+  close?(): Promise<void>;
+  end?(): Promise<void>;
 }
 
 export class InMemoryCatalogRepository implements CatalogRepository {
@@ -197,4 +199,7 @@ export class InMemoryCatalogRepository implements CatalogRepository {
         return bExact - aExact;
       });
   }
+
+  async close(): Promise<void> {}
+  async end(): Promise<void> {}
 }
