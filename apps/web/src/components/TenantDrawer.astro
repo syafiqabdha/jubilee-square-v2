@@ -55,11 +55,18 @@
         </svg>
         <span id="drawer-call-text">Call Store</span>
       </a>
+      <!-- WhatsApp click-to-chat CTA -->
+      <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" class="btn-drawer-action btn-drawer-whatsapp w-full justify-center hidden" id="drawer-whatsapp-btn" aria-label="Chat with store on WhatsApp">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+        <span>Chat on WhatsApp</span>
+      </a>
     </div>
 
     <!-- About Section -->
     <div class="border-t border-slate-100 pt-5">
-      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">About the Store</h3>
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">About the Store</h3>
       <p class="text-slate-700 leading-relaxed text-sm sm:text-base" id="drawer-description">
         Store description goes here.
       </p>
@@ -73,7 +80,7 @@
         </div>
         <div>
           <div class="text-sm font-bold text-slate-900" id="drawer-map-level">Level 1 Directory Pin</div>
-          <div class="text-xs text-slate-500">Ang Mo Kio Jubilee Square</div>
+          <div class="text-xs text-slate-600">Ang Mo Kio Jubilee Square</div>
         </div>
       </div>
       <a href="/location" class="text-xs font-bold text-jubilee-navy hover:text-jubilee-red underline">
@@ -83,16 +90,19 @@
 
     <!-- Contact & Details Grid -->
     <div class="border-t border-slate-100 pt-5">
-      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Store Details</h3>
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">Store Details</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="drawer-details-grid">
         <!-- Injected dynamically via safe DOM nodes -->
       </div>
     </div>
 
-    <!-- Weekly Operating Hours -->
+    <!-- 7-Day Operating Hours with live open/closed indicators -->
     <div class="border-t border-slate-100 pt-5">
-      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Weekly Operating Hours</h3>
-      <div class="flex flex-col gap-2" id="drawer-hours-list">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600">Weekly Operating Hours</h3>
+        <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full" id="drawer-hours-timezone">SGT (UTC+8)</span>
+      </div>
+      <div class="flex flex-col gap-1" id="drawer-hours-list">
         <!-- Injected dynamically via safe DOM nodes -->
       </div>
     </div>
@@ -134,6 +144,7 @@
 
   const callBtn = document.getElementById('drawer-call-btn') as HTMLAnchorElement | null;
   const callText = document.getElementById('drawer-call-text');
+  const whatsappBtn = document.getElementById('drawer-whatsapp-btn') as HTMLAnchorElement | null;
 
   function isValidWebUrl(urlString: string | null | undefined): boolean {
     if (!urlString || typeof urlString !== 'string') return false;
@@ -164,6 +175,16 @@
       tags: Array.isArray(data.tags) ? data.tags.filter((t: any) => typeof t === 'string') : [],
       operatingHours: Array.isArray(data.operatingHours) ? data.operatingHours : [],
     };
+  }
+
+  /**
+   * Normalises a raw phone/WhatsApp number to an E.164-like string suitable for wa.me links.
+   * Strips non-digit chars, preserves a leading +.
+   */
+  function sanitizeWhatsAppNumber(raw: string): string {
+    const withPlus = raw.trim().startsWith('+');
+    const digits = raw.replace(/\D/g, '');
+    return withPlus ? `+${digits}` : digits;
   }
 
   function populateDrawerUI(rawTenant: any) {
@@ -208,6 +229,21 @@
       }
     }
 
+    // WhatsApp click-to-chat button
+    if (whatsappBtn) {
+      const waSource = tenant.whatsapp || tenant.phone;
+      if (waSource) {
+        const cleanNumber = sanitizeWhatsAppNumber(waSource);
+        const waUrl = `https://wa.me/${cleanNumber}`;
+        whatsappBtn.href = waUrl;
+        whatsappBtn.classList.remove('hidden');
+        whatsappBtn.style.display = 'inline-flex';
+      } else {
+        whatsappBtn.classList.add('hidden');
+        whatsappBtn.style.display = 'none';
+      }
+    }
+
     // Details Grid constructed with safe DOM nodes
     if (detailsGrid) {
       const fragment = document.createDocumentFragment();
@@ -216,7 +252,7 @@
         const card = document.createElement('div');
         card.className = 'p-3 bg-slate-50 rounded-lg';
         const label = document.createElement('div');
-        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.className = 'text-xs font-semibold text-slate-600 uppercase';
         label.textContent = 'Phone';
         const val = document.createElement('div');
         val.className = 'text-sm font-bold text-slate-800';
@@ -229,7 +265,7 @@
         const card = document.createElement('div');
         card.className = 'p-3 bg-slate-50 rounded-lg';
         const label = document.createElement('div');
-        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.className = 'text-xs font-semibold text-slate-600 uppercase';
         label.textContent = 'Email';
         const val = document.createElement('a');
         val.className = 'text-sm font-bold text-jubilee-navy hover:underline break-all';
@@ -243,7 +279,7 @@
         const card = document.createElement('div');
         card.className = 'p-3 bg-slate-50 rounded-lg';
         const label = document.createElement('div');
-        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.className = 'text-xs font-semibold text-slate-600 uppercase';
         label.textContent = 'Website';
         const link = document.createElement('a');
         link.className = 'text-sm font-bold text-jubilee-navy hover:underline';
@@ -259,7 +295,7 @@
         const card = document.createElement('div');
         card.className = 'p-3 bg-slate-50 rounded-lg col-span-full';
         const label = document.createElement('div');
-        label.className = 'text-xs font-semibold text-slate-400 uppercase';
+        label.className = 'text-xs font-semibold text-slate-600 uppercase';
         label.textContent = 'Tags';
         const val = document.createElement('div');
         val.className = 'text-sm font-medium text-slate-700';
@@ -271,49 +307,119 @@
       detailsGrid.replaceChildren(fragment);
     }
 
-    // Operating Hours List constructed with safe DOM nodes
+    // 7-Day Operating Hours — full breakdown with live per-day open/closed indicators
     if (hoursList) {
       const fragment = document.createDocumentFragment();
-      const todayIndex = new Date().getDay();
+      const now = new Date();
+      const todayIndex = now.getDay();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
       DAYS_OF_WEEK.forEach((dayName, idx) => {
         const isToday = idx === todayIndex;
         const tenantHour = tenant.operatingHours?.find((h: any) => h.dayOfWeek === idx);
 
         let timeStr = '10:00 – 21:30';
+        let isClosed = false;
+        let openMins: number | null = null;
+        let closeMins: number | null = null;
+
         if (tenantHour) {
           if (tenantHour.isClosed) {
             timeStr = 'Closed';
+            isClosed = true;
           } else {
-            timeStr = `${formatTimeShort(tenantHour.openTime)} – ${formatTimeShort(tenantHour.closeTime, '21:30')}`;
+            const openFmt = formatTimeShort(tenantHour.openTime);
+            const closeFmt = formatTimeShort(tenantHour.closeTime, '21:30');
+            timeStr = `${openFmt} – ${closeFmt}`;
+
+            // Parse open/close minutes for live indicator on today
+            if (tenantHour.openTime) {
+              const parts = tenantHour.openTime.split(':');
+              if (parts.length >= 2) openMins = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+            }
+            if (tenantHour.closeTime) {
+              const parts = tenantHour.closeTime.split(':');
+              if (parts.length >= 2) closeMins = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+            }
           }
         }
 
-        const row = document.createElement('div');
-        row.className = `flex items-center justify-between text-sm py-2 px-3 rounded-lg ${
-          isToday
-            ? 'bg-jubilee-navy-light text-jubilee-navy font-bold border border-jubilee-navy/20'
-            : 'text-slate-600'
-        }`;
-
-        const leftSpan = document.createElement('span');
-        leftSpan.textContent = dayName;
-
-        if (isToday) {
-          const badge = document.createElement('span');
-          badge.className = 'text-xs bg-jubilee-navy text-white px-2 py-0.5 rounded-full ml-1.5 font-semibold';
-          badge.textContent = 'Today';
-          leftSpan.appendChild(badge);
+        // Calculate if this day is currently open (only meaningful for today)
+        let isDayOpen = false;
+        if (isToday && !isClosed && openMins !== null && closeMins !== null) {
+          if (closeMins > openMins) {
+            isDayOpen = currentMinutes >= openMins && currentMinutes < closeMins;
+          } else {
+            // Overnight: open if after openMins OR before closeMins
+            isDayOpen = currentMinutes >= openMins || currentMinutes < closeMins;
+          }
+        } else if (isToday && !isClosed && openMins === null) {
+          // Fallback default hours 10:00 – 21:30
+          isDayOpen = currentMinutes >= 600 && currentMinutes < 1290;
         }
 
+        const row = document.createElement('div');
+        row.className = `flex items-center justify-between text-sm py-2.5 px-3 rounded-xl ${
+          isToday
+            ? 'bg-jubilee-navy-light text-jubilee-navy font-bold border border-jubilee-navy/20'
+            : isClosed
+              ? 'text-slate-500 font-medium'
+              : 'text-slate-600 hover:bg-slate-50 transition-colors'
+        }`;
+
+        // Left: day name + Today badge + live status dot
+        const leftWrap = document.createElement('div');
+        leftWrap.className = 'flex items-center gap-2';
+
+        const daySpan = document.createElement('span');
+        daySpan.textContent = dayName;
+        leftWrap.appendChild(daySpan);
+
+        if (isToday) {
+          const todayBadge = document.createElement('span');
+          todayBadge.className = 'text-[10px] bg-jubilee-navy text-white px-2 py-0.5 rounded-full font-semibold';
+          todayBadge.textContent = 'Today';
+          leftWrap.appendChild(todayBadge);
+
+          // Live status dot — only shown for today
+          if (!isClosed) {
+            const dot = document.createElement('span');
+            dot.className = `w-2 h-2 rounded-full shrink-0 ${isDayOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-400'}`;
+            dot.setAttribute('title', isDayOpen ? 'Currently open' : 'Currently closed');
+            leftWrap.appendChild(dot);
+          }
+        }
+
+        // Right: time string
         const rightSpan = document.createElement('span');
+        rightSpan.className = isClosed ? 'text-rose-700 font-bold text-xs' : 'font-mono text-xs';
         rightSpan.textContent = timeStr;
 
-        row.append(leftSpan, rightSpan);
+        // Special notes if available
+        if (tenantHour?.specialNotes) {
+          const note = document.createElement('div');
+          note.className = 'text-[10px] text-slate-600 mt-0.5 col-span-full px-3 pb-1';
+          note.textContent = tenantHour.specialNotes;
+          row.appendChild(leftWrap);
+          row.appendChild(rightSpan);
+          fragment.appendChild(row);
+          fragment.appendChild(note);
+          return;
+        }
+
+        row.append(leftWrap, rightSpan);
         fragment.appendChild(row);
       });
 
       hoursList.replaceChildren(fragment);
+    }
+
+    // Emit floor highlight event so BuildingFloorExplorer can highlight the tenant's floor
+    const floorLevel = tenant.floorLevel;
+    if (floorLevel) {
+      window.dispatchEvent(new CustomEvent('jubilee:highlightFloor', {
+        detail: { floorLevel, unitNumber: tenant.unitNumber, tenantName: tenant.name }
+      }));
     }
   }
 
@@ -332,6 +438,8 @@
     backdrop.classList.remove('open');
     panel.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    // Clear floor highlight on close
+    window.dispatchEvent(new CustomEvent('jubilee:clearFloorHighlight'));
   }
 
   closeBtn?.addEventListener('click', closeDrawer);

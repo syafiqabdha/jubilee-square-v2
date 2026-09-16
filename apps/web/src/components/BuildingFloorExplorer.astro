@@ -390,4 +390,30 @@ const FLOORS = [
       renderFloorState(floor);
     }
   });
+
+  // Listen for tenant drawer open: highlight the tenant's floor on the building explorer
+  window.addEventListener('jubilee:highlightFloor', (e: any) => {
+    const { floorLevel, unitNumber, tenantName } = e.detail || {};
+    if (!floorLevel) return;
+
+    // Activate the matching floor band
+    renderFloorState(floorLevel);
+
+    // Briefly pulse the floor band to draw attention (drawer-sourced highlight)
+    const targetBand = document.querySelector(`.floor-band[data-floor="${floorLevel}"]`);
+    if (targetBand) {
+      const highlight = targetBand.querySelector('.floor-band-highlight');
+      if (highlight) {
+        highlight.classList.add('ring-2', 'ring-white/40');
+        setTimeout(() => {
+          highlight.classList.remove('ring-2', 'ring-white/40');
+        }, 1800);
+      }
+    }
+  });
+
+  // Clear floor highlight when drawer closes
+  window.addEventListener('jubilee:clearFloorHighlight', () => {
+    renderFloorState('all');
+  });
 </script>

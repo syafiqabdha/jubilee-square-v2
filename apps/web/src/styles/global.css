@@ -519,6 +519,25 @@ a { color: inherit; text-decoration: none; }
   transform: translateX(2px);
 }
 
+/* WhatsApp quick-chat icon on store cards */
+.wa-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E7F9ED;
+  color: #075E54;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.wa-card-icon:hover {
+  background: #075E54;
+  color: #FFFFFF;
+  transform: scale(1.1);
+}
+
 /* ─── Detail Slide-over Drawer ─── */
 .drawer-backdrop {
   position: fixed;
@@ -638,6 +657,19 @@ a { color: inherit; text-decoration: none; }
 .btn-drawer-secondary:hover {
   background: var(--color-brand-navy-light);
   border-color: var(--color-brand-navy);
+}
+
+.btn-drawer-whatsapp {
+  background: #25D366;
+  color: #0F172A !important;
+  font-weight: 700;
+}
+.btn-drawer-whatsapp svg {
+  color: #0F172A;
+}
+.btn-drawer-whatsapp:hover {
+  background: #1DA851;
+  color: #0F172A !important;
 }
 
 /* ─── Mobile Bottom Navigation Dock ─── */
