@@ -17,80 +17,433 @@ const directory = await repo.getSignageDirectory();
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --jubilee-navy: #252F81;
+      --jubilee-red: #C60A4D;
+      --signage-bg: #0B0F19;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--signage-bg);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Slide Carousel ── */
+    .slide-carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #111827;
+      min-height: 260px;
+    }
+    .slide-track {
+      display: flex;
+      transition: transform 0.55s cubic-bezier(0.16,1,0.3,1);
+      will-change: transform;
+    }
+    .slide-item {
+      flex: 0 0 100%;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 260px;
+    }
+    .slide-controls {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .slide-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      transition: background 0.2s, width 0.3s;
+      cursor: pointer;
+    }
+    .slide-dot.active {
+      background: #C60A4D;
+      width: 18px;
+      border-radius: 3px;
+    }
+    .slide-progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: #C60A4D;
+      transition: width linear;
+    }
+
+    /* Interval Selector */
+    .interval-btn {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .interval-btn.active {
+      background: #252F81;
+      border-color: #252F81;
+      color: #fff;
+    }
+
+    /* Play/Pause */
+    .play-pause-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .play-pause-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Emergency Banner ── */
+    .emergency-banner {
+      display: none;
+      position: relative;
+      border-radius: 12px;
+      border: 1.5px solid #C60A4D;
+      background: linear-gradient(135deg, #1a0008 0%, #200010 100%);
+      padding: 16px 20px;
+      gap: 12px;
+    }
+    .emergency-banner.visible { display: flex; align-items: flex-start; }
+    .emergency-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #C60A4D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .emergency-text { flex: 1; min-width: 0; }
+    .emergency-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #C60A4D;
+      margin-bottom: 4px;
+    }
+    .emergency-msg {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4;
+    }
+    .emergency-dismiss {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      transition: background 0.2s, color 0.2s;
+    }
+    .emergency-dismiss:hover { background: rgba(198,10,77,0.3); color: #fff; }
+
+    /* Banner Compose Panel */
+    .banner-compose {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .banner-msg-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      resize: none;
+      transition: border-color 0.2s;
+    }
+    .banner-msg-input::placeholder { color: rgba(255,255,255,0.3); }
+    .banner-msg-input:focus { border-color: #C60A4D; }
+
+    .banner-broadcast-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: #C60A4D;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .banner-broadcast-btn:hover { background: #9E083E; transform: translateY(-1px); }
+    .banner-broadcast-btn:active { transform: translateY(0); }
+    .banner-clear-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .banner-clear-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* Contrast-safe text — WCAG AAA on #0B0F19 */
+    .label-muted { color: rgba(255,255,255,0.45); }
+    .label-section {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex flex-col font-sans antialiased">
-  <header class="bg-slate-900 border-b border-slate-800 p-4">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <a href="/" class="flex items-center">
-          <img src="/brand/jubilee-square-logo-white.png" alt="Jubilee Square" class="h-8 w-auto" width="113" height="32" />
+<body>
+  <header style="background:#111827;border-bottom:1px solid rgba(255,255,255,0.07);padding:14px 24px;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="/" style="display:flex;align-items:center;">
+          <img src="/brand/jubilee-square-logo-white.png" alt="Jubilee Square" style="height:30px;width:auto;" width="113" height="32" />
         </a>
-        <div class="hidden sm:flex items-center gap-3 border-l border-slate-700 pl-3">
-          <img src="/images/jubilee_sq_building.jpg" alt="Jubilee Square building" class="w-10 h-7 object-cover rounded border border-slate-700 shadow-sm" />
+        <div style="display:flex;align-items:center;gap:10px;border-left:1px solid rgba(255,255,255,0.1);padding-left:12px;">
+          <img src="/images/jubilee_sq_building.jpg" alt="Jubilee Square building" style="width:38px;height:26px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.1);" />
           <div>
-            <h1 class="text-xs font-bold tracking-wider uppercase text-slate-300">Digital Signage Controller</h1>
-            <p class="text-[11px] text-slate-400">7 In-Mall Screens Deployed • 61 Ang Mo Kio Ave 8</p>
+            <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.7);">Digital Signage Controller</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);">7 In-Mall Screens Deployed • 61 Ang Mo Kio Ave 8</div>
           </div>
         </div>
       </div>
-      <div class="flex items-center gap-2 text-xs">
-        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-emerald-400 font-bold">Signage Feed Active</span>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block;animation:pulse 2s infinite;"></span>
+        <span style="color:#10B981;font-weight:700;">Signage Feed Active</span>
       </div>
     </div>
   </header>
 
-  <main class="flex-grow max-w-7xl mx-auto p-6 w-full space-y-8">
-    <!-- Active Slides Section -->
+  <main style="flex-grow:1;max-width:1280px;margin:0 auto;padding:28px 24px;width:100%;display:flex;flex-direction:column;gap:32px;">
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION 1: Emergency / Broadcast Announcement Banner
+    ══════════════════════════════════════════════════════ -->
     <section>
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-white">Rotating Promotional Slides ({slides.length})</h2>
-        <code class="text-xs bg-slate-900 px-3 py-1 rounded text-slate-300 border border-slate-800">
-          GET /api/v1/signage/featured
-        </code>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div>
+          <span class="label-section">Broadcast Announcement</span>
+          <h2 style="font-size:18px;font-weight:800;color:#fff;margin-top:3px;">Emergency & Alert Banner</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="banner-status-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);"></span>
+          <span id="banner-status-label" style="font-size:12px;color:rgba(255,255,255,0.4);font-weight:600;">No active broadcast</span>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {slides.map((s) => (
-          <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 flex flex-col justify-between shadow-lg">
-            <div>
-              <div class="flex justify-between text-[11px] text-slate-400 mb-2">
-                <span class="bg-slate-800 px-2 py-0.5 rounded font-mono">Priority: {s.priority}</span>
-                <span>⏱ {s.durationSeconds}s</span>
-              </div>
-              <h3 class="font-bold text-base text-white">{s.title}</h3>
-              <p class="text-xs text-[#C60A4D] mt-1 font-bold">{s.headline}</p>
-              <p class="text-xs text-slate-400 mt-1 leading-relaxed">{s.subheadline}</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-500">
-              <span>Targets: {s.targetLocations.join(', ')}</span>
-            </div>
+      <!-- Live Banner Display -->
+      <div class="emergency-banner" id="emergency-banner" role="alert" aria-live="assertive">
+        <div class="emergency-icon" aria-hidden="true">🚨</div>
+        <div class="emergency-text">
+          <div class="emergency-title">Broadcast Announcement</div>
+          <div class="emergency-msg" id="emergency-msg-text">Announcement text</div>
+        </div>
+        <button class="emergency-dismiss" id="emergency-dismiss-btn" aria-label="Dismiss announcement">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Compose Panel -->
+      <div class="banner-compose">
+        <label style="display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:8px;" for="banner-input">Compose Announcement Message</label>
+        <textarea
+          id="banner-input"
+          class="banner-msg-input"
+          rows="2"
+          placeholder="e.g. Mall closes at 6 PM today due to private event. We apologise for any inconvenience."
+          maxlength="280"
+          aria-label="Broadcast announcement message"
+        ></textarea>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px;flex-wrap:wrap;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="banner-broadcast-btn" id="broadcast-btn" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              Broadcast Now
+            </button>
+            <button class="banner-clear-btn" id="clear-banner-btn" type="button">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Clear Broadcast
+            </button>
           </div>
-        ))}
+          <span id="char-count" style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:600;">0 / 280</span>
+        </div>
       </div>
     </section>
 
-    <!-- Signage Directory Feed Section -->
+    <!-- ══════════════════════════════════════════════════════
+         SECTION 2: Promotional Slide Deck with Rotation Controls
+    ══════════════════════════════════════════════════════ -->
     <section>
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-white">Wayfinding Directory Grouping</h2>
-        <code class="text-xs bg-slate-900 px-3 py-1 rounded text-slate-300 border border-slate-800">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;gap:12px;flex-wrap:wrap;">
+        <div>
+          <span class="label-section">Promotional Display</span>
+          <h2 style="font-size:18px;font-weight:800;color:#fff;margin-top:3px;">
+            Rotating Slide Deck
+            <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.35);margin-left:8px;">({slides.length} slides)</span>
+          </h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="label-muted" style="font-size:12px;font-weight:600;">Interval:</span>
+          <div style="display:flex;gap:4px;" id="interval-controls" role="group" aria-label="Slide interval">
+            <button class="interval-btn active" data-interval="5000" type="button">5s</button>
+            <button class="interval-btn" data-interval="10000" type="button">10s</button>
+            <button class="interval-btn" data-interval="15000" type="button">15s</button>
+            <button class="interval-btn" data-interval="30000" type="button">30s</button>
+          </div>
+          <button class="play-pause-btn" id="play-pause-btn" aria-label="Pause rotation" title="Pause/Resume rotation">
+            <svg id="pause-icon" width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="1" width="3" height="10" rx="1"/><rect x="7" y="1" width="3" height="10" rx="1"/></svg>
+            <svg id="play-icon" width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="display:none;"><polygon points="2,1 11,6 2,11"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carousel -->
+      <div class="slide-carousel" id="slide-carousel" aria-roledescription="carousel" aria-label="Promotional slides">
+        <div class="slide-track" id="slide-track">
+          {slides.map((s, i) => (
+            <div
+              class="slide-item"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`Slide ${i + 1} of ${slides.length}: ${s.title}`}
+            >
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;font-family:monospace;color:rgba(255,255,255,0.5);">
+                      Priority {s.priority}
+                    </span>
+                    <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.4);">
+                      ⏱ {s.durationSeconds}s
+                    </span>
+                    <span style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#10B981;">
+                      Active
+                    </span>
+                  </div>
+                  <span style="font-size:11px;color:rgba(255,255,255,0.25);font-weight:600;">{i + 1}/{slides.length}</span>
+                </div>
+
+                <h3 style="font-size:22px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px;">{s.title}</h3>
+                {s.headline && (
+                  <p style="font-size:14px;font-weight:800;color:#C60A4D;margin-bottom:6px;letter-spacing:0.01em;">{s.headline}</p>
+                )}
+                {s.subheadline && (
+                  <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.55;">{s.subheadline}</p>
+                )}
+              </div>
+
+              <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-size:11px;color:rgba(255,255,255,0.3);">
+                  Targets: {s.targetLocations.join(', ')}
+                </span>
+                {s.tenant && (
+                  <span style="font-size:11px;font-weight:700;color:#252F81;background:rgba(37,47,129,0.18);border:1px solid rgba(37,47,129,0.3);padding:3px 10px;border-radius:20px;">
+                    {s.tenant.name} • {s.tenant.unitNumber}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="slide-progress-bar" id="slide-progress" style="width:0%;" aria-hidden="true"></div>
+
+        <!-- Dot Indicators -->
+        <div class="slide-controls" role="tablist" aria-label="Slide indicators" id="slide-dots">
+          {slides.map((_, i) => (
+            <button
+              class={`slide-dot ${i === 0 ? 'active' : ''}`}
+              data-index={i}
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-label={`Go to slide ${i + 1}`}
+              type="button"
+            ></button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION 3: Wayfinding Directory Grouping
+    ══════════════════════════════════════════════════════ -->
+    <section>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div>
+          <span class="label-section">In-Mall Wayfinding</span>
+          <h2 style="font-size:18px;font-weight:800;color:#fff;margin-top:3px;">Directory by Floor</h2>
+        </div>
+        <code style="font-size:11px;background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:6px;color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.08);">
           GET /api/v1/signage/directory
         </code>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
         {directory.map((floor) => (
-          <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
-            <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800">
-              <span class="font-black text-[#C60A4D] text-lg">{floor.floorLevel}</span>
-              <span class="text-xs text-slate-300 font-semibold">{floor.tenants.length} Stores</span>
+          <div style="background:#111827;border-radius:14px;border:1px solid rgba(255,255,255,0.07);padding:18px;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);">
+              <span style="font-weight:900;color:#C60A4D;font-size:20px;">{floor.floorLevel}</span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:600;">{floor.tenants.length} Stores</span>
             </div>
-            <ul class="space-y-2 text-xs">
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
               {floor.tenants.map((t) => (
-                <li class="flex justify-between items-center py-1 border-b border-slate-800/40 last:border-0">
-                  <span class="text-slate-200 font-medium truncate mr-2">{t.tenantName}</span>
-                  <span class="font-mono text-slate-400 text-[10px] shrink-0">{t.unitNumber}</span>
+                <li style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                  <span style="color:rgba(255,255,255,0.85);font-weight:600;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px;">{t.tenantName}</span>
+                  <span style="font-family:monospace;color:rgba(255,255,255,0.3);font-size:10px;flex-shrink:0;">{t.unitNumber}</span>
                 </li>
               ))}
             </ul>
@@ -98,6 +451,215 @@ const directory = await repo.getSignageDirectory();
         ))}
       </div>
     </section>
+
   </main>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────────
+    // Emergency Banner Controls
+    // ─────────────────────────────────────────────────────────────────
+    const banner = document.getElementById('emergency-banner') as HTMLElement | null;
+    const bannerInput = document.getElementById('banner-input') as HTMLTextAreaElement | null;
+    const bannerMsgText = document.getElementById('emergency-msg-text');
+    const broadcastBtn = document.getElementById('broadcast-btn');
+    const clearBannerBtn = document.getElementById('clear-banner-btn');
+    const dismissBtn = document.getElementById('emergency-dismiss-btn');
+    const charCount = document.getElementById('char-count');
+    const bannerStatusDot = document.getElementById('banner-status-dot') as HTMLElement | null;
+    const bannerStatusLabel = document.getElementById('banner-status-label');
+
+    function setBannerActive(msg: string) {
+      if (!banner || !bannerMsgText) return;
+      bannerMsgText.textContent = msg;
+      banner.classList.add('visible');
+      if (bannerStatusDot) {
+        bannerStatusDot.style.background = '#C60A4D';
+        bannerStatusDot.style.boxShadow = '0 0 8px rgba(198,10,77,0.5)';
+        bannerStatusDot.style.animation = 'pulse 1.2s infinite';
+      }
+      if (bannerStatusLabel) {
+        bannerStatusLabel.textContent = 'Broadcasting live';
+        bannerStatusLabel.style.color = '#C60A4D';
+      }
+    }
+
+    function clearBanner() {
+      if (!banner) return;
+      banner.classList.remove('visible');
+      if (bannerStatusDot) {
+        bannerStatusDot.style.background = 'rgba(255,255,255,0.2)';
+        bannerStatusDot.style.boxShadow = '';
+        bannerStatusDot.style.animation = '';
+      }
+      if (bannerStatusLabel) {
+        bannerStatusLabel.textContent = 'No active broadcast';
+        bannerStatusLabel.style.color = 'rgba(255,255,255,0.4)';
+      }
+    }
+
+    bannerInput?.addEventListener('input', () => {
+      const len = bannerInput.value.length;
+      if (charCount) charCount.textContent = `${len} / 280`;
+    });
+
+    broadcastBtn?.addEventListener('click', () => {
+      const msg = bannerInput?.value.trim();
+      if (!msg) {
+        bannerInput?.focus();
+        return;
+      }
+      setBannerActive(msg);
+    });
+
+    clearBannerBtn?.addEventListener('click', () => {
+      clearBanner();
+      if (bannerInput) bannerInput.value = '';
+      if (charCount) charCount.textContent = '0 / 280';
+    });
+
+    dismissBtn?.addEventListener('click', clearBanner);
+
+    // ─────────────────────────────────────────────────────────────────
+    // Slide Carousel Controls
+    // ─────────────────────────────────────────────────────────────────
+    const slideTrack = document.getElementById('slide-track') as HTMLElement | null;
+    const progressBar = document.getElementById('slide-progress') as HTMLElement | null;
+    const dotsContainer = document.getElementById('slide-dots');
+    const dots = Array.from(document.querySelectorAll('.slide-dot'));
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const pauseIcon = document.getElementById('pause-icon');
+    const playIcon = document.getElementById('play-icon');
+    const intervalBtns = Array.from(document.querySelectorAll('.interval-btn'));
+
+    const totalSlides = dots.length;
+
+    if (totalSlides <= 1) {
+      // No rotation needed for 0 or 1 slides — hide controls
+      document.getElementById('interval-controls')?.style.setProperty('display', 'none');
+      playPauseBtn?.style.setProperty('display', 'none');
+    }
+
+    let currentSlide = 0;
+    let intervalMs = 5000;
+    let isPlaying = true;
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+    let progressTimerId: ReturnType<typeof setInterval> | null = null;
+    let progressStart = 0;
+
+    function goToSlide(idx: number) {
+      if (!slideTrack) return;
+      const target = Math.max(0, Math.min(idx, totalSlides - 1));
+      currentSlide = target;
+      slideTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+      // Update dots
+      dots.forEach((dot, i) => {
+        const isActive = i === currentSlide;
+        dot.classList.toggle('active', isActive);
+        dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      // Reset progress bar
+      startProgress();
+    }
+
+    function startProgress() {
+      if (progressBar) {
+        progressBar.style.transition = 'none';
+        progressBar.style.width = '0%';
+        // Trigger reflow
+        void progressBar.offsetWidth;
+        progressBar.style.transition = `width ${intervalMs}ms linear`;
+        progressBar.style.width = '100%';
+      }
+    }
+
+    function scheduleNext() {
+      if (timerId) clearTimeout(timerId);
+      if (!isPlaying || totalSlides <= 1) return;
+      timerId = setTimeout(() => {
+        goToSlide((currentSlide + 1) % totalSlides);
+        scheduleNext();
+      }, intervalMs);
+    }
+
+    function startRotation() {
+      isPlaying = true;
+      if (pauseIcon) pauseIcon.style.display = '';
+      if (playIcon) playIcon.style.display = 'none';
+      if (playPauseBtn) playPauseBtn.setAttribute('aria-label', 'Pause rotation');
+      startProgress();
+      scheduleNext();
+    }
+
+    function pauseRotation() {
+      isPlaying = false;
+      if (timerId) { clearTimeout(timerId); timerId = null; }
+      if (pauseIcon) pauseIcon.style.display = 'none';
+      if (playIcon) playIcon.style.display = '';
+      if (playPauseBtn) playPauseBtn.setAttribute('aria-label', 'Resume rotation');
+      // Freeze progress bar width
+      if (progressBar) {
+        const computedWidth = getComputedStyle(progressBar).width;
+        const carouselWidth = progressBar.parentElement?.offsetWidth || 1;
+        const pct = (parseFloat(computedWidth) / carouselWidth) * 100;
+        progressBar.style.transition = 'none';
+        progressBar.style.width = `${pct}%`;
+      }
+    }
+
+    playPauseBtn?.addEventListener('click', () => {
+      if (isPlaying) pauseRotation(); else startRotation();
+    });
+
+    // Interval selector
+    intervalBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        intervalBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        intervalMs = parseInt(btn.getAttribute('data-interval') || '5000', 10);
+        if (isPlaying) {
+          if (timerId) clearTimeout(timerId);
+          startProgress();
+          scheduleNext();
+        }
+      });
+    });
+
+    // Dot navigation
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        if (timerId) clearTimeout(timerId);
+        goToSlide(i);
+        if (isPlaying) scheduleNext();
+      });
+    });
+
+    // Init
+    if (totalSlides > 1) {
+      startRotation();
+    }
+
+    // Pause on hover
+    const carousel = document.getElementById('slide-carousel');
+    carousel?.addEventListener('mouseenter', () => { if (isPlaying) pauseRotation(); });
+    carousel?.addEventListener('mouseleave', () => { if (!isPlaying && playPauseBtn?.getAttribute('aria-label') === 'Resume rotation') return; startRotation(); });
+
+    // Keyboard accessibility
+    carousel?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') { goToSlide((currentSlide + 1) % totalSlides); if (isPlaying) { if(timerId) clearTimeout(timerId); scheduleNext(); } }
+      if (e.key === 'ArrowLeft') { goToSlide((currentSlide - 1 + totalSlides) % totalSlides); if (isPlaying) { if(timerId) clearTimeout(timerId); scheduleNext(); } }
+    });
+  </script>
+
+  <style>
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @media (max-width: 640px) {
+      main { padding: 20px 16px; }
+    }
+  </style>
 </body>
 </html>
