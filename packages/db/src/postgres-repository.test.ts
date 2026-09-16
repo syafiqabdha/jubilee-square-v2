@@ -79,7 +79,7 @@ function makeCategoryRow(overrides: Record<string, unknown> = {}) {
 
 function makeTenantRow(overrides: Record<string, unknown> = {}) {
   return {
-    id: 't0000000-0000-0000-0000-000000000001',
+    id: 'b0000000-0000-0000-0000-000000000001',
     slug: 'ya-kun-kaya-toast',
     name: 'Ya Kun Kaya Toast',
     category_id: 'c0000000-0000-0000-0000-000000000001',
@@ -111,8 +111,8 @@ function makeTenantRow(overrides: Record<string, unknown> = {}) {
 
 function makePromotionRow(overrides: Record<string, unknown> = {}) {
   return {
-    id: 'p0000000-0000-0000-0000-000000000001',
-    tenant_id: 't0000000-0000-0000-0000-000000000001',
+    id: 'e0000000-0000-0000-0000-000000000001',
+    tenant_id: 'b0000000-0000-0000-0000-000000000001',
     title: '10% off this week',
     slug: '10-off-this-week',
     summary: 'Limited offer',
@@ -131,7 +131,7 @@ function makePromotionRow(overrides: Record<string, unknown> = {}) {
 
 function makeSignageSlideRow(overrides: Record<string, unknown> = {}) {
   return {
-    id: 's0000000-0000-0000-0000-000000000001',
+    id: 'f0000000-0000-0000-0000-000000000001',
     title: 'Welcome Slide',
     slide_type: 'image',
     media_url: '/slides/welcome.jpg',
@@ -351,7 +351,7 @@ describe('PostgresCatalogRepository — unit tests (mocked pool)', () => {
         // Second call is getPromotionsForTenant
         return { rows: [makePromotionRow()] };
       };
-      const t = await repo.getTenantById('t0000000-0000-0000-0000-000000000001');
+      const t = await repo.getTenantById('b0000000-0000-0000-0000-000000000001');
       assert.ok(t);
       assert.equal(t.name, 'Ya Kun Kaya Toast');
       assert.ok(Array.isArray(t.promotions));

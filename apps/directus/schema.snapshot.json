@@ -1,46 +1,46 @@
 {
   "version": 1,
   "directus": "11.4.1",
+  "vendor": "postgres",
   "collections": [
+    {
+      "collection": "amenities",
+      "meta": {
+        "icon": "room_service",
+        "note": "Store and mall amenities",
+        "display_template": "{{name}}",
+        "hidden": false,
+        "singleton": false,
+        "collection": "amenities"
+      },
+      "schema": {
+        "name": "amenities"
+      }
+    },
     {
       "collection": "categories",
       "meta": {
-        "collection": "categories",
         "icon": "category",
         "note": "Mall tenant categories (Dine, Learn, Relax, Shop, Services)",
         "display_template": "{{name}} ({{short_code}})",
+        "sort_field": "display_order",
         "hidden": false,
         "singleton": false,
-        "sort_field": "display_order"
+        "collection": "categories"
       },
       "schema": {
         "name": "categories"
       }
     },
     {
-      "collection": "tenants",
-      "meta": {
-        "collection": "tenants",
-        "icon": "storefront",
-        "note": "23 Mall Stores and Educational Centres",
-        "display_template": "{{name}} [{{floor_level}} {{unit_number}}]",
-        "hidden": false,
-        "singleton": false,
-        "sort_field": "display_order"
-      },
-      "schema": {
-        "name": "tenants"
-      }
-    },
-    {
       "collection": "operating_hours",
       "meta": {
-        "collection": "operating_hours",
         "icon": "schedule",
         "note": "Daily store operating hours",
         "display_template": "{{day_name}}: {{open_time}} - {{close_time}}",
         "hidden": false,
-        "singleton": false
+        "singleton": false,
+        "collection": "operating_hours"
       },
       "schema": {
         "name": "operating_hours"
@@ -49,233 +49,2021 @@
     {
       "collection": "promotions",
       "meta": {
-        "collection": "promotions",
         "icon": "local_offer",
         "note": "Special store deals and mall-wide campaigns",
         "display_template": "{{title}} ({{badge_text}})",
+        "sort_field": "display_order",
         "hidden": false,
         "singleton": false,
-        "sort_field": "display_order"
+        "collection": "promotions"
       },
       "schema": {
         "name": "promotions"
       }
     },
     {
-      "collection": "amenities",
-      "meta": {
-        "collection": "amenities",
-        "icon": "room_service",
-        "note": "Store and mall amenities",
-        "display_template": "{{name}}",
-        "hidden": false,
-        "singleton": false
-      },
-      "schema": {
-        "name": "amenities"
-      }
-    },
-    {
       "collection": "signage_slides",
       "meta": {
-        "collection": "signage_slides",
         "icon": "tv",
         "note": "Digital display slides across 7 units on Levels 1–4",
         "display_template": "{{title}} [Priority {{priority}}]",
+        "sort_field": "priority",
         "hidden": false,
         "singleton": false,
-        "sort_field": "priority"
+        "collection": "signage_slides"
       },
       "schema": {
         "name": "signage_slides"
+      }
+    },
+    {
+      "collection": "tenant_amenities",
+      "meta": {
+        "icon": "link",
+        "note": "M2M junction table linking tenants and amenities",
+        "hidden": true,
+        "singleton": false,
+        "collection": "tenant_amenities"
+      },
+      "schema": {
+        "name": "tenant_amenities"
+      }
+    },
+    {
+      "collection": "tenants",
+      "meta": {
+        "icon": "storefront",
+        "note": "23 Mall Stores and Educational Centres",
+        "display_template": "{{name}} [{{floor_level}} {{unit_number}}]",
+        "sort_field": "display_order",
+        "hidden": false,
+        "singleton": false,
+        "collection": "tenants"
+      },
+      "schema": {
+        "name": "tenants"
       }
     }
   ],
   "fields": [
     {
+      "collection": "amenities",
+      "field": "id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "id",
+        "table": "amenities",
+        "data_type": "uuid",
+        "default_value": "uuid_generate_v4()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": true,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "amenities",
+      "field": "code",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "code",
+        "table": "amenities",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 50,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "amenities",
+      "field": "name",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "name",
+        "table": "amenities",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 100,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "amenities",
+      "field": "icon",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "icon",
+        "table": "amenities",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 64,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "amenities",
+      "field": "description",
+      "type": "text",
+      "meta": null,
+      "schema": {
+        "name": "description",
+        "table": "amenities",
+        "data_type": "text",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "amenities",
+      "field": "created_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "created_at",
+        "table": "amenities",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
       "collection": "categories",
       "field": "id",
       "type": "uuid",
-      "meta": { "hidden": true, "readonly": true }
+      "meta": null,
+      "schema": {
+        "name": "id",
+        "table": "categories",
+        "data_type": "uuid",
+        "default_value": "uuid_generate_v4()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": true,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "slug",
       "type": "string",
-      "meta": { "interface": "input", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "slug",
+        "table": "categories",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 64,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "name",
       "type": "string",
-      "meta": { "interface": "input", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "name",
+        "table": "categories",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 100,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "short_code",
       "type": "string",
-      "meta": { "interface": "input", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "short_code",
+        "table": "categories",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 20,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "description",
       "type": "text",
-      "meta": { "interface": "input-multiline" }
+      "meta": null,
+      "schema": {
+        "name": "description",
+        "table": "categories",
+        "data_type": "text",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "icon",
       "type": "string",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "icon",
+        "table": "categories",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 64,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "accent_color",
       "type": "string",
-      "meta": { "interface": "input-color" }
+      "meta": null,
+      "schema": {
+        "name": "accent_color",
+        "table": "categories",
+        "data_type": "character varying",
+        "default_value": "#3B82F6",
+        "max_length": 32,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "categories",
       "field": "display_order",
       "type": "integer",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "display_order",
+        "table": "categories",
+        "data_type": "integer",
+        "default_value": 0,
+        "max_length": null,
+        "numeric_precision": 32,
+        "numeric_scale": 0,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "categories",
+      "field": "created_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "created_at",
+        "table": "categories",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "categories",
+      "field": "updated_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "updated_at",
+        "table": "categories",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "id",
+        "table": "operating_hours",
+        "data_type": "uuid",
+        "default_value": "uuid_generate_v4()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": true,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "tenant_id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "tenant_id",
+        "table": "operating_hours",
+        "data_type": "uuid",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id"
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "day_of_week",
+      "type": "integer",
+      "meta": null,
+      "schema": {
+        "name": "day_of_week",
+        "table": "operating_hours",
+        "data_type": "integer",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": 32,
+        "numeric_scale": 0,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "day_name",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "day_name",
+        "table": "operating_hours",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 20,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "open_time",
+      "type": "time",
+      "meta": null,
+      "schema": {
+        "name": "open_time",
+        "table": "operating_hours",
+        "data_type": "time without time zone",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "close_time",
+      "type": "time",
+      "meta": null,
+      "schema": {
+        "name": "close_time",
+        "table": "operating_hours",
+        "data_type": "time without time zone",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "is_closed",
+      "type": "boolean",
+      "meta": null,
+      "schema": {
+        "name": "is_closed",
+        "table": "operating_hours",
+        "data_type": "boolean",
+        "default_value": false,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "special_notes",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "special_notes",
+        "table": "operating_hours",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 200,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "created_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "created_at",
+        "table": "operating_hours",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "operating_hours",
+      "field": "updated_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "updated_at",
+        "table": "operating_hours",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "id",
+        "table": "promotions",
+        "data_type": "uuid",
+        "default_value": "uuid_generate_v4()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": true,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "tenant_id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "tenant_id",
+        "table": "promotions",
+        "data_type": "uuid",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id"
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "title",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "title",
+        "table": "promotions",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 200,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "slug",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "slug",
+        "table": "promotions",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 200,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "summary",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "summary",
+        "table": "promotions",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 300,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "description",
+      "type": "text",
+      "meta": null,
+      "schema": {
+        "name": "description",
+        "table": "promotions",
+        "data_type": "text",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "banner_url",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "banner_url",
+        "table": "promotions",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 500,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "badge_text",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "badge_text",
+        "table": "promotions",
+        "data_type": "character varying",
+        "default_value": "PROMO",
+        "max_length": 50,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "terms_conditions",
+      "type": "text",
+      "meta": null,
+      "schema": {
+        "name": "terms_conditions",
+        "table": "promotions",
+        "data_type": "text",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "start_date",
+      "type": "date",
+      "meta": null,
+      "schema": {
+        "name": "start_date",
+        "table": "promotions",
+        "data_type": "date",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "end_date",
+      "type": "date",
+      "meta": null,
+      "schema": {
+        "name": "end_date",
+        "table": "promotions",
+        "data_type": "date",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "is_active",
+      "type": "boolean",
+      "meta": null,
+      "schema": {
+        "name": "is_active",
+        "table": "promotions",
+        "data_type": "boolean",
+        "default_value": true,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "is_featured",
+      "type": "boolean",
+      "meta": null,
+      "schema": {
+        "name": "is_featured",
+        "table": "promotions",
+        "data_type": "boolean",
+        "default_value": false,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "display_order",
+      "type": "integer",
+      "meta": null,
+      "schema": {
+        "name": "display_order",
+        "table": "promotions",
+        "data_type": "integer",
+        "default_value": 0,
+        "max_length": null,
+        "numeric_precision": 32,
+        "numeric_scale": 0,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "created_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "created_at",
+        "table": "promotions",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "promotions",
+      "field": "updated_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "updated_at",
+        "table": "promotions",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "id",
+        "table": "signage_slides",
+        "data_type": "uuid",
+        "default_value": "uuid_generate_v4()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": true,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "title",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "title",
+        "table": "signage_slides",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 200,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "slide_type",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "slide_type",
+        "table": "signage_slides",
+        "data_type": "character varying",
+        "default_value": "image",
+        "max_length": 50,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "media_url",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "media_url",
+        "table": "signage_slides",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 500,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "duration_seconds",
+      "type": "integer",
+      "meta": null,
+      "schema": {
+        "name": "duration_seconds",
+        "table": "signage_slides",
+        "data_type": "integer",
+        "default_value": 10,
+        "max_length": null,
+        "numeric_precision": 32,
+        "numeric_scale": 0,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "target_locations",
+      "type": "unknown",
+      "meta": null,
+      "schema": {
+        "name": "target_locations",
+        "table": "signage_slides",
+        "data_type": "text[]",
+        "default_value": "ARRAY['all'",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "tenant_id",
+      "type": "uuid",
+      "meta": null,
+      "schema": {
+        "name": "tenant_id",
+        "table": "signage_slides",
+        "data_type": "uuid",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id"
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "headline",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "headline",
+        "table": "signage_slides",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 255,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "subheadline",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "subheadline",
+        "table": "signage_slides",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 255,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "start_date",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "start_date",
+        "table": "signage_slides",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "end_date",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "end_date",
+        "table": "signage_slides",
+        "data_type": "timestamp with time zone",
+        "default_value": "(now() + '1 year'",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "is_active",
+      "type": "boolean",
+      "meta": null,
+      "schema": {
+        "name": "is_active",
+        "table": "signage_slides",
+        "data_type": "boolean",
+        "default_value": true,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "priority",
+      "type": "integer",
+      "meta": null,
+      "schema": {
+        "name": "priority",
+        "table": "signage_slides",
+        "data_type": "integer",
+        "default_value": 1,
+        "max_length": null,
+        "numeric_precision": 32,
+        "numeric_scale": 0,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "created_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "created_at",
+        "table": "signage_slides",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "signage_slides",
+      "field": "updated_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "updated_at",
+        "table": "signage_slides",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "id",
       "type": "uuid",
-      "meta": { "hidden": true, "readonly": true }
-    },
-    {
-      "collection": "tenants",
-      "field": "name",
-      "type": "string",
-      "meta": { "interface": "input", "required": true }
-    },
-    {
-      "collection": "tenants",
-      "field": "slug",
-      "type": "string",
-      "meta": { "interface": "input", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "id",
+        "table": "tenants",
+        "data_type": "uuid",
+        "default_value": "uuid_generate_v4()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": false,
+        "is_primary_key": true,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "category_id",
       "type": "uuid",
-      "meta": { "interface": "select-dropdown-m2o", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "category_id",
+        "table": "tenants",
+        "data_type": "uuid",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": "categories",
+        "foreign_key_column": "id"
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "slug",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "slug",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 120,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": true,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "name",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "name",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 200,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "floor_level",
       "type": "string",
-      "meta": {
-        "interface": "select-dropdown",
-        "options": {
-          "choices": [
-            { "text": "Level 1", "value": "L1" },
-            { "text": "Level 2", "value": "L2" },
-            { "text": "Level 3", "value": "L3" },
-            { "text": "Level 4", "value": "L4" },
-            { "text": "Basement 1", "value": "B1" }
-          ]
-        }
+      "meta": null,
+      "schema": {
+        "name": "floor_level",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 10,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
       }
     },
     {
       "collection": "tenants",
       "field": "unit_number",
       "type": "string",
-      "meta": { "interface": "input", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "unit_number",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 50,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "summary",
       "type": "string",
-      "meta": { "interface": "input-multiline", "required": true }
+      "meta": null,
+      "schema": {
+        "name": "summary",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 300,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "description",
       "type": "text",
-      "meta": { "interface": "input-rich-text-html" }
+      "meta": null,
+      "schema": {
+        "name": "description",
+        "table": "tenants",
+        "data_type": "text",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": false,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "phone",
       "type": "string",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "phone",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 50,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "whatsapp",
       "type": "string",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "whatsapp",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 50,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "email",
+      "type": "string",
+      "meta": null,
+      "schema": {
+        "name": "email",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 120,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "website",
       "type": "string",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "website",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 255,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "logo_url",
       "type": "string",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "logo_url",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 500,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "hero_image_url",
       "type": "string",
-      "meta": { "interface": "input" }
+      "meta": null,
+      "schema": {
+        "name": "hero_image_url",
+        "table": "tenants",
+        "data_type": "character varying",
+        "default_value": null,
+        "max_length": 500,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "gallery",
+      "type": "json",
+      "meta": null,
+      "schema": {
+        "name": "gallery",
+        "table": "tenants",
+        "data_type": "jsonb",
+        "default_value": [],
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "social_links",
+      "type": "json",
+      "meta": null,
+      "schema": {
+        "name": "social_links",
+        "table": "tenants",
+        "data_type": "jsonb",
+        "default_value": {},
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "tags",
-      "type": "json",
-      "meta": { "interface": "tags" }
+      "type": "unknown",
+      "meta": null,
+      "schema": {
+        "name": "tags",
+        "table": "tenants",
+        "data_type": "text[]",
+        "default_value": "ARRAY[]",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "metadata",
       "type": "json",
-      "meta": { "interface": "input-code", "options": { "language": "json" } }
+      "meta": null,
+      "schema": {
+        "name": "metadata",
+        "table": "tenants",
+        "data_type": "jsonb",
+        "default_value": {},
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "is_active",
       "type": "boolean",
-      "meta": { "interface": "boolean" }
+      "meta": null,
+      "schema": {
+        "name": "is_active",
+        "table": "tenants",
+        "data_type": "boolean",
+        "default_value": true,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     },
     {
       "collection": "tenants",
       "field": "is_featured",
       "type": "boolean",
-      "meta": { "interface": "boolean" }
+      "meta": null,
+      "schema": {
+        "name": "is_featured",
+        "table": "tenants",
+        "data_type": "boolean",
+        "default_value": false,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "display_order",
+      "type": "integer",
+      "meta": null,
+      "schema": {
+        "name": "display_order",
+        "table": "tenants",
+        "data_type": "integer",
+        "default_value": 0,
+        "max_length": null,
+        "numeric_precision": 32,
+        "numeric_scale": 0,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "created_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "created_at",
+        "table": "tenants",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "updated_at",
+      "type": "timestamp",
+      "meta": null,
+      "schema": {
+        "name": "updated_at",
+        "table": "tenants",
+        "data_type": "timestamp with time zone",
+        "default_value": "now()",
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "search_vector",
+      "type": "unknown",
+      "meta": null,
+      "schema": {
+        "name": "search_vector",
+        "table": "tenants",
+        "data_type": "tsvector",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_indexed": true,
+        "is_primary_key": false,
+        "is_generated": true,
+        "generation_expression": "(((setweight(to_tsvector('english'::regconfig, (COALESCE(name, ''::character varying))::text), 'A'::\"char\") || setweight(to_tsvector('english'::regconfig, (COALESCE(unit_number, ''::character varying))::text), 'B'::\"char\")) || setweight(to_tsvector('english'::regconfig, (COALESCE(summary, ''::character varying))::text), 'C'::\"char\")) || setweight(to_tsvector('english'::regconfig, COALESCE(description, ''::text)), 'D'::\"char\"))",
+        "has_auto_increment": false,
+        "foreign_key_table": null,
+        "foreign_key_column": null
+      }
     }
   ],
   "relations": [
     {
-      "collection": "tenants",
-      "field": "category_id",
-      "related_collection": "categories",
-      "schema": {
-        "table": "tenants",
-        "column": "category_id",
-        "foreign_key_table": "categories",
-        "foreign_key_column": "id",
-        "on_delete": "RESTRICT"
-      }
-    },
-    {
       "collection": "operating_hours",
       "field": "tenant_id",
       "related_collection": "tenants",
+      "meta": null,
       "schema": {
         "table": "operating_hours",
         "column": "tenant_id",
         "foreign_key_table": "tenants",
         "foreign_key_column": "id",
+        "constraint_name": "operating_hours_tenant_id_fkey",
+        "on_update": "NO ACTION",
         "on_delete": "CASCADE"
       }
     },
@@ -283,11 +2071,14 @@
       "collection": "promotions",
       "field": "tenant_id",
       "related_collection": "tenants",
+      "meta": null,
       "schema": {
         "table": "promotions",
         "column": "tenant_id",
         "foreign_key_table": "tenants",
         "foreign_key_column": "id",
+        "constraint_name": "promotions_tenant_id_fkey",
+        "on_update": "NO ACTION",
         "on_delete": "SET NULL"
       }
     },
@@ -295,12 +2086,60 @@
       "collection": "signage_slides",
       "field": "tenant_id",
       "related_collection": "tenants",
+      "meta": null,
       "schema": {
         "table": "signage_slides",
         "column": "tenant_id",
         "foreign_key_table": "tenants",
         "foreign_key_column": "id",
+        "constraint_name": "signage_slides_tenant_id_fkey",
+        "on_update": "NO ACTION",
         "on_delete": "SET NULL"
+      }
+    },
+    {
+      "collection": "tenant_amenities",
+      "field": "tenant_id",
+      "related_collection": "tenants",
+      "meta": null,
+      "schema": {
+        "table": "tenant_amenities",
+        "column": "tenant_id",
+        "foreign_key_table": "tenants",
+        "foreign_key_column": "id",
+        "constraint_name": "tenant_amenities_tenant_id_fkey",
+        "on_update": "NO ACTION",
+        "on_delete": "CASCADE"
+      }
+    },
+    {
+      "collection": "tenant_amenities",
+      "field": "amenity_id",
+      "related_collection": "amenities",
+      "meta": null,
+      "schema": {
+        "table": "tenant_amenities",
+        "column": "amenity_id",
+        "foreign_key_table": "amenities",
+        "foreign_key_column": "id",
+        "constraint_name": "tenant_amenities_amenity_id_fkey",
+        "on_update": "NO ACTION",
+        "on_delete": "CASCADE"
+      }
+    },
+    {
+      "collection": "tenants",
+      "field": "category_id",
+      "related_collection": "categories",
+      "meta": null,
+      "schema": {
+        "table": "tenants",
+        "column": "category_id",
+        "foreign_key_table": "categories",
+        "foreign_key_column": "id",
+        "constraint_name": "tenants_category_id_fkey",
+        "on_update": "NO ACTION",
+        "on_delete": "RESTRICT"
       }
     }
   ]
