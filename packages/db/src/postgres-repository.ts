@@ -6,6 +6,8 @@ import type {
   SignageDirectoryFloorGroup,
   TenantFilterParams,
   FloorLevel,
+  OperatingHours,
+  Amenity,
 } from '@jubilee/shared';
 import pg from 'pg';
 import { SEED_CATEGORIES } from './seed-data.js';
@@ -133,6 +135,10 @@ export class PostgresCatalogRepository implements CatalogRepository {
   }
 
   async getTenantById(id: string): Promise<Tenant | null> {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+      return null;
+    }
+
     const query = `
       SELECT t.*, c.name as category_name, c.slug as category_slug
       FROM tenants t
@@ -143,6 +149,8 @@ export class PostgresCatalogRepository implements CatalogRepository {
     if (res.rows.length === 0) return null;
     const tenant = this.mapTenant(res.rows[0]);
     tenant.promotions = await this.getPromotionsForTenant(id);
+    tenant.operatingHours = await this.getOperatingHoursForTenant(id);
+    tenant.amenities = await this.getAmenitiesForTenant(id);
     return tenant;
   }
 
@@ -157,6 +165,8 @@ export class PostgresCatalogRepository implements CatalogRepository {
     if (res.rows.length === 0) return null;
     const tenant = this.mapTenant(res.rows[0]);
     tenant.promotions = await this.getPromotionsForTenant(tenant.id);
+    tenant.operatingHours = await this.getOperatingHoursForTenant(tenant.id);
+    tenant.amenities = await this.getAmenitiesForTenant(tenant.id);
     return tenant;
   }
 
@@ -164,6 +174,28 @@ export class PostgresCatalogRepository implements CatalogRepository {
     const query = `SELECT * FROM promotions WHERE tenant_id = $1 AND is_active = true ORDER BY display_order`;
     const res = await this.pool.query(query, [tenantId]);
     return res.rows.map(this.mapPromotion);
+  }
+
+  private async getOperatingHoursForTenant(tenantId: string): Promise<OperatingHours[]> {
+    const query = `SELECT * FROM operating_hours WHERE tenant_id = $1 ORDER BY day_of_week`;
+    const res = await this.pool.query(query, [tenantId]);
+    return res.rows
+      .filter((r: any) => r && r.day_of_week !== undefined && r.day_name !== undefined)
+      .map(this.mapOperatingHours);
+  }
+
+  private async getAmenitiesForTenant(tenantId: string): Promise<Amenity[]> {
+    const query = `
+      SELECT a.*
+      FROM amenities a
+      JOIN tenant_amenities ta ON ta.amenity_id = a.id
+      WHERE ta.tenant_id = $1
+      ORDER BY a.name
+    `;
+    const res = await this.pool.query(query, [tenantId]);
+    return res.rows
+      .filter((r: any) => r && r.code !== undefined && r.name !== undefined)
+      .map(this.mapAmenity);
   }
 
   async getTenantsByCategory(categorySlug: string): Promise<Tenant[]> {
@@ -179,17 +211,26 @@ export class PostgresCatalogRepository implements CatalogRepository {
   }
 
   async getPromotions(activeOnly: boolean = true): Promise<Promotion[]> {
-    let query = `SELECT * FROM promotions`;
+    let query = `
+      SELECT p.*, t.name as tenant_name, t.slug as tenant_slug
+      FROM promotions p
+      LEFT JOIN tenants t ON p.tenant_id = t.id
+    `;
     if (activeOnly) {
-      query += ` WHERE is_active = true`;
+      query += ` WHERE p.is_active = true`;
     }
-    query += ` ORDER BY display_order`;
+    query += ` ORDER BY p.display_order`;
     const res = await this.pool.query(query);
     return res.rows.map(this.mapPromotion);
   }
 
   async getPromotionBySlug(slug: string): Promise<Promotion | null> {
-    const query = `SELECT * FROM promotions WHERE slug = $1`;
+    const query = `
+      SELECT p.*, t.name as tenant_name, t.slug as tenant_slug
+      FROM promotions p
+      LEFT JOIN tenants t ON p.tenant_id = t.id
+      WHERE p.slug = $1
+    `;
     const res = await this.pool.query(query, [slug]);
     if (res.rows.length === 0) return null;
     return this.mapPromotion(res.rows[0]);
@@ -316,6 +357,8 @@ export class PostgresCatalogRepository implements CatalogRepository {
   private mapPromotion = (r: any): Promotion => ({
     id: r.id,
     tenantId: r.tenant_id,
+    tenantName: r.tenant_name,
+    tenantSlug: r.tenant_slug,
     title: r.title,
     slug: r.slug,
     summary: r.summary,
@@ -328,6 +371,25 @@ export class PostgresCatalogRepository implements CatalogRepository {
     isActive: r.is_active,
     isFeatured: r.is_featured,
     displayOrder: r.display_order,
+  });
+
+  private mapOperatingHours = (r: any): OperatingHours => ({
+    id: r.id,
+    tenantId: r.tenant_id,
+    dayOfWeek: r.day_of_week,
+    dayName: r.day_name,
+    openTime: r.open_time,
+    closeTime: r.close_time,
+    isClosed: r.is_closed ?? false,
+    specialNotes: r.special_notes,
+  });
+
+  private mapAmenity = (r: any): Amenity => ({
+    id: r.id,
+    code: r.code,
+    name: r.name,
+    icon: r.icon,
+    description: r.description,
   });
 
   private mapSignageSlide = (r: any): SignageSlide => ({

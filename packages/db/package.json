@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "node --test --import tsx/esm src/postgres-repository.test.ts"
+    "test": "node --test --import tsx/esm src/postgres-repository.test.ts src/resilient-repository.test.ts"
   },
   "dependencies": {
     "@jubilee/shared": "*",

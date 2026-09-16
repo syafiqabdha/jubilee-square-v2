@@ -75,7 +75,7 @@ const standardHours = [
 export const SEED_TENANTS: Tenant[] = [
   // DINE (6)
   {
-    id: 't0000000-0000-0000-0000-000000000001',
+    id: 'b0000000-0000-0000-0000-000000000001',
     categoryId: 'c0000000-0000-0000-0000-000000000001',
     categorySlug: 'dine',
     categoryName: 'Dine',
@@ -103,7 +103,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[2], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000002',
+    id: 'b0000000-0000-0000-0000-000000000002',
     categoryId: 'c0000000-0000-0000-0000-000000000001',
     categorySlug: 'dine',
     categoryName: 'Dine',
@@ -131,7 +131,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000003',
+    id: 'b0000000-0000-0000-0000-000000000003',
     categoryId: 'c0000000-0000-0000-0000-000000000001',
     categorySlug: 'dine',
     categoryName: 'Dine',
@@ -159,7 +159,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000004',
+    id: 'b0000000-0000-0000-0000-000000000004',
     categoryId: 'c0000000-0000-0000-0000-000000000001',
     categorySlug: 'dine',
     categoryName: 'Dine',
@@ -187,7 +187,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000005',
+    id: 'b0000000-0000-0000-0000-000000000005',
     categoryId: 'c0000000-0000-0000-0000-000000000001',
     categorySlug: 'dine',
     categoryName: 'Dine',
@@ -215,7 +215,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[1], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000006',
+    id: 'b0000000-0000-0000-0000-000000000006',
     categoryId: 'c0000000-0000-0000-0000-000000000001',
     categorySlug: 'dine',
     categoryName: 'Dine',
@@ -245,7 +245,7 @@ export const SEED_TENANTS: Tenant[] = [
 
   // LEARN (9)
   {
-    id: 't0000000-0000-0000-0000-000000000007',
+    id: 'b0000000-0000-0000-0000-000000000007',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -273,7 +273,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000008',
+    id: 'b0000000-0000-0000-0000-000000000008',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -301,7 +301,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000009',
+    id: 'b0000000-0000-0000-0000-000000000009',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -329,7 +329,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000010',
+    id: 'b0000000-0000-0000-0000-000000000010',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -357,7 +357,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000011',
+    id: 'b0000000-0000-0000-0000-000000000011',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -385,7 +385,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000012',
+    id: 'b0000000-0000-0000-0000-000000000012',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -413,7 +413,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000013',
+    id: 'b0000000-0000-0000-0000-000000000013',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -441,7 +441,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000014',
+    id: 'b0000000-0000-0000-0000-000000000014',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -469,7 +469,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[2], SEED_AMENITIES[3], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000015',
+    id: 'b0000000-0000-0000-0000-000000000015',
     categoryId: 'c0000000-0000-0000-0000-000000000002',
     categorySlug: 'learn',
     categoryName: 'Learn',
@@ -499,7 +499,7 @@ export const SEED_TENANTS: Tenant[] = [
 
   // RELAX (5)
   {
-    id: 't0000000-0000-0000-0000-000000000016',
+    id: 'b0000000-0000-0000-0000-000000000016',
     categoryId: 'c0000000-0000-0000-0000-000000000003',
     categorySlug: 'relax',
     categoryName: 'Relax',
@@ -527,7 +527,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000017',
+    id: 'b0000000-0000-0000-0000-000000000017',
     categoryId: 'c0000000-0000-0000-0000-000000000003',
     categorySlug: 'relax',
     categoryName: 'Relax',
@@ -555,7 +555,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000018',
+    id: 'b0000000-0000-0000-0000-000000000018',
     categoryId: 'c0000000-0000-0000-0000-000000000003',
     categorySlug: 'relax',
     categoryName: 'Relax',
@@ -583,7 +583,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000019',
+    id: 'b0000000-0000-0000-0000-000000000019',
     categoryId: 'c0000000-0000-0000-0000-000000000003',
     categorySlug: 'relax',
     categoryName: 'Relax',
@@ -611,7 +611,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000020',
+    id: 'b0000000-0000-0000-0000-000000000020',
     categoryId: 'c0000000-0000-0000-0000-000000000003',
     categorySlug: 'relax',
     categoryName: 'Relax',
@@ -641,7 +641,7 @@ export const SEED_TENANTS: Tenant[] = [
 
   // SHOP (2)
   {
-    id: 't0000000-0000-0000-0000-000000000021',
+    id: 'b0000000-0000-0000-0000-000000000021',
     categoryId: 'c0000000-0000-0000-0000-000000000004',
     categorySlug: 'shop',
     categoryName: 'Shop',
@@ -669,7 +669,7 @@ export const SEED_TENANTS: Tenant[] = [
     amenities: [SEED_AMENITIES[0], SEED_AMENITIES[4], SEED_AMENITIES[5]],
   },
   {
-    id: 't0000000-0000-0000-0000-000000000022',
+    id: 'b0000000-0000-0000-0000-000000000022',
     categoryId: 'c0000000-0000-0000-0000-000000000004',
     categorySlug: 'shop',
     categoryName: 'Shop',
@@ -699,7 +699,7 @@ export const SEED_TENANTS: Tenant[] = [
 
   // SERVICES (1)
   {
-    id: 't0000000-0000-0000-0000-000000000023',
+    id: 'b0000000-0000-0000-0000-000000000023',
     categoryId: 'c0000000-0000-0000-0000-000000000005',
     categorySlug: 'services',
     categoryName: 'Services',
@@ -730,8 +730,8 @@ export const SEED_TENANTS: Tenant[] = [
 
 export const SEED_PROMOTIONS: Promotion[] = [
   {
-    id: 'p0000000-0000-0000-0000-000000000001',
-    tenantId: 't0000000-0000-0000-0000-000000000001',
+    id: 'e0000000-0000-0000-0000-000000000001',
+    tenantId: 'b0000000-0000-0000-0000-000000000001',
     tenantName: 'BANTIANYAO GRILLED FISH',
     tenantSlug: 'bantianyao-grilled-fish',
     title: 'Bantianyao Weekday Lunch Special — 20% Off Whole Fish',
@@ -748,8 +748,8 @@ export const SEED_PROMOTIONS: Promotion[] = [
     displayOrder: 1,
   },
   {
-    id: 'p0000000-0000-0000-0000-000000000002',
-    tenantId: 't0000000-0000-0000-0000-000000000014',
+    id: 'e0000000-0000-0000-0000-000000000002',
+    tenantId: 'b0000000-0000-0000-0000-000000000014',
     tenantName: 'My Drum School',
     tenantSlug: 'my-drum-school',
     title: 'My Drum School Free 30-Minute Trial Session',
@@ -766,8 +766,8 @@ export const SEED_PROMOTIONS: Promotion[] = [
     displayOrder: 2,
   },
   {
-    id: 'p0000000-0000-0000-0000-000000000017',
-    tenantId: 't0000000-0000-0000-0000-000000000017',
+    id: 'e0000000-0000-0000-0000-000000000017',
+    tenantId: 'b0000000-0000-0000-0000-000000000017',
     tenantName: 'Ashi Foot Reflexology',
     tenantSlug: 'ashi-foot-reflexology',
     title: 'Ashi Reflexology: 60-min Foot & Shoulder Combo at $58',
@@ -787,7 +787,7 @@ export const SEED_PROMOTIONS: Promotion[] = [
 
 export const SEED_SIGNAGE_SLIDES: SignageSlide[] = [
   {
-    id: 's0000000-0000-0000-0000-000000000001',
+    id: 'f0000000-0000-0000-0000-000000000001',
     title: 'Welcome to Jubilee Square AMK',
     slideType: 'image',
     mediaUrl: '/images/signage/welcome-banner.jpg',
@@ -801,7 +801,7 @@ export const SEED_SIGNAGE_SLIDES: SignageSlide[] = [
     priority: 1,
   },
   {
-    id: 's0000000-0000-0000-0000-000000000002',
+    id: 'f0000000-0000-0000-0000-000000000002',
     title: 'Level 3 & 4 Education Hub Spotlight',
     slideType: 'image',
     mediaUrl: '/images/signage/education-spotlight.jpg',
@@ -815,13 +815,13 @@ export const SEED_SIGNAGE_SLIDES: SignageSlide[] = [
     priority: 2,
   },
   {
-    id: 's0000000-0000-0000-0000-000000000003',
+    id: 'f0000000-0000-0000-0000-000000000003',
     title: 'Bantianyao Grilled Fish Featured',
     slideType: 'image',
     mediaUrl: '/images/signage/bantianyao-slide.jpg',
     durationSeconds: 10,
     targetLocations: ['L1_counter', 'L2_lift', 'L2_escalator'],
-    tenantId: 't0000000-0000-0000-0000-000000000001',
+    tenantId: 'b0000000-0000-0000-0000-000000000001',
     tenant: {
       name: 'BANTIANYAO GRILLED FISH',
       slug: 'bantianyao-grilled-fish',
@@ -834,7 +834,7 @@ export const SEED_SIGNAGE_SLIDES: SignageSlide[] = [
     priority: 3,
   },
   {
-    id: 's0000000-0000-0000-0000-000000000004',
+    id: 'f0000000-0000-0000-0000-000000000004',
     title: 'Level 2 Wellness & Hair Studios',
     slideType: 'image',
     mediaUrl: '/images/signage/wellness-slide.jpg',
@@ -848,7 +848,7 @@ export const SEED_SIGNAGE_SLIDES: SignageSlide[] = [
     priority: 4,
   },
   {
-    id: 's0000000-0000-0000-0000-000000000005',
+    id: 'f0000000-0000-0000-0000-000000000005',
     title: 'Wayfinding & Interactive Directory Map',
     slideType: 'html',
     mediaUrl: '/signage/wayfinding-kiosk',

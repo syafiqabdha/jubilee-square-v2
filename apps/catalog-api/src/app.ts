@@ -9,6 +9,7 @@ import { tenantRoutes } from './routes/tenants.js';
 import { promotionRoutes } from './routes/promotions.js';
 import { signageRoutes } from './routes/signage.js';
 import { searchRoutes } from './routes/search.js';
+import { syncRoutes } from './routes/sync.js';
 import { closeCatalogRepository } from '@jubilee/db';
 
 export async function buildApp(): Promise<FastifyInstance> {
@@ -72,6 +73,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       await v1.register(promotionRoutes);
       await v1.register(signageRoutes);
       await v1.register(searchRoutes);
+      await v1.register(syncRoutes);
     },
     { prefix: '/api/v1' }
   );
