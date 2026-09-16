@@ -149,7 +149,7 @@ const directory = await repo.getSignageDirectory();
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #C60A4D;
+      color: #FB7185;
       margin-bottom: 4px;
     }
     .emergency-msg {
@@ -235,13 +235,20 @@ const directory = await repo.getSignageDirectory();
     .banner-clear-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
     /* Contrast-safe text — WCAG AAA on #0B0F19 */
-    .label-muted { color: rgba(255,255,255,0.45); }
+    .label-muted { color: rgba(255,255,255,0.75); }
     .label-section {
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255,255,255,0.75);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide-track,
+      .slide-progress-bar {
+        transition: none !important;
+      }
     }
   </style>
 </head>
@@ -255,8 +262,8 @@ const directory = await repo.getSignageDirectory();
         <div style="display:flex;align-items:center;gap:10px;border-left:1px solid rgba(255,255,255,0.1);padding-left:12px;">
           <img src="/images/jubilee_sq_building.jpg" alt="Jubilee Square building" style="width:38px;height:26px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.1);" />
           <div>
-            <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.7);">Digital Signage Controller</div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.4);">7 In-Mall Screens Deployed • 61 Ang Mo Kio Ave 8</div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.9);">Digital Signage Controller</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.7);">7 In-Mall Screens Deployed • 61 Ang Mo Kio Ave 8</div>
           </div>
         </div>
       </div>
@@ -280,7 +287,7 @@ const directory = await repo.getSignageDirectory();
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <span id="banner-status-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);"></span>
-          <span id="banner-status-label" style="font-size:12px;color:rgba(255,255,255,0.4);font-weight:600;">No active broadcast</span>
+          <span id="banner-status-label" style="font-size:12px;color:rgba(255,255,255,0.7);font-weight:600;">No active broadcast</span>
         </div>
       </div>
 
@@ -363,34 +370,34 @@ const directory = await repo.getSignageDirectory();
               <div>
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
                   <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                    <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;font-family:monospace;color:rgba(255,255,255,0.5);">
+                    <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;font-family:monospace;color:rgba(255,255,255,0.85);">
                       Priority {s.priority}
                     </span>
-                    <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.4);">
+                    <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.85);">
                       ⏱ {s.durationSeconds}s
                     </span>
-                    <span style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#10B981;">
+                    <span style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#34D399;">
                       Active
                     </span>
                   </div>
-                  <span style="font-size:11px;color:rgba(255,255,255,0.25);font-weight:600;">{i + 1}/{slides.length}</span>
+                  <span style="font-size:11px;color:rgba(255,255,255,0.7);font-weight:600;">{i + 1}/{slides.length}</span>
                 </div>
 
                 <h3 style="font-size:22px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px;">{s.title}</h3>
                 {s.headline && (
-                  <p style="font-size:14px;font-weight:800;color:#C60A4D;margin-bottom:6px;letter-spacing:0.01em;">{s.headline}</p>
+                  <p style="font-size:14px;font-weight:800;color:#FB7185;margin-bottom:6px;letter-spacing:0.01em;">{s.headline}</p>
                 )}
                 {s.subheadline && (
-                  <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.55;">{s.subheadline}</p>
+                  <p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.55;">{s.subheadline}</p>
                 )}
               </div>
 
               <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span style="font-size:11px;color:rgba(255,255,255,0.3);">
+                <span style="font-size:11px;color:rgba(255,255,255,0.75);">
                   Targets: {s.targetLocations.join(', ')}
                 </span>
                 {s.tenant && (
-                  <span style="font-size:11px;font-weight:700;color:#252F81;background:rgba(37,47,129,0.18);border:1px solid rgba(37,47,129,0.3);padding:3px 10px;border-radius:20px;">
+                  <span style="font-size:11px;font-weight:700;color:#A5B4FC;background:rgba(37,47,129,0.35);border:1px solid rgba(165,180,252,0.3);padding:3px 10px;border-radius:20px;">
                     {s.tenant.name} • {s.tenant.unitNumber}
                   </span>
                 )}
@@ -437,13 +444,13 @@ const directory = await repo.getSignageDirectory();
           <div style="background:#111827;border-radius:14px;border:1px solid rgba(255,255,255,0.07);padding:18px;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);">
               <span style="font-weight:900;color:#C60A4D;font-size:20px;">{floor.floorLevel}</span>
-              <span style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:600;">{floor.tenants.length} Stores</span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:600;">{floor.tenants.length} Stores</span>
             </div>
             <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
               {floor.tenants.map((t) => (
                 <li style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
                   <span style="color:rgba(255,255,255,0.85);font-weight:600;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px;">{t.tenantName}</span>
-                  <span style="font-family:monospace;color:rgba(255,255,255,0.3);font-size:10px;flex-shrink:0;">{t.unitNumber}</span>
+                  <span style="font-family:monospace;color:rgba(255,255,255,0.7);font-size:10px;flex-shrink:0;">{t.unitNumber}</span>
                 </li>
               ))}
             </ul>
