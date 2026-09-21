@@ -148,6 +148,61 @@ export async function ensurePublicPermissions(
   return createdCount;
 }
 
+export async function ensureWebhookSync(
+  directusUrl: string,
+  token: string,
+  apiUrl: string = process.env.PUBLIC_API_URL || 'http://catalog-api:3000',
+  syncSecret: string = process.env.SYNC_SECRET || ''
+): Promise<void> {
+  if (!syncSecret) {
+    console.log('⚠️ SYNC_SECRET not provided; skipping webhook config update.');
+    return;
+  }
+
+  const hookRes = await fetch(`${directusUrl}/webhooks`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  
+  if (!hookRes.ok) {
+    throw new Error(`Failed to fetch webhooks: ${hookRes.statusText}`);
+  }
+  
+  const hookData = await hookRes.json() as { data: Array<{ id: string; name: string }> };
+  const existing = hookData.data.find(h => h.name === 'Catalog Sync Hook');
+  
+  const payload = {
+    name: 'Catalog Sync Hook',
+    method: 'POST',
+    url: `${apiUrl}/api/v1/sync`,
+    status: 'active',
+    data: true,
+    actions: ['create', 'update', 'delete'],
+    collections: ['categories', 'tenants', 'operating_hours', 'promotions', 'signage_slides'],
+    headers: [{ header: 'x-sync-secret', value: syncSecret }]
+  };
+
+  let res;
+  if (existing) {
+    res = await fetch(`${directusUrl}/webhooks/${existing.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload)
+    });
+  } else {
+    res = await fetch(`${directusUrl}/webhooks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  if (res.ok) {
+    console.log(`   🔗 Webhook 'Catalog Sync Hook' synchronized with SYNC_SECRET.`);
+  } else {
+    console.error(`   ❌ Failed to sync webhook: ${res.statusText}`);
+  }
+}
+
 /**
  * Resolve the Directus admin credentials from the environment.
  * No default/fallback credentials are shipped — a misconfigured deployment must
@@ -220,6 +275,7 @@ export async function bootstrapDirectus(directusUrl: string = process.env.DIRECT
     const token = loginData.data.access_token;
     const granted = await ensurePublicPermissions(directusUrl, token);
     console.log(`✅ Directus public permissions synchronized (${granted} new granted).`);
+    await ensureWebhookSync(directusUrl, token);
   }
 
   console.log('✅ Directus 11 schema snapshot ready for deployment.');

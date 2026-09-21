@@ -13,6 +13,7 @@ Full-stack production deployment for Jubilee Square v2 consisting of:
 - Remote GitHub repository: `https://github.com/syafiqabdha/jubilee-square-v2`
 - Coolify instance at `http://100.112.193.13:8000` (accessible via Tailscale).
 - `COOLIFY_TOKEN` exported in shell environment.
+- `SYNC_SECRET` exported in shell environment or configured in Coolify UI (required for Directus webhook sync).
 
 ---
 
