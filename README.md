@@ -100,7 +100,7 @@ No credentials are defaulted anywhere in this repository — production secrets 
 cp .env.example .env
 
 # Fill in the REQUIRED secrets (compose + Directus bootstrap refuse to start without them)
-#   DB_PASSWORD, ADMIN_EMAIL, ADMIN_PASSWORD, KEY, SECRET
+#   DB_PASSWORD, ADMIN_EMAIL, ADMIN_PASSWORD, KEY, SECRET, SYNC_SECRET
 # Generate strong values with:
 openssl rand -base64 32
 ```

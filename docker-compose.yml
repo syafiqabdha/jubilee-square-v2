@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -72,6 +70,7 @@ services:
       PORT: 3000
       HOST: 0.0.0.0
       DATABASE_URL: postgresql://${DB_USER:-jubilee_admin}:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/${DB_NAME:-jubilee_square_v2}
+      SYNC_SECRET: "${SYNC_SECRET:?SYNC_SECRET is required}"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
       interval: 5s
