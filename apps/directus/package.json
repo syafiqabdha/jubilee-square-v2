@@ -5,7 +5,7 @@
   "scripts": {
     "build": "echo \"Directus schema integration ready\"",
     "bootstrap": "npx tsx bootstrap.ts",
-    "test": "npx tsx bootstrap.ts"
+    "test": "npx tsx bootstrap.ts && npx tsx --test bootstrap.credentials.test.ts"
   },
   "dependencies": {
     "@directus/sdk": "^18.0.0",

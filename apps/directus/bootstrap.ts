@@ -148,6 +148,39 @@ export async function ensurePublicPermissions(
   return createdCount;
 }
 
+/**
+ * Resolve the Directus admin credentials from the environment.
+ * No default/fallback credentials are shipped — a misconfigured deployment must
+ * fail loudly instead of silently using a publicly known admin login.
+ */
+export function resolveAdminCredentials(env: NodeJS.ProcessEnv = process.env): { email: string; password: string } {
+  const email = env.ADMIN_EMAIL?.trim();
+  const password = env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error(
+      'ADMIN_EMAIL and ADMIN_PASSWORD must be set to bootstrap Directus — no default credentials are provided. ' +
+        'See .env.example, then export them (e.g. `set -a; . ./.env; set +a`).',
+    );
+  }
+
+  return { email, password };
+}
+
+/** Non-throwing reachability probe for the Directus runtime. */
+export async function isDirectusReachable(directusUrl: string, timeoutMs: number = 2000): Promise<boolean> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const pingRes = await fetch(`${directusUrl}/server/ping`, { signal: controller.signal });
+    return pingRes.ok;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function bootstrapDirectus(directusUrl: string = process.env.DIRECTUS_URL || 'http://localhost:8055') {
   console.log(`📡 Checking Directus schema snapshot...`);
 
@@ -160,33 +193,33 @@ export async function bootstrapDirectus(directusUrl: string = process.env.DIRECT
   REQUIRED_COLLECTIONS.forEach((c) => console.log(`   • ${c}`));
 
   // Check if Directus runtime server is reachable
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2000);
-    const pingRes = await fetch(`${directusUrl}/server/ping`, { signal: controller.signal });
-    clearTimeout(timeout);
+  const reachable = await isDirectusReachable(directusUrl);
 
-    if (pingRes.ok) {
-      console.log(`🟢 Directus instance reachable at ${directusUrl}. Ensuring public permissions and synchronization...`);
-
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@jubileesq.com.sg';
-      const adminPassword = process.env.ADMIN_PASSWORD || 'JubileeAdmin2026!';
-
-      const loginRes = await fetch(`${directusUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: adminEmail, password: adminPassword }),
-      });
-
-      if (loginRes.ok) {
-        const loginData = (await loginRes.json()) as { data: { access_token: string } };
-        const token = loginData.data.access_token;
-        const granted = await ensurePublicPermissions(directusUrl, token);
-        console.log(`✅ Directus public permissions synchronized (${granted} new granted).`);
-      }
-    }
-  } catch {
+  if (!reachable) {
     console.log(`ℹ️ Directus runtime server not currently reachable at ${directusUrl} (running in offline validation mode).`);
+  } else {
+    console.log(`🟢 Directus instance reachable at ${directusUrl}. Ensuring public permissions and synchronization...`);
+
+    // No fallback credentials: an unconfigured deployment must fail loudly instead of
+    // authenticating with a well-known default admin login.
+    const { email: adminEmail, password: adminPassword } = resolveAdminCredentials();
+
+    const loginRes = await fetch(`${directusUrl}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: adminEmail, password: adminPassword }),
+    });
+
+    if (!loginRes.ok) {
+      throw new Error(
+        `Directus admin authentication failed (HTTP ${loginRes.status}). Verify ADMIN_EMAIL/ADMIN_PASSWORD.`,
+      );
+    }
+
+    const loginData = (await loginRes.json()) as { data: { access_token: string } };
+    const token = loginData.data.access_token;
+    const granted = await ensurePublicPermissions(directusUrl, token);
+    console.log(`✅ Directus public permissions synchronized (${granted} new granted).`);
   }
 
   console.log('✅ Directus 11 schema snapshot ready for deployment.');
