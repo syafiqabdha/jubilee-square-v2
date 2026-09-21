@@ -160,33 +160,46 @@ export async function bootstrapDirectus(directusUrl: string = process.env.DIRECT
   REQUIRED_COLLECTIONS.forEach((c) => console.log(`   • ${c}`));
 
   // Check if Directus runtime server is reachable
+  let directusReachable = false;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 2000);
     const pingRes = await fetch(`${directusUrl}/server/ping`, { signal: controller.signal });
     clearTimeout(timeout);
-
-    if (pingRes.ok) {
-      console.log(`🟢 Directus instance reachable at ${directusUrl}. Ensuring public permissions and synchronization...`);
-
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@jubileesq.com.sg';
-      const adminPassword = process.env.ADMIN_PASSWORD || 'JubileeAdmin2026!';
-
-      const loginRes = await fetch(`${directusUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: adminEmail, password: adminPassword }),
-      });
-
-      if (loginRes.ok) {
-        const loginData = (await loginRes.json()) as { data: { access_token: string } };
-        const token = loginData.data.access_token;
-        const granted = await ensurePublicPermissions(directusUrl, token);
-        console.log(`✅ Directus public permissions synchronized (${granted} new granted).`);
-      }
-    }
+    directusReachable = pingRes.ok;
   } catch {
     console.log(`ℹ️ Directus runtime server not currently reachable at ${directusUrl} (running in offline validation mode).`);
+  }
+
+  // The permission sync authenticates as the Directus admin user. There are no
+  // embedded default credentials: ADMIN_EMAIL and ADMIN_PASSWORD must be
+  // supplied explicitly whenever a Directus instance is reachable.
+  if (directusReachable) {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+      throw new Error(
+        'ADMIN_EMAIL and ADMIN_PASSWORD must be set to synchronise Directus permissions — no default credentials are embedded in the codebase.'
+      );
+    }
+
+    console.log(`🟢 Directus instance reachable at ${directusUrl}. Ensuring public permissions and synchronization...`);
+
+    const loginRes = await fetch(`${directusUrl}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: adminEmail, password: adminPassword }),
+    });
+
+    if (loginRes.ok) {
+      const loginData = (await loginRes.json()) as { data: { access_token: string } };
+      const token = loginData.data.access_token;
+      const granted = await ensurePublicPermissions(directusUrl, token);
+      console.log(`✅ Directus public permissions synchronized (${granted} new granted).`);
+    } else {
+      console.log(`⚠️ Directus admin login failed (HTTP ${loginRes.status}) — public permissions were NOT synchronised.`);
+    }
   }
 
   console.log('✅ Directus 11 schema snapshot ready for deployment.');
