@@ -148,59 +148,88 @@ export async function ensurePublicPermissions(
   return createdCount;
 }
 
-export async function ensureWebhookSync(
+export async function ensureSyncFlow(
   directusUrl: string,
   token: string,
-  apiUrl: string = process.env.PUBLIC_API_URL || 'http://catalog-api:3000',
+  syncTargetUrl: string = process.env.SYNC_TARGET_URL || 'http://catalog-api:3000/api/v1/sync',
   syncSecret: string = process.env.SYNC_SECRET || ''
 ): Promise<void> {
   if (!syncSecret) {
-    console.log('⚠️ SYNC_SECRET not provided; skipping webhook config update.');
-    return;
+    throw new Error('SYNC_SECRET is not provided. It is required for Directus to sync with the Catalog API. Check your environment configuration.');
   }
 
-  const hookRes = await fetch(`${directusUrl}/webhooks`, {
+  // 1. Fetch existing flows
+  const flowRes = await fetch(`${directusUrl}/flows`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  
-  if (!hookRes.ok) {
-    throw new Error(`Failed to fetch webhooks: ${hookRes.statusText}`);
+  if (!flowRes.ok) throw new Error(`Failed to fetch flows: ${flowRes.statusText}`);
+  const flowData = await flowRes.json() as { data: Array<{ id: string; name: string }> };
+  const existingFlow = flowData.data.find(f => f.name === 'Catalog Sync Hook');
+
+  // 2. Clear old flow if exists (cascading removes operations)
+  if (existingFlow) {
+    await fetch(`${directusUrl}/flows/${existingFlow.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
   }
-  
-  const hookData = await hookRes.json() as { data: Array<{ id: string; name: string }> };
-  const existing = hookData.data.find(h => h.name === 'Catalog Sync Hook');
-  
-  const payload = {
-    name: 'Catalog Sync Hook',
+
+  // 3. Create new Flow
+  const createFlowRes = await fetch(`${directusUrl}/flows`, {
     method: 'POST',
-    url: `${apiUrl}/api/v1/sync`,
-    status: 'active',
-    data: true,
-    actions: ['create', 'update', 'delete'],
-    collections: ['categories', 'tenants', 'operating_hours', 'promotions', 'signage_slides'],
-    headers: [{ header: 'x-sync-secret', value: syncSecret }]
-  };
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      name: 'Catalog Sync Hook',
+      trigger: 'event',
+      status: 'active',
+      options: {
+        type: 'action',
+        scope: ['items.create', 'items.update', 'items.delete'],
+        collections: ['categories', 'tenants', 'operating_hours', 'promotions', 'signage_slides']
+      }
+    })
+  });
+  
+  if (!createFlowRes.ok) throw new Error(`Failed to create Flow: ${await createFlowRes.text()}`);
+  const newFlow = await createFlowRes.json() as { data: { id: string } };
 
-  let res;
-  if (existing) {
-    res = await fetch(`${directusUrl}/webhooks/${existing.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(payload)
-    });
-  } else {
-    res = await fetch(`${directusUrl}/webhooks`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(payload)
-    });
-  }
+  // 4. Create Operation
+  const opRes = await fetch(`${directusUrl}/operations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      name: 'post_sync',
+      key: 'post_sync',
+      type: 'request',
+      flow: newFlow.data.id,
+      position_x: 1,
+      position_y: 1,
+      options: {
+        url: syncTargetUrl,
+        method: 'POST',
+        headers: [{ header: 'x-sync-secret', value: syncSecret }]
+      }
+    })
+  });
 
-  if (res.ok) {
-    console.log(`   🔗 Webhook 'Catalog Sync Hook' synchronized with SYNC_SECRET.`);
-  } else {
-    console.error(`   ❌ Failed to sync webhook: ${res.statusText}`);
+  if (!opRes.ok) {
+    // cleanup
+    await fetch(`${directusUrl}/flows/${newFlow.data.id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    throw new Error(`Failed to create Flow Operation: ${await opRes.text()}`);
   }
+  
+  const opData = await opRes.json() as { data: { id: string } };
+
+  // 5. Link Operation to Flow
+  const linkRes = await fetch(`${directusUrl}/flows/${newFlow.data.id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ operation: opData.data.id })
+  });
+
+  if (!linkRes.ok) throw new Error(`Failed to link Operation to Flow: ${await linkRes.text()}`);
+  
+  console.log(`   🔗 Flow 'Catalog Sync Hook' synchronized with SYNC_SECRET.`);
 }
 
 /**
@@ -275,7 +304,7 @@ export async function bootstrapDirectus(directusUrl: string = process.env.DIRECT
     const token = loginData.data.access_token;
     const granted = await ensurePublicPermissions(directusUrl, token);
     console.log(`✅ Directus public permissions synchronized (${granted} new granted).`);
-    await ensureWebhookSync(directusUrl, token);
+    await ensureSyncFlow(directusUrl, token);
   }
 
   console.log('✅ Directus 11 schema snapshot ready for deployment.');
