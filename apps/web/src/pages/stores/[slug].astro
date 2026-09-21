@@ -47,7 +47,7 @@ const jsonLd = {
   description={tenant.summary}
   activePage="directory"
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/\u003c/g, '\\u003c')} />
 
   <div class="max-w-4xl mx-auto px-4 py-8 md:py-12">
     <a href="/directory" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-jubilee-navy mb-6 transition-colors">

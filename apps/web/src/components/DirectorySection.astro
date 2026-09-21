@@ -195,7 +195,7 @@ const { categories, tenants, initialCategory = 'all', initialSearch = '' } = Ast
 </section>
 
 <!-- JSON Data serialization for clean client script module bundling -->
-<script type="application/json" id="jubilee-directory-tenants" set:html={JSON.stringify(tenants)} />
+<script type="application/json" id="jubilee-directory-tenants" set:html={JSON.stringify(tenants).replace(/\u003c/g, '\\u003c')} />
 
 <script>
   import { getTenantOpeningStatus } from '../lib/opening-hours';
