@@ -47,7 +47,7 @@ const jsonLd = {
   description={tenant.summary}
   activePage="directory"
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/\u003c/g, '\\u003c')} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <div class="max-w-4xl mx-auto px-4 py-8 md:py-12">
     <a href="/directory" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-jubilee-navy mb-6 transition-colors">
@@ -97,7 +97,7 @@ const jsonLd = {
 
       <!-- Opening Hours Grid -->
       <div class="border-t border-slate-100 pt-6">
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Weekly Operating Hours</h2>
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-600 mb-4">Weekly Operating Hours</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {(tenant.operatingHours || []).map((h: any) => (
             <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex justify-between items-center text-sm">
