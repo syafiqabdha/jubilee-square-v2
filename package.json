@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
+    "pretest": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "typecheck": "tsc --build --noEmit || (npm run build --workspaces)",
     "start": "npm run start --workspace=apps/catalog-api",

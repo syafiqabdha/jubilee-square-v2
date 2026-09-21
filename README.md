@@ -87,8 +87,31 @@ npm install
 # Build all packages and applications
 npm run build
 
-# Run unit and integration test suites
+# Run unit and integration test suites (builds workspaces first via `pretest`)
 npm test
+```
+
+### Environment Configuration
+
+No credentials are defaulted anywhere in this repository — production secrets must be supplied.
+
+```bash
+# Create your local env file from the template
+cp .env.example .env
+
+# Fill in the REQUIRED secrets (compose + Directus bootstrap refuse to start without them)
+#   DB_PASSWORD, ADMIN_EMAIL, ADMIN_PASSWORD, KEY, SECRET
+# Generate strong values with:
+openssl rand -base64 32
+```
+
+`docker-compose.yml` uses required-variable syntax (`${VAR:?}`), so `docker compose up` fails fast with a clear
+message instead of silently booting PostgreSQL/Directus with well-known demo credentials. The Directus bootstrap
+(`npm run bootstrap --workspace=apps/directus`) exits non-zero if `ADMIN_EMAIL` / `ADMIN_PASSWORD` are unset:
+
+```bash
+set -a; . ./.env; set +a
+npm run bootstrap --workspace=apps/directus
 ```
 
 ### Local Development
