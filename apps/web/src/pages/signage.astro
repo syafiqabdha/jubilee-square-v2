@@ -94,7 +94,7 @@ const directory = await repo.getSignageDirectory();
       font-weight: 700;
       border: 1px solid rgba(255,255,255,0.15);
       background: transparent;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.75);
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -165,7 +165,7 @@ const directory = await repo.getSignageDirectory();
       border-radius: 50%;
       background: rgba(255,255,255,0.08);
       border: none;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.75);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -197,7 +197,7 @@ const directory = await repo.getSignageDirectory();
       resize: none;
       transition: border-color 0.2s;
     }
-    .banner-msg-input::placeholder { color: rgba(255,255,255,0.3); }
+    .banner-msg-input::placeholder { color: rgba(255,255,255,0.75); }
     .banner-msg-input:focus { border-color: #C60A4D; }
 
     .banner-broadcast-btn {
@@ -325,7 +325,7 @@ const directory = await repo.getSignageDirectory();
               Clear Broadcast
             </button>
           </div>
-          <span id="char-count" style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:600;">0 / 280</span>
+          <span id="char-count" style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:600;">0 / 280</span>
         </div>
       </div>
     </section>
@@ -339,7 +339,7 @@ const directory = await repo.getSignageDirectory();
           <span class="label-section">Promotional Display</span>
           <h2 style="font-size:18px;font-weight:800;color:#fff;margin-top:3px;">
             Rotating Slide Deck
-            <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.35);margin-left:8px;">({slides.length} slides)</span>
+            <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);margin-left:8px;">({slides.length} slides)</span>
           </h2>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -434,7 +434,7 @@ const directory = await repo.getSignageDirectory();
           <span class="label-section">In-Mall Wayfinding</span>
           <h2 style="font-size:18px;font-weight:800;color:#fff;margin-top:3px;">Directory by Floor</h2>
         </div>
-        <code style="font-size:11px;background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:6px;color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.08);">
+        <code style="font-size:11px;background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:6px;color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.08);">
           GET /api/v1/signage/directory
         </code>
       </div>
@@ -500,7 +500,7 @@ const directory = await repo.getSignageDirectory();
       }
       if (bannerStatusLabel) {
         bannerStatusLabel.textContent = 'No active broadcast';
-        bannerStatusLabel.style.color = 'rgba(255,255,255,0.4)';
+        bannerStatusLabel.style.color = 'rgba(255,255,255,0.75)';
       }
     }
 
