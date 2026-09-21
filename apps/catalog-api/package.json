@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "node --loader ts-node/esm src/server.ts",
-    "test": "node --test dist/tests/*.test.js || node --test --loader ts-node/esm src/tests/*.test.ts"
+    "test": "node --test --import tsx/esm src/tests/*.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
