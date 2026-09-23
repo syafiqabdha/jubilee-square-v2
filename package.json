@@ -8,10 +8,10 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "pretest": "npm run build --workspaces",
+    "build": "npm run build --workspace=@jubilee/shared && npm run build --workspace=@jubilee/db && npm run build --workspace=@jubilee/directus && npm run build --workspace=@jubilee/catalog-api && npm run build --workspace=@jubilee/web",
+    "pretest": "npm run build --workspace=@jubilee/shared && npm run build --workspace=@jubilee/db && npm run build --workspace=@jubilee/directus && npm run build --workspace=@jubilee/catalog-api && npm run build --workspace=@jubilee/web",
     "test": "npm run test --workspaces",
-    "typecheck": "tsc --build --noEmit || (npm run build --workspaces)",
+    "typecheck": "tsc --build --noEmit || npm run build",
     "start": "npm run start --workspace=apps/catalog-api",
     "dev:api": "npm run dev --workspace=apps/catalog-api",
     "dev:web": "npm run dev --workspace=apps/web",
