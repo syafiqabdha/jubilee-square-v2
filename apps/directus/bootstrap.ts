@@ -207,7 +207,11 @@ export async function ensureSyncFlow(
       options: {
         url: syncTargetUrl,
         method: 'POST',
-        headers: [{ header: 'x-sync-secret', value: syncSecret }]
+        headers: [
+          { header: 'x-sync-secret', value: syncSecret },
+          { header: 'Content-Type', value: 'application/json' }
+        ],
+        body: JSON.stringify({ event: 'items.create', collection: '$trigger', keys: '$trigger' })
       }
     })
   });

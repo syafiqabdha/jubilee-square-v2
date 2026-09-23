@@ -34,6 +34,7 @@ Verify all health check endpoints return HTTP 200:
 
 ### Step C: Seed CMS Collections (First Deploy Only)
 ```bash
+npx directus schema apply ./schema.snapshot.json --yes
 npm run test --workspace=@jubilee/directus
 ```
 
