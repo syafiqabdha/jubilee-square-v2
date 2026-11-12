@@ -41,7 +41,7 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('returns open status during standard operating hours', () => {
     // Monday at 14:30
-    const testDate = new Date('2026-09-07T14:30:00'); // 2026-09-07 was Monday
+    const testDate = new Date('2026-09-07T14:30:00+08:00'); // 2026-09-07 was Monday
     const status = getTenantOpeningStatus(standardSchedule, testDate);
     assert.strictEqual(status.isOpen, true);
     assert.strictEqual(status.statusBadge, 'open');
@@ -50,7 +50,7 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('returns closed status before standard opening time', () => {
     // Monday at 08:30
-    const testDate = new Date('2026-09-07T08:30:00');
+    const testDate = new Date('2026-09-07T08:30:00+08:00');
     const status = getTenantOpeningStatus(standardSchedule, testDate);
     assert.strictEqual(status.isOpen, false);
     assert.strictEqual(status.statusBadge, 'closed');
@@ -59,7 +59,7 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('returns closed status after standard closing time', () => {
     // Monday at 23:15
-    const testDate = new Date('2026-09-07T23:15:00');
+    const testDate = new Date('2026-09-07T23:15:00+08:00');
     const status = getTenantOpeningStatus(standardSchedule, testDate);
     assert.strictEqual(status.isOpen, false);
     assert.strictEqual(status.statusBadge, 'closed');
@@ -67,7 +67,7 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('returns closed status for a designated closed day', () => {
     // Wednesday at 14:00 (isClosed: true)
-    const testDate = new Date('2026-09-09T14:00:00'); // Wednesday
+    const testDate = new Date('2026-09-09T14:00:00+08:00'); // Wednesday
     const status = getTenantOpeningStatus(standardSchedule, testDate);
     assert.strictEqual(status.isOpen, false);
     assert.strictEqual(status.statusBadge, 'closed');
@@ -76,7 +76,7 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('handles midnight crossover: returns open during Friday evening shift', () => {
     // Friday at 21:00
-    const testDate = new Date('2026-09-11T21:00:00'); // Friday
+    const testDate = new Date('2026-09-11T21:00:00+08:00'); // Friday
     const status = getTenantOpeningStatus(midnightCrossSchedule, testDate);
     assert.strictEqual(status.isOpen, true);
     assert.strictEqual(status.statusBadge, 'open');
@@ -85,7 +85,7 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('handles midnight crossover: returns open during Saturday early morning rollover (01:30 AM)', () => {
     // Saturday at 01:30 (rollover from Friday evening shift)
-    const testDate = new Date('2026-09-12T01:30:00'); // Saturday early morning
+    const testDate = new Date('2026-09-12T01:30:00+08:00'); // Saturday early morning
     const status = getTenantOpeningStatus(midnightCrossSchedule, testDate);
     assert.strictEqual(status.isOpen, true);
     assert.strictEqual(status.statusBadge, 'open');
@@ -94,19 +94,28 @@ describe('Jubilee Square Opening Hours Engine Suite', () => {
 
   it('handles midnight crossover: returns closed on Saturday morning after overnight shift closed', () => {
     // Saturday at 10:00 AM (after 02:00 AM close and before 18:00 start)
-    const testDate = new Date('2026-09-12T10:00:00');
+    const testDate = new Date('2026-09-12T10:00:00+08:00');
     const status = getTenantOpeningStatus(midnightCrossSchedule, testDate);
     assert.strictEqual(status.isOpen, false);
     assert.strictEqual(status.statusBadge, 'closed');
   });
 
   it('defaults to standard mall operating hours when schedule is undefined', () => {
-    const dayDate = new Date('2026-09-09T12:00:00');
+    const dayDate = new Date('2026-09-09T12:00:00+08:00');
     const statusDay = getTenantOpeningStatus(undefined, dayDate);
     assert.strictEqual(statusDay.isOpen, true);
 
-    const nightDate = new Date('2026-09-09T03:00:00');
+    const nightDate = new Date('2026-09-09T03:00:00+08:00');
     const statusNight = getTenantOpeningStatus(undefined, nightDate);
     assert.strictEqual(statusNight.isOpen, false);
+  });
+
+  it('evaluates in Singapore time regardless of the runtime timezone', () => {
+    // 02:30 UTC on Monday 2026-09-07 is 10:30 in Singapore: open under default 10:00 hours.
+    const morningSgt = new Date('2026-09-07T02:30:00Z');
+    assert.strictEqual(getTenantOpeningStatus(undefined, morningSgt).isOpen, true);
+    // 15:00 UTC is 23:00 in Singapore: closed.
+    const lateSgt = new Date('2026-09-07T15:00:00Z');
+    assert.strictEqual(getTenantOpeningStatus(undefined, lateSgt).isOpen, false);
   });
 });

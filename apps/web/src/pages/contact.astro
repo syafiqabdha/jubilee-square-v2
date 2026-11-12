@@ -1,30 +1,60 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const LEASING_EMAIL = 'leasing@jubileesq.com.sg';
+const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=Jubilee+Square+61+Ang+Mo+Kio+Ave+8+Singapore+569814';
 ---
 
 <Layout
   title="Contact Us — Jubilee Square"
-  description="Get in touch with Jubilee Square. Find our address, operating hours, and contact information."
+  description="Contact Jubilee Square management for leasing and general enquiries. 61 Ang Mo Kio Ave 8, Singapore 569814."
   activePage="contact"
 >
-  <section class="container mx-auto px-4 py-16 md:py-24">
-    <div class="max-w-3xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-        Contact Us
+  <div class="max-w-5xl mx-auto px-4 py-12 md:py-16">
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light mb-3">
+        Contact
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        Get in touch
       </h1>
-      <div class="text-lg text-slate-600 space-y-4">
-        <p>
-          <strong class="text-slate-900">Address:</strong><br />
-          61 Ang Mo Kio Ave 8, Singapore 569814
-        </p>
-        <p>
-          <strong class="text-slate-900">Getting Here:</strong><br />
-          2 minutes walk from Ang Mo Kio MRT (NS16)
-        </p>
-        <p class="mt-8 text-slate-500">
-          For leasing inquiries and general questions, please check back soon for updated contact details.
-        </p>
+      <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+        Questions about leasing, events or the mall? Reach the management office below. For a specific store, use the
+        phone number on its page in the <a href="/directory" class="font-semibold text-jubilee-navy hover:text-jubilee-red">directory</a>.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <p class="text-2xl mb-3" aria-hidden="true">✉️</p>
+        <h2 class="font-bold text-slate-900 mb-1">Leasing &amp; enquiries</h2>
+        <p class="text-sm text-slate-600 mb-4">Retail, F&amp;B and enrichment spaces across four levels.</p>
+        <a href={`mailto:${LEASING_EMAIL}`} class="text-sm font-bold text-jubilee-navy hover:text-jubilee-red break-all">{LEASING_EMAIL}</a>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <p class="text-2xl mb-3" aria-hidden="true">📍</p>
+        <h2 class="font-bold text-slate-900 mb-1">Address</h2>
+        <address class="not-italic text-sm text-slate-600 mb-4">
+          Jubilee Square<br />61 Ang Mo Kio Ave 8<br />Singapore 569814
+        </address>
+        <a href={MAPS_URL} target="_blank" rel="noopener" class="text-sm font-bold text-jubilee-navy hover:text-jubilee-red">Open in Google Maps &rarr;</a>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <p class="text-2xl mb-3" aria-hidden="true">🚇</p>
+        <h2 class="font-bold text-slate-900 mb-1">Getting here</h2>
+        <p class="text-sm text-slate-600 mb-4">2 minutes' sheltered walk from Ang Mo Kio MRT (NS16, Exit C) and the bus interchange.</p>
+        <a href="/location" class="text-sm font-bold text-jubilee-navy hover:text-jubilee-red">Directions &amp; parking &rarr;</a>
       </div>
     </div>
-  </section>
+
+    <div class="rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 aspect-[16/9] md:aspect-[21/9]">
+      <iframe
+        title="Map showing Jubilee Square at 61 Ang Mo Kio Ave 8"
+        src="https://www.google.com/maps?q=Jubilee+Square+61+Ang+Mo+Kio+Ave+8+Singapore+569814&output=embed"
+        class="w-full h-full border-0"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </div>
 </Layout>

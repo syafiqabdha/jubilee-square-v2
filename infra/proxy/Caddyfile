@@ -1,0 +1,32 @@
+# Jubilee Square v2 — HTTPS entrypoint (docker compose --profile proxy up -d)
+# Caddy obtains and renews Let's Encrypt certificates for each domain automatically.
+{
+	email {$ACME_EMAIL}
+}
+
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+{$SITE_DOMAIN}, www.{$SITE_DOMAIN} {
+	import common
+	@www host www.{$SITE_DOMAIN}
+	redir @www https://{$SITE_DOMAIN}{uri} permanent
+	reverse_proxy web:4321
+}
+
+{$CMS_DOMAIN} {
+	import common
+	reverse_proxy directus:8055
+}
+
+{$API_DOMAIN} {
+	import common
+	reverse_proxy catalog-api:3000
+}

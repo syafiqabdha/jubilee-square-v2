@@ -42,6 +42,26 @@ export function formatTimeShort(timeStr: string | null | undefined, fallback: st
   return match ? match[1].padStart(5, '0') : fallback;
 }
 
+const SG_WEEKDAY: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+const sgFormatter = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Singapore',
+  weekday: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+/**
+ * Day of week (0 = Sunday) and minutes since midnight for an instant, in Asia/Singapore.
+ */
+export function getSingaporeClock(date: Date): { day: number; minutes: number } {
+  const parts = Object.fromEntries(sgFormatter.formatToParts(date).map((p) => [p.type, p.value]));
+  return {
+    day: SG_WEEKDAY[parts.weekday as string] ?? date.getDay(),
+    minutes: (parseInt(parts.hour as string, 10) % 24) * 60 + parseInt(parts.minute as string, 10),
+  };
+}
+
 /**
  * Evaluates whether a tenant is currently open given their weekly operating schedule and a target Date.
  * Handles:
@@ -55,8 +75,8 @@ export function getTenantOpeningStatus(
   operatingHours?: OperatingHours[] | null,
   targetDate: Date = new Date()
 ): OpeningStatusResult {
-  const currentDay = targetDate.getDay();
-  const currentMinutes = targetDate.getHours() * 60 + targetDate.getMinutes();
+  // Always evaluate in mall time, whatever the visitor's (or server's) timezone is.
+  const { day: currentDay, minutes: currentMinutes } = getSingaporeClock(targetDate);
 
   const todaySchedule = operatingHours?.find((h) => h.dayOfWeek === currentDay);
   const yesterdayDay = (currentDay + 6) % 7;

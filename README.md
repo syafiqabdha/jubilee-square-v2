@@ -4,7 +4,7 @@
 
 [![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Production-black?style=flat&logo=vercel)](https://jubilee-square-v2.vercel.app)
 [![Node.js](https://img.shields.io/badge/Node.js-v22+-green?style=flat&logo=node.js)](https://nodejs.org/)
-[![Astro](https://img.shields.io/badge/Astro-5.0-orange?style=flat&logo=astro)](https://astro.build/)
+[![Astro](https://img.shields.io/badge/Astro-7-orange?style=flat&logo=astro)](https://astro.build/)
 [![Fastify](https://img.shields.io/badge/Fastify-5.0-white?style=flat&logo=fastify)](https://fastify.dev/)
 [![Directus](https://img.shields.io/badge/Directus-11-purple?style=flat&logo=directus)](https://directus.io/)
 
@@ -40,14 +40,19 @@ Official brand assets and vector graphics adhere strictly to the **Jubilee Squar
 ```text
 jubilee-square-v2/
 ├── apps/
-│   ├── web/               # Astro 5 SSR Web Application (@jubilee/web)
+│   ├── web/               # Astro 7 SSR Web Application (@jubilee/web)
 │   ├── catalog-api/       # Fastify 5 REST API & Digital Signage Controller (@jubilee/catalog-api)
 │   └── directus/          # Directus 11 CMS Schema Snapshots (@jubilee/directus)
 ├── packages/
 │   ├── shared/            # Shared TypeScript types, constants & schemas (@jubilee/shared)
 │   └── db/                # Repository layer with resilient local & database fallback (@jubilee/db)
-├── docker-compose.yml     # Production orchestration for PostgreSQL, Directus, API & Web
-└── vercel.json            # Edge deployment configuration
+├── infra/
+│   ├── docker/            # Dockerfiles for web, catalog-api and the Directus bootstrap job
+│   ├── proxy/             # Caddyfile for the optional HTTPS proxy profile
+│   ├── migrations/        # PostgreSQL schema + seed (runs on first boot)
+│   ├── coolify/           # Deployment runbook, preflight and Coolify scripts
+│   └── scripts/           # DB backup, placeholder image generator
+└── docker-compose.yml     # Full production stack: PostgreSQL, Directus, API & Web
 ```
 
 ---
@@ -63,6 +68,7 @@ jubilee-square-v2/
 - **Building Landmark Showcase**: Photo-driven landmark gallery with lightbox modal (`BuildingLightbox`) for full-resolution building imagery and ambient hero backdrop.
 - **Location Visual Guide**: Dedicated `/location` page with Google Maps embed, surrounding landmark cards, and wayfinding cues for first-time visitors.
 - **Mobile-First Experience**: Glassmorphism sticky header and fixed bottom navigation dock (`Home`, `Stores`, `Deals`, `Transit`).
+- **Mall Pages**: About (live tenant mix and level-by-level breakdown), Contact (management email, address, map), News, and Deals (current tenant promotions, filtered by date in Singapore time).
 - **Digital Signage Kiosk**: Real-time interactive kiosk controller (`/signage`) with rotating promotions and directory wayfinding.
 - **Standards & Accessibility**: WCAG 2.1 AA compliant color contrast, Schema.org `ShoppingCenter` + `LocalBusiness` JSON-LD structured data, and `prefers-reduced-motion` animations.
 
@@ -126,11 +132,34 @@ npm run dev:api
 
 ---
 
+## Docker Stack Deployment
+
+The production target is the Docker Compose stack in `docker-compose.yml` (PostgreSQL, Directus, catalog API, web,
+plus optional one-shot bootstrap jobs and a Caddy HTTPS proxy). Full instructions, including Coolify, are in
+[`infra/coolify/RUNBOOK.md`](infra/coolify/RUNBOOK.md).
+
+```bash
+cp .env.example .env                 # fill in the REQUIRED secrets
+./infra/coolify/check-envs.sh .env   # preflight
+docker compose up -d --build
+
+# first deploy only
+docker compose --profile bootstrap run --rm directus-schema
+docker compose --profile bootstrap run --rm directus-bootstrap
+
+# optional: HTTPS on your own domain (set SITE_DOMAIN etc. in .env)
+docker compose --profile proxy up -d
+```
+
+| URL | Service |
+|---|---|
+| `http://<host>:4321` | Public website |
+| `http://<host>:4000/docs` | Catalog API (Swagger) |
+| `http://<host>:8055` | Directus CMS admin |
+
+---
+
 ## Live Deployments
 
-- **Production URL**: [https://jubilee-square-v2.vercel.app](https://jubilee-square-v2.vercel.app)
-- **Location & Wayfinding**: [https://jubilee-square-v2.vercel.app/location](https://jubilee-square-v2.vercel.app/location)
-- **Digital Signage**: [https://jubilee-square-v2.vercel.app/signage](https://jubilee-square-v2.vercel.app/signage)
-- **API Swagger Docs**: `http://localhost:4000/docs`
-
-> Last deployed: `0660f04` — fix(ui): remove floor explorer and fix mobile header responsiveness (PAN-28, PAN-29)
+- **Vercel (web only)**: [https://jubilee-square-v2.vercel.app](https://jubilee-square-v2.vercel.app). The web app
+  still builds for Vercel; set `CATALOG_API_URL` there to point it at a running catalog API.

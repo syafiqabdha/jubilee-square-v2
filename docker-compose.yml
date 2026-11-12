@@ -1,4 +1,23 @@
-version: '3.8'
+# Jubilee Square v2 — full Docker stack
+#
+#   cp .env.example .env            # fill in every REQUIRED value
+#   ./infra/coolify/check-envs.sh   # preflight
+#   docker compose up -d --build
+#   # first deploy only:
+#   docker compose --profile bootstrap run --rm directus-schema
+#   docker compose --profile bootstrap run --rm directus-bootstrap
+#
+# Optional public HTTPS entrypoint (plain VPS, not needed on Coolify):
+#   docker compose --profile proxy up -d
+#
+# Secrets use required-variable syntax (${VAR:?}) so the stack refuses to start
+# without them instead of silently booting with demo credentials.
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 
 services:
   postgres:
@@ -20,6 +39,7 @@ services:
       timeout: 5s
       retries: 10
       start_period: 5s
+    logging: *default-logging
     networks:
       - jubilee-net
 
@@ -33,7 +53,7 @@ services:
     expose:
       - "8055"
     ports:
-      - "${DIRECTUS_PORT:-8055}:8055"
+      - "${BIND_ADDR:-0.0.0.0}:${DIRECTUS_PORT:-8055}:8055"
     environment:
       KEY: "${KEY:?KEY is required}"
       SECRET: "${SECRET:?SECRET is required}"
@@ -46,11 +66,18 @@ services:
       DB_USER: "${DB_USER:-jubilee_admin}"
       DB_PASSWORD: "${DB_PASSWORD:?DB_PASSWORD is required}"
       CORS_ENABLED: "true"
-      CORS_ORIGIN: "*"
+      CORS_ORIGIN: "${DIRECTUS_CORS_ORIGIN:-true}"
       PUBLIC_URL: "${DIRECTUS_PUBLIC_URL:-http://localhost:8055}"
     volumes:
       - directus_uploads:/directus/uploads
       - directus_extensions:/directus/extensions
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8055/server/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    logging: *default-logging
     networks:
       - jubilee-net
 
@@ -58,6 +85,7 @@ services:
     build:
       context: .
       dockerfile: infra/docker/Dockerfile.api
+    image: jubilee-square/catalog-api:latest
     container_name: jubilee-catalog-api
     restart: unless-stopped
     depends_on:
@@ -66,7 +94,7 @@ services:
     expose:
       - "3000"
     ports:
-      - "${PORT:-4000}:3000"
+      - "${BIND_ADDR:-0.0.0.0}:${PORT:-4000}:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -79,6 +107,7 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+    logging: *default-logging
     networks:
       - jubilee-net
 
@@ -86,6 +115,7 @@ services:
     build:
       context: .
       dockerfile: infra/docker/Dockerfile.web
+    image: jubilee-square/web:latest
     container_name: jubilee-web
     restart: unless-stopped
     depends_on:
@@ -94,30 +124,107 @@ services:
     expose:
       - "4321"
     ports:
-      - "${WEB_PORT:-4321}:4321"
+      - "${BIND_ADDR:-0.0.0.0}:${WEB_PORT:-4321}:4321"
     environment:
       NODE_ENV: production
-      CATALOG_API_URL: http://catalog-api:3000
-      PUBLIC_API_URL: http://catalog-api:3000
-      PUBLIC_DIRECTUS_URL: http://directus:8055
       PORT: 4321
       HOST: 0.0.0.0
+      # Server-side calls from Astro to the catalog API, over the private network.
+      CATALOG_API_URL: http://catalog-api:3000
+      # /signage reads the catalog repository directly.
+      DATABASE_URL: postgresql://${DB_USER:-jubilee_admin}:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/${DB_NAME:-jubilee_square_v2}
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4321/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4321/ >/dev/null || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 10s
+    logging: *default-logging
+    networks:
+      - jubilee-net
+
+  # One-shot, FIRST DEPLOY ONLY: registers the catalog tables (from 001_init.sql)
+  # as Directus collections by applying the committed schema snapshot.
+  # Not idempotent: re-applying to an already-registered database fails on the
+  # tenant_amenities junction table (it has no single-column primary key).
+  directus-schema:
+    profiles: ["bootstrap"]
+    image: directus/directus:11.4.1
+    depends_on:
+      directus:
+        condition: service_healthy
+    entrypoint: ["node", "/directus/cli.js", "schema", "apply", "--yes", "/snapshot/schema.snapshot.json"]
+    environment:
+      KEY: "${KEY:?KEY is required}"
+      SECRET: "${SECRET:?SECRET is required}"
+      DB_CLIENT: "pg"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_DATABASE: "${DB_NAME:-jubilee_square_v2}"
+      DB_USER: "${DB_USER:-jubilee_admin}"
+      DB_PASSWORD: "${DB_PASSWORD:?DB_PASSWORD is required}"
+    volumes:
+      - ./apps/directus/schema.snapshot.json:/snapshot/schema.snapshot.json:ro
+    restart: "no"
+    networks:
+      - jubilee-net
+
+  # One-shot: grants Directus public read permissions and installs the
+  # CMS → catalog sync Flow. Safe to re-run.
+  directus-bootstrap:
+    profiles: ["bootstrap"]
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.directus-bootstrap
+    image: jubilee-square/directus-bootstrap:latest
+    depends_on:
+      directus:
+        condition: service_healthy
+      catalog-api:
+        condition: service_healthy
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      ADMIN_EMAIL: "${ADMIN_EMAIL:?ADMIN_EMAIL is required}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}"
+      SYNC_SECRET: "${SYNC_SECRET:?SYNC_SECRET is required}"
+      SYNC_TARGET_URL: http://catalog-api:3000/api/v1/sync
+    restart: "no"
+    networks:
+      - jubilee-net
+
+  # Optional HTTPS reverse proxy with automatic Let's Encrypt certificates.
+  # Set SITE_DOMAIN (and optionally CMS_DOMAIN / API_DOMAIN) and point DNS at the host.
+  # When using it, set BIND_ADDR=127.0.0.1 so the app ports are not exposed directly.
+  proxy:
+    profiles: ["proxy"]
+    image: caddy:2-alpine
+    container_name: jubilee-proxy
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_DOMAIN: "${SITE_DOMAIN:-localhost}"
+      CMS_DOMAIN: "${CMS_DOMAIN:-cms.localhost}"
+      API_DOMAIN: "${API_DOMAIN:-api.localhost}"
+      ACME_EMAIL: "${ACME_EMAIL:-}"
+    volumes:
+      - ./infra/proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    logging: *default-logging
     networks:
       - jubilee-net
 
 volumes:
   postgres_data:
-    driver: local
   directus_uploads:
-    driver: local
   directus_extensions:
-    driver: local
+  caddy_data:
+  caddy_config:
 
 networks:
   jubilee-net:

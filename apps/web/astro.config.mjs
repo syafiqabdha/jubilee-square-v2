@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import node from '@astrojs/node';
 import vercel from '@astrojs/vercel';
 
@@ -12,7 +11,14 @@ export default defineConfig({
     : node({
         mode: 'standalone',
       }),
-  integrations: [tailwind()],
+  vite: {
+    ssr: {
+      // Astro's runtime imports `cookie` v2, but in this npm workspace the hoisted
+      // copy is fastify's v1 (Astro's sits nested under node_modules/astro). Bundle
+      // it so the server output never resolves the wrong or a missing copy.
+      noExternal: ['cookie'],
+    },
+  },
   server: {
     port: 4321,
     host: true,

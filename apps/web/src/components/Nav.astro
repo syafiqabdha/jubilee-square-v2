@@ -40,11 +40,8 @@ const { activePage = 'home' } = Astro.props;
 
     <!-- Desktop Navigation Links -->
     <nav class="hidden lg:flex nav-links-wrap" aria-label="Main Navigation">
-      <a href="/directory" class={`nav-item-link ${activePage === 'directory' ? 'active' : ''}`}>Directory</a>
-      <a href="/dine" class={`nav-item-link ${activePage === 'dine' ? 'active' : ''}`}>Dine</a>
-      <a href="/learn" class={`nav-item-link ${activePage === 'learn' ? 'active' : ''}`}>Learn</a>
-      <a href="/relax" class={`nav-item-link ${activePage === 'relax' ? 'active' : ''}`}>Relax</a>
-      <a href="/location" class={`nav-item-link ${activePage === 'location' ? 'active' : ''}`}>Location</a>
+      <a href="/directory" class={`nav-item-link ${activePage === 'directory' ? 'active' : ''}`}>Stores</a>
+      <a href="/deals" class={`nav-item-link ${activePage === 'deals' ? 'active' : ''}`}>Store Deals</a>
     </nav>
 
     <!-- Right Actions -->
@@ -103,6 +100,9 @@ const { activePage = 'home' } = Astro.props;
       <a href="/shop" class="mobile-nav-item" data-page="shop">🛍️ Shop &amp; Retail</a>
       <a href="/services" class="mobile-nav-item" data-page="services">🩺 Healthcare &amp; Services</a>
       <a href="/location" class="mobile-nav-item" data-page="location">🧭 Location &amp; Parking</a>
+      <a href="/deals" class="mobile-nav-item" data-page="deals">🏷️ Deals &amp; Promotions</a>
+      <a href="/news" class="mobile-nav-item" data-page="news">📰 News &amp; Updates</a>
+      <a href="/contact" class="mobile-nav-item" data-page="contact">✉️ Contact Us</a>
     </div>
   </div>
 </header>
