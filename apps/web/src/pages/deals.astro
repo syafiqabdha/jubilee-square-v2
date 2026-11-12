@@ -13,13 +13,16 @@ const today = new Intl.DateTimeFormat('en-CA', {
   day: '2-digit',
 }).format(new Date());
 
+// The API may return full ISO timestamps; only the calendar date matters here.
+const day = (d: string) => String(d).slice(0, 10);
+
 const all = await api.getPromotions();
 const deals = all
-  .filter((p) => p.isActive && p.startDate <= today && p.endDate >= today)
+  .filter((p) => p.isActive && day(p.startDate) <= today && day(p.endDate) >= today)
   .sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.displayOrder - b.displayOrder);
 
 const fmt = (d: string) =>
-  new Date(`${d}T00:00:00+08:00`).toLocaleDateString('en-SG', {
+  new Date(`${day(d)}T00:00:00+08:00`).toLocaleDateString('en-SG', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
