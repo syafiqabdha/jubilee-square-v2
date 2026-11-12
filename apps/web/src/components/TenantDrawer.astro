@@ -65,22 +65,6 @@
       </p>
     </div>
 
-    <!-- Interactive Floor Map Pin Callout -->
-    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-jubilee-navy-light text-jubilee-navy flex items-center justify-center font-bold text-lg">
-          🗺️
-        </div>
-        <div>
-          <div class="text-sm font-bold text-slate-900" id="drawer-map-level">Level 1 Directory Pin</div>
-          <div class="text-xs text-slate-600">Ang Mo Kio Jubilee Square</div>
-        </div>
-      </div>
-      <a href="/location" class="text-xs font-bold text-jubilee-navy hover:text-jubilee-red underline">
-        View Mall Map →
-      </a>
-    </div>
-
     <!-- Contact & Details Grid -->
     <div class="border-t border-slate-100 pt-5">
       <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">Store Details</h3>
@@ -99,21 +83,6 @@
         <!-- Injected dynamically via safe DOM nodes -->
       </div>
     </div>
-
-    <!-- Directions CTA -->
-    <div class="pt-2">
-      <a
-        href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
-        </svg>
-        Navigate to Jubilee Square on Google Maps
-      </a>
-    </div>
   </div>
 </aside>
 
@@ -129,7 +98,6 @@
   const locationEl = document.getElementById('drawer-location-badge');
   const statusPill = document.getElementById('drawer-status-pill');
   const descEl = document.getElementById('drawer-description');
-  const mapLevelEl = document.getElementById('drawer-map-level');
   const detailsGrid = document.getElementById('drawer-details-grid');
   const hoursList = document.getElementById('drawer-hours-list');
   const logoWrap = document.getElementById('drawer-logo-wrap');
@@ -184,7 +152,6 @@
     if (catEl) catEl.textContent = tenant.categoryName;
     if (nameEl) nameEl.textContent = tenant.name;
     if (locationEl) locationEl.textContent = `📍 ${tenant.floorLevel} • ${tenant.unitNumber}`;
-    if (mapLevelEl) mapLevelEl.textContent = `${tenant.floorLevel} Directory Pin (${tenant.unitNumber})`;
     if (descEl) descEl.textContent = tenant.description || tenant.summary || 'Visit us in Jubilee Square.';
 
     // Live status using shared engine

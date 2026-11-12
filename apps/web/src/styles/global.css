@@ -827,8 +827,19 @@ a { color: inherit; text-decoration: none; }
 }
 
 .mobile-nav-dropdown.is-open {
-  max-height: 500px;
+  /* Fill the screen below the header; scroll inside if the list is taller. */
+  height: calc(100vh - var(--mobile-header-h, 64px));
+  height: calc(100dvh - var(--mobile-header-h, 64px));
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   opacity: 1;
+}
+
+/* The bottom tab bar would cover the last menu items, so hide it while the menu is open. */
+body.mobile-menu-open .bottom-nav-dock {
+  display: none;
 }
 
 .mobile-nav-content {

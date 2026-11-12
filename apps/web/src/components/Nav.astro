@@ -135,15 +135,19 @@ const { activePage = 'home' } = Astro.props;
   });
 
   function openMobileMenu() {
+    const headerBottom = mobileDropdown?.parentElement?.getBoundingClientRect().bottom ?? 64;
+    document.documentElement.style.setProperty('--mobile-header-h', `${Math.max(0, headerBottom)}px`);
     mobileDropdown?.classList.add('is-open');
     hamburgerBtn?.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('mobile-menu-open');
   }
 
   function closeMobileMenu() {
     mobileDropdown?.classList.remove('is-open');
     hamburgerBtn?.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
+    document.body.classList.remove('mobile-menu-open');
   }
 
   // Click outside to close

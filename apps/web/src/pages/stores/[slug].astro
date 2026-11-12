@@ -82,12 +82,6 @@ const jsonLd = {
             Call {tenant.phone}
           </a>
         )}
-        <a href="https://maps.google.com/?q=61+Ang+Mo+Kio+Ave+8+Singapore+569814" target="_blank" rel="noopener noreferrer" class="btn-secondary-outline text-sm py-2.5 px-5">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
-          </svg>
-          Get Directions
-        </a>
         {tenant.website && (tenant.website.startsWith('http://') || tenant.website.startsWith('https://')) && (
           <a href={tenant.website} target="_blank" rel="noopener noreferrer" class="btn-secondary-outline text-sm py-2.5 px-5">
             Visit Store Website &nearr;
