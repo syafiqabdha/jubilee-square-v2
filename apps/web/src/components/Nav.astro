@@ -41,9 +41,7 @@ const { activePage = 'home' } = Astro.props;
     <!-- Desktop Navigation Links -->
     <nav class="hidden lg:flex nav-links-wrap" aria-label="Main Navigation">
       <a href="/directory" class={`nav-item-link ${activePage === 'directory' ? 'active' : ''}`}>Stores</a>
-      <a href="/relax" class={`nav-item-link ${activePage === 'relax' ? 'active' : ''}`}>Relax</a>
       <a href="/deals" class={`nav-item-link ${activePage === 'deals' ? 'active' : ''}`}>Store Deals</a>
-      <a href="/contact" class={`nav-item-link ${activePage === 'contact' || activePage === 'about' ? 'active' : ''}`}>About Us</a>
     </nav>
 
     <!-- Right Actions -->
