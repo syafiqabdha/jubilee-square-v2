@@ -1,5 +1,36 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+// Mall announcements. Newest first. Edit this list to publish news until a CMS
+// collection is wired up for it.
+const posts: { date: string; title: string; body: string; link?: { href: string; label: string } }[] = [
+  {
+    date: '2026-11-12',
+    title: 'A new Jubilee Square website',
+    body: 'Our refreshed site brings the full store directory, live opening hours, directions and current deals together, and works just as well on your phone.',
+    link: { href: '/directory', label: 'Explore the directory' },
+  },
+  {
+    date: '2026-11-12',
+    title: 'See which stores are open right now',
+    body: 'Every store listing now shows whether it is open at this moment, based on Singapore time, along with its full weekly hours.',
+    link: { href: '/directory', label: 'Find a store' },
+  },
+  {
+    date: '2026-11-12',
+    title: 'Deals from our tenants, in one place',
+    body: 'Lunch specials, free trial classes and wellness packages from stores across the mall are now listed on a single page.',
+    link: { href: '/deals', label: 'See current deals' },
+  },
+];
+
+const fmt = (d: string) =>
+  new Date(`${d}T00:00:00+08:00`).toLocaleDateString('en-SG', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Asia/Singapore',
+  });
 ---
 
 <Layout
@@ -7,14 +38,34 @@ import Layout from '../layouts/Layout.astro';
   description="Latest news, announcements, and updates from Jubilee Square, Ang Mo Kio."
   activePage="news"
 >
-  <section class="container mx-auto px-4 py-16 md:py-24">
-    <div class="max-w-3xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-        News & Updates
+  <div class="max-w-3xl mx-auto px-4 py-12 md:py-16">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light mb-3">
+        News
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        News &amp; updates
       </h1>
-      <p class="text-lg text-slate-600">
-        Stay tuned for the latest announcements, events, and updates from Jubilee Square.
+      <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+        Announcements and happenings at Jubilee Square.
       </p>
     </div>
-  </section>
+
+    <ol class="space-y-5" role="list">
+      {posts.map((p) => (
+        <li>
+          <article class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <time datetime={p.date} class="text-xs font-bold uppercase tracking-wider text-jubilee-red">{fmt(p.date)}</time>
+            <h2 class="text-xl font-bold text-slate-900 mt-2 mb-2">{p.title}</h2>
+            <p class="text-slate-600 leading-relaxed">{p.body}</p>
+            {p.link && (
+              <a href={p.link.href} class="inline-block mt-4 text-sm font-bold text-jubilee-navy hover:text-jubilee-red">
+                {p.link.label} &rarr;
+              </a>
+            )}
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
 </Layout>

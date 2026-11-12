@@ -1,25 +1,95 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CTA from '../components/CTA.astro';
+import { api } from '../lib/api-client';
+import { CATEGORY_EMOJI_MAP } from '@jubilee/shared';
+
+const categories = await api.getCategories();
+const { tenants } = await api.getTenants();
+
+const floors = ['L1', 'L2', 'L3', 'L4'].map((level) => {
+  const here = tenants.filter((t) => t.floorLevel === level);
+  return { level, count: here.length, names: here.map((t) => t.name) };
+}).filter((f) => f.count > 0);
+
+const categoryCounts = categories.map((c) => ({
+  ...c,
+  emoji: CATEGORY_EMOJI_MAP[c.slug] ?? '',
+  count: tenants.filter((t) => t.categorySlug === c.slug).length,
+}));
 ---
 
 <Layout
   title="About Jubilee Square — Ang Mo Kio Community Mall"
-  description="Learn more about Jubilee Square, a vibrant community mall in Ang Mo Kio offering dining, enrichment, and lifestyle options."
+  description="Jubilee Square is a community mall at 61 Ang Mo Kio Ave 8, next to AMK MRT, with dining, enrichment, wellness and healthcare across four levels."
   activePage="about"
 >
-  <section class="container mx-auto px-4 py-16 md:py-24">
-    <div class="max-w-3xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-        About Jubilee Square
+  <div class="max-w-5xl mx-auto px-4 py-12 md:py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-jubilee-navy bg-jubilee-navy-light mb-3">
+        About the mall
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        Your neighbourhood mall in <span class="text-jubilee-navy">Ang Mo Kio Central</span>
       </h1>
-      <p class="text-lg text-slate-600 mb-8">
-        Jubilee Square is a community-focused mall located at 61 Ang Mo Kio Ave 8, 
-        just 2 minutes from AMK MRT. We bring together 23 curated tenants across 
-        dining, enrichment tuition, beauty wellness, and healthcare.
-      </p>
-      <p class="text-lg text-slate-600">
-        More details coming soon.
+      <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+        Jubilee Square sits at 61 Ang Mo Kio Ave 8, a two-minute sheltered walk from Ang Mo Kio MRT (NS16) and the
+        bus interchange. Across four levels you'll find {tenants.length} tenants for everyday meals, after-school
+        enrichment, wellness and care, all under one roof.
       </p>
     </div>
-  </section>
+
+    <section aria-labelledby="mix-heading" class="mb-12">
+      <h2 id="mix-heading" class="text-xl font-bold text-slate-900 mb-4">What you'll find here</h2>
+      <ul class="grid grid-cols-2 md:grid-cols-5 gap-4" role="list">
+        {categoryCounts.map((c) => (
+          <li>
+            <a
+              href={`/${c.slug}`}
+              class="block bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-card-hover hover:border-jubilee-navy/30 transition-all h-full"
+            >
+              <span class="text-2xl" aria-hidden="true">{c.emoji}</span>
+              <p class="font-bold text-slate-900 mt-2">{c.name}</p>
+              <p class="text-sm text-slate-500">{c.count} {c.count === 1 ? 'tenant' : 'tenants'}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="floors-heading" class="mb-12">
+      <h2 id="floors-heading" class="text-xl font-bold text-slate-900 mb-4">Level by level</h2>
+      <div class="bg-white border border-slate-200 rounded-3xl shadow-sm divide-y divide-slate-100">
+        {floors.map((f) => (
+          <div class="p-5 sm:p-6 flex flex-col sm:flex-row gap-3 sm:gap-6">
+            <div class="shrink-0 w-14 h-14 rounded-2xl bg-jubilee-navy text-white flex items-center justify-center text-lg font-extrabold">
+              {f.level}
+            </div>
+            <div>
+              <p class="font-bold text-slate-900">{f.count} {f.count === 1 ? 'tenant' : 'tenants'}</p>
+              <p class="text-sm text-slate-600 leading-relaxed">{f.names.join(' · ')}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="mgmt-heading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <h2 id="mgmt-heading" class="text-lg font-bold text-slate-900 mb-2">Management</h2>
+        <p class="text-slate-600 leading-relaxed">
+          Jubilee Square is managed by Eng Wah Global Pte Ltd. For leasing and general enquiries, see our
+          <a href="/contact" class="font-semibold text-jubilee-navy hover:text-jubilee-red">contact page</a>.
+        </p>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-2">Getting here</h2>
+        <p class="text-slate-600 leading-relaxed mb-3">
+          Take Exit C at Ang Mo Kio MRT and follow the sheltered linkway. Car park access is from Ang Mo Kio Ave 8.
+        </p>
+        <a href="/location" class="text-sm font-bold text-jubilee-navy hover:text-jubilee-red">Directions &amp; parking &rarr;</a>
+      </div>
+    </section>
+  </div>
+  <CTA />
 </Layout>
