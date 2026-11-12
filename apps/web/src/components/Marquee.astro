@@ -1,81 +1,88 @@
 ---
-const defaultRow1 = [
-  { alt: 'Bantianyao Grilled Fish logo', src: '/images/tenants/bantianyao-logo.png' },
-  { alt: 'AGrader Learning Centre logo', src: '/images/tenants/agrader-logo.png' },
-  { alt: 'Ya Kun Kaya Toast logo', src: '/images/tenants/yakun-logo.png' },
-  { alt: 'My Drum School logo', src: '/images/tenants/mydrumschool-logo.png' },
-  { alt: 'Ashi Foot Reflexology logo', src: '/images/tenants/ashi-logo.png' },
-  { alt: 'Jeong-In Taekwondo logo', src: '/images/tenants/jeongin-logo.png' }
-];
-
-const defaultRow2 = [
-  { alt: 'Subway logo', src: '/images/tenants/subway-logo.png' },
-  { alt: 'Artlette Art Studio logo', src: '/images/tenants/artlette-logo.png' },
-  { alt: 'Tianyi InMed TCM Clinic logo', src: '/images/tenants/tianyi-logo.png' },
-  { alt: 'LCentral English logo', src: '/images/tenants/lcentral-logo.png' },
-  { alt: '7 Studio Hair Salon logo', src: '/images/tenants/7studio-logo.png' },
-  { alt: 'The Chinese Wedding Shop logo', src: '/images/tenants/chinesewedding-logo.png' }
+// All 23 tenant logos, split across three rows so no logo appears in more than one row.
+const rows = [
+  [
+    { alt: 'Bantianyao Grilled Fish', src: '/images/tenants/bantianyao-logo.png' },
+    { alt: 'AGrader Learning Centre', src: '/images/tenants/agrader-logo.png' },
+    { alt: 'Ya Kun Kaya Toast', src: '/images/tenants/yakun-logo.png' },
+    { alt: 'My Drum School', src: '/images/tenants/mydrumschool-logo.png' },
+    { alt: 'Ashi Foot Reflexology', src: '/images/tenants/ashi-logo.png' },
+    { alt: 'Jeong-In Taekwondo', src: '/images/tenants/jeongin-logo.png' },
+    { alt: 'Jolly Desserts', src: '/images/tenants/jolly-logo.png' },
+    { alt: 'Eyechamp Optometrists', src: '/images/tenants/eyechamp-logo.png' },
+  ],
+  [
+    { alt: 'Subway', src: '/images/tenants/subway-logo.png' },
+    { alt: 'Artlette', src: '/images/tenants/artlette-logo.png' },
+    { alt: 'Tianyi InMed TCM Clinic', src: '/images/tenants/tianyi-logo.png' },
+    { alt: 'LCentral', src: '/images/tenants/lcentral-logo.png' },
+    { alt: '7 Studio Hair Salon', src: '/images/tenants/7studio-logo.png' },
+    { alt: 'The Chinese Wedding Shop', src: '/images/tenants/chinesewedding-logo.png' },
+    { alt: 'Wang Learning Centre', src: '/images/tenants/wang-logo.png' },
+    { alt: 'Max-See & Veggie House', src: '/images/tenants/maxsee-logo.png' },
+  ],
+  [
+    { alt: 'Mcube Learning Centre', src: '/images/tenants/mcube-logo.png' },
+    { alt: 'Guitar Emerge Music School', src: '/images/tenants/guitaremerge-logo.png' },
+    { alt: 'Skin Labo', src: '/images/tenants/skinlabo-logo.png' },
+    { alt: 'Siam Square Mookata', src: '/images/tenants/siamsquare-logo.png' },
+    { alt: 'Learning Kidz', src: '/images/tenants/learningkidz-logo.png' },
+    { alt: 'Glow Haven', src: '/images/tenants/glowhaven-logo.png' },
+    { alt: 'Soul Scissors Studio', src: '/images/tenants/soulscissors-logo.png' },
+  ],
 ];
 ---
 
-<div class="relative w-full overflow-hidden py-6" style="mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);" aria-hidden="true">
-  <!-- Desktop Layout: Two side-by-side rows -->
-  <div class="hidden md:flex w-full items-center gap-16">
-    <!-- Row 1 -->
-    <div class="marquee-track flex w-max items-center gap-12 px-6">
-      {defaultRow1.concat(defaultRow1).map((item) => (
-        <img
-          src={item.src}
-          alt={item.alt}
-          class="h-10 w-auto object-contain grayscale opacity-70 mix-blend-multiply transition-all duration-300 hover:grayscale-0 hover:opacity-100"
-        />
-      ))}
-    </div>
-
-    <!-- Row 2 -->
-    <div class="marquee-track reverse flex w-max items-center gap-12 px-6">
-      {defaultRow2.concat(defaultRow2).map((item) => (
-        <img
-          src={item.src}
-          alt={item.alt}
-          class="h-10 w-auto object-contain grayscale opacity-70 mix-blend-multiply transition-all duration-300 hover:grayscale-0 hover:opacity-100"
-        />
-      ))}
-    </div>
+<section class="marquee-band bg-white border-y border-slate-200" aria-label="Tenants at Jubilee Square">
+  <div class="marquee-mask py-7 md:py-10 flex flex-col gap-6 md:gap-8">
+    {rows.map((row, i) => (
+      <div class="overflow-hidden">
+        <ul
+          class={`marquee-track flex w-max items-center ${i % 2 === 1 ? 'reverse' : ''}`}
+          style={`--marquee-duration: ${[60, 70, 55][i]}s;`}
+          role="list"
+        >
+          {/* Two copies so the loop is seamless; the second copy is hidden from assistive tech. */}
+          {[0, 1].map((copy) =>
+            row.map((item) => (
+              <li class="marquee-item" aria-hidden={copy === 1 ? 'true' : undefined}>
+                <img
+                  src={item.src}
+                  alt={copy === 0 ? item.alt : ''}
+                  class="h-10 md:h-12 w-auto max-w-[150px] md:max-w-[180px] object-contain grayscale opacity-70 mix-blend-multiply transition-all duration-300 hover:grayscale-0 hover:opacity-100"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+    ))}
   </div>
-
-  <!-- Mobile Layout: Stacked rows -->
-  <div class="flex flex-col gap-3 md:hidden">
-    <!-- Row 1 -->
-    <div class="marquee-track flex w-max items-center gap-12 px-6">
-      {defaultRow1.concat(defaultRow1).map((item) => (
-        <img
-          src={item.src}
-          alt={item.alt}
-          class="h-10 w-auto object-contain grayscale opacity-70 mix-blend-multiply transition-all duration-300 hover:grayscale-0 hover:opacity-100"
-        />
-      ))}
-    </div>
-
-    <!-- Row 2 -->
-    <div class="marquee-track reverse flex w-max items-center gap-12 px-6">
-      {defaultRow2.concat(defaultRow2).map((item) => (
-        <img
-          src={item.src}
-          alt={item.alt}
-          class="h-10 w-auto object-contain grayscale opacity-70 mix-blend-multiply transition-all duration-300 hover:grayscale-0 hover:opacity-100"
-        />
-      ))}
-    </div>
-  </div>
-</div>
+</section>
 
 <style>
+  .marquee-mask {
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  /* Each row is wider than a desktop screen, so a logo never shows twice in view. */
+  .marquee-item {
+    flex: none;
+    min-width: 8rem;
+    padding-inline: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+  @media (min-width: 768px) {
+    .marquee-item { min-width: 14rem; padding-inline: 2rem; }
+  }
   @keyframes marquee-scroll {
     to { transform: translateX(-50%); }
   }
   .marquee-track {
-    animation: marquee-scroll 70s linear infinite;
+    animation: marquee-scroll var(--marquee-duration, 60s) linear infinite;
     will-change: transform;
   }
   .marquee-track:hover {
@@ -83,5 +90,8 @@ const defaultRow2 = [
   }
   .marquee-track.reverse {
     animation-direction: reverse;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
   }
 </style>
