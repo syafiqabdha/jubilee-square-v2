@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1.7
+# One-shot job: applies public permissions and the CMS→catalog sync Flow to Directus.
+# Run with: docker compose --profile bootstrap run --rm directus-bootstrap
+ARG NODE_IMAGE=node:22-alpine
+
+FROM ${NODE_IMAGE}
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY packages/shared/package.json packages/shared/
+COPY packages/db/package.json packages/db/
+COPY apps/web/package.json apps/web/
+COPY apps/catalog-api/package.json apps/catalog-api/
+COPY apps/directus/package.json apps/directus/
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --no-fund --workspace=@jubilee/directus --include-workspace-root
+COPY tsconfig.json ./
+COPY packages/shared/ packages/shared/
+COPY apps/directus/ apps/directus/
+RUN npm run build --workspace=@jubilee/shared
+USER node
+WORKDIR /app/apps/directus
+CMD ["npx", "tsx", "bootstrap.ts"]

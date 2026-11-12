@@ -1,0 +1,19 @@
+# Keep the build context small and free of secrets.
+**/node_modules
+**/dist
+**/.astro
+**/.vercel
+**/*.tsbuildinfo
+**/coverage
+**/*.log
+.git
+.github
+.env
+.env.*
+!.env.example
+.DS_Store
+.multica
+AGENTS.md
+infra/coolify
+infra/scripts
+infra/proxy
